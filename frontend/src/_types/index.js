@@ -1,0 +1,5 @@
+export const LS_STORAGE_PREFIX = '$-DIPLOMA-PROJECT-BOOKING-E-';
+
+export const LS_USERS = LS_STORAGE_PREFIX + 'USERS';
+export const LS_TOKEN = LS_STORAGE_PREFIX + 'TOKEN';
+export const LS_LOCALE = LS_STORAGE_PREFIX + 'LOCALE';
