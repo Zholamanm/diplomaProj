@@ -23,11 +23,16 @@ class BookController extends Controller
             'tags_id' => 'nullable|array',
         ]);
 
-        Book::create([
+        $book = Book::create([
             'title' => $validated['title'],
             'author' => $validated['author'],
             'description' => $validated['description'],
+            'category_id' => $validated['category_id']
         ]);
+
+        if (!empty($validated['tags_id'])) {
+            $book->tags()->sync($validated['tags_id']);
+        }
 
         return ['success' => true];
     }
@@ -35,23 +40,33 @@ class BookController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'title' => 'required|string',
-            'author' => 'required|string',
-            'description' => 'required|string'
+            'title'    => 'required|string',
+            'author'   => 'required|string',
+            'description' => 'required|string',
+            'category_id' => 'nullable',
+            'tags_id'  => 'nullable|array',
         ]);
 
-        $book = Book::where('id', $id)->first();
-        $book->title = $validated['title'];
-        $book->author = $validated['author'];
-        $book->description = $validated['description'];
-        $book->save();
+        $book = Book::findOrFail($id);
 
+        $book->update([
+            'title'       => $validated['title'],
+            'author'      => $validated['author'],
+            'description' => $validated['description'],
+            'category_id' => $validated['category_id'],
+        ]);
+
+        if (array_key_exists('tags_id', $validated)) {
+            $book->tags()->sync($validated['tags_id']);
+        } else {
+            $book->tags()->sync([]);
+        }
         return ['success' => true];
     }
 
     public function view($id)
     {
-        return Book::where('id', $id)->first();
+        return Book::where('id', $id)->with('tags')->first();
     }
 
     public function destroy($id)

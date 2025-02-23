@@ -9,13 +9,6 @@ const bookRoutes = [
         beforeEnter: requireAuth,
     },
     {
-        path: 'book/:id',
-        name: 'BookView',
-        component: () => import('@/AdminViews/books/view.vue'),
-        // component: ListApplications,
-        beforeEnter: requireAuth,
-    },
-    {
         path: 'books',
         name: 'BookIndex',
         component: () => import('@/AdminViews/books/index.vue'),
@@ -23,7 +16,7 @@ const bookRoutes = [
         beforeEnter: requireAuth,
     },
     {
-        path: 'book/:id/edit    ',
+        path: 'book/:id/edit',
         name: 'BookEdit',
         component: () => import('@/AdminViews/books/edit.vue'),
         // component: ListApplications,

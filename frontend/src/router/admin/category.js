@@ -9,13 +9,6 @@ const categoryRoutes = [
         beforeEnter: requireAuth,
     },
     {
-        path: 'book/:id',
-        name: 'CategoryView',
-        component: () => import('@/AdminViews/categories/view.vue'),
-        // component: ListApplications,
-        beforeEnter: requireAuth,
-    },
-    {
         path: 'categories',
         name: 'CategoryIndex',
         component: () => import('@/AdminViews/categories/index.vue'),
@@ -23,7 +16,7 @@ const categoryRoutes = [
         beforeEnter: requireAuth,
     },
     {
-        path: 'book/:id/edit    ',
+        path: 'category/:id/edit',
         name: 'CategoryEdit',
         component: () => import('@/AdminViews/categories/edit.vue'),
         // component: ListApplications,

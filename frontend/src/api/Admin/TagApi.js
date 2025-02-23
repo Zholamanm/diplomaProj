@@ -13,5 +13,8 @@ const tagApi = {
     edit(id, data) {
         return client.post('/api/tag/' + id, data).then(res => res.data);
     },
+    delete(id) {
+        return client.delete('/api/category/' + id).then(res => res.data);
+    },
 };
 export default tagApi;

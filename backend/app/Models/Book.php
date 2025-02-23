@@ -16,7 +16,7 @@ class Book extends Model
     }
 
     public function tags() {
-        return $this->belongsToMany(Tag::class, 'book_tag')->using(BookTag::class);
+        return $this->belongsToMany(Tag::class, 'book_tags')->using(BookTag::class);
     }
 
     public function reviews() {
@@ -37,9 +37,9 @@ class Book extends Model
 
         if (isset($filters['sortBy'])){
             if($filters['sortBy'] == 0){
-                $query->reorder()->orderBy('name', 'desc');
+                $query->reorder()->orderBy('id', 'desc');
             }elseif($filters['sortBy'] == 1) {
-                $query->reorder()->orderBy('name', 'asc');
+                $query->reorder()->orderBy('id', 'asc');
             }
         }
     }

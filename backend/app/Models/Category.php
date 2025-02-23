@@ -18,8 +18,7 @@ class Category extends Model
     {
         if (isset($filters['search']))
             $query->where(function ($q) use ($filters) {
-                $q->where('title', 'LIKE', '%' . $filters['search'] . '%')
-                    ->orWhere('author', 'LIKE', '%' . $filters['search'] . '%');
+                $q->where('name', 'LIKE', '%' . $filters['search'] . '%');
             });
 
         if (isset($filters['sortBy'])){

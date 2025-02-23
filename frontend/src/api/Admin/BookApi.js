@@ -13,5 +13,8 @@ const bookApi = {
     edit(id, data) {
         return client.post('/api/book/' + id, data).then(res => res.data);
     },
+    delete(id) {
+        return client.delete('/api/category/' + id).then(res => res.data);
+    },
 };
 export default bookApi;

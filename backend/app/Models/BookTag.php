@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class BookTag extends Model
+class BookTag extends Pivot
 {
-    use HasFactory;
-
-    protected $table = 'book_tag';
+    protected $table = 'book_tags';
     protected $fillable = ['book_id', 'tag_id', 'added_at'];
 }

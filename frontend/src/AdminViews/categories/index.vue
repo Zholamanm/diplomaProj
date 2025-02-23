@@ -2,20 +2,36 @@
   <div class="content-wrapper" v-if="filtersReady">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Responsive Hover Table</h3>
+        <h3 class="card-title">Category Table</h3>
 
         <div class="card-tools">
-          <div class="input-group input-group-sm" style="width: 150px;">
-            <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+          <div class="card-tools">
+            <div class="input-group input-group-sm" style="width: 150px;">
+              <input type="text" v-model="filters.search" :disabled="loading"
+                     @keyup.enter="keyEnter"
+                     name="table_search"
+                     class="form-control float-right"
+                     placeholder="Search">
 
-            <div class="input-group-append">
-              <button type="submit" class="btn btn-default">
-                <i class="fas fa-search"></i>
-              </button>
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-default" @click="keyEnter">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <button type="submit" class="btn btn-default" @click="$router.push({
+                                            name: 'CategoryCreate',
+                                            params: {
+                                                locale: $route.params.locale,
+                                            },
+                                        })">
+        <i class="fas fa-plus"></i>
+        <span>Add category</span>
+      </button>
+
       <!-- /.card-header -->
       <div class="card-body table-responsive p-0">
         <table class="table table-hover text-nowrap">
@@ -128,8 +144,6 @@
   </div>
 </template>
 <script>
-// import InfiniteLoading from "./../../../node_modules/v3-infinite-loading/lib/v3-infinite-loading.es.js";
-// import InfiniteLoading from "v3-infinite-loading/lib/v3-infinite-loading.es.js";
 import categoryApi from "@/api/Admin/CategoryApi";
 import store from "@/store";
 import AdminModal from "@/views/Components/Ui/AdminModal.vue";
@@ -143,7 +157,7 @@ export default {
       list: [],
       filters: {
         search: null,
-        sortBy: 1,
+        sortBy: 0,
       },
       loading: false,
       selectedItem: null,

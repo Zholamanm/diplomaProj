@@ -14,7 +14,7 @@ import {useHead} from "@vueuse/head";
 import HeaderView from "./Elements/HeaderView.vue";
 import FooterView from "./Elements/FooterView.vue";
 import SidebarView from "./Elements/SidebarView.vue";
-import $ from "jquery";
+import $ from 'jquery'
 import "jquery-ui";
 
 export default {
@@ -40,6 +40,18 @@ export default {
           rel: "stylesheet",
           href: "/dist/css/adminlte.min.css",
         },
+        {
+          rel: "stylesheet",
+          href: "/plugins/daterangepicker/daterangepicker.css",
+        },
+        {
+          rel: "stylesheet",
+          href: "/plugins/select2/css/select2.min.css",
+        },
+        {
+          rel: "stylesheet",
+          href: "/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css",
+        },
       ],
     });
   },
@@ -49,10 +61,16 @@ export default {
     },
   },
   mounted() {
+
     document.body.classList.add('sidebar-mini');
     document.body.classList.add('layout-fixed');
     window.$ = window.jQuery = $;
+    this.loadScript("/plugins/select2/js/select2.full.min.js", () => {
+      $('.select2bs4').select2({ theme: 'bootstrap4' });
+    });
     this.loadScript("/plugins/bootstrap/js/bootstrap.bundle.min.js");
+
+    this.loadScript("/plugins/daterangepicker/daterangepicker.js");
     this.loadScript("/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js");
     this.loadScript("/dist/js/adminlte.js");
   },
