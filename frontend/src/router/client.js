@@ -1,9 +1,10 @@
 import Catalog from "@/ClientViews/Catalog.vue";
 import Main from "@/ClientViews/Main.vue";
+import Login from "@/views/Login.vue";
 
 const clientRoutes = [
     {
-        path: '/client',
+        path: '',
         name: 'ClientMainView',
         component: Main,
         children: [
@@ -13,6 +14,11 @@ const clientRoutes = [
                 component: Catalog,
             },
         ],
+    },
+    {
+        path: 'login',
+        name: 'login',
+        component: Login
     },
 ];
 

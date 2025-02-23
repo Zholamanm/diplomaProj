@@ -45,7 +45,6 @@ class BookController extends Controller
         return ['success' => true];
     }
 
-
     public function update(Request $request, $id)
     {
         $validated = $request->validate([

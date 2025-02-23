@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AuthController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,8 +22,12 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 Route::middleware('auth:api')->get('/user-info', function (Request $request) {
     return $request->user();
 });
+Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
 
 Route::middleware(['auth:api'])->group(function () {
+// role:1 - Admin
+// role:2 - Librarian
+// role:3 - Member
     Route::middleware(['admin_routes'])->group(function () {
 // role:1 - Admin
 // role:2 - Librarian
@@ -56,6 +61,16 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::post('/', [\App\Http\Controllers\UserController::class, 'store']);
                 Route::post('/{id}', [\App\Http\Controllers\UserController::class, 'update']);
                 Route::delete('/{id}', [\App\Http\Controllers\UserController::class, 'destroy']);
+            });
+            Route::prefix('locations')->group(function () {
+                Route::get('', [\App\Http\Controllers\LocationController::class, 'index']);
+                Route::post('', [\App\Http\Controllers\LocationController::class, 'store']);
+                Route::post('/{location}/books', [\App\Http\Controllers\LocationController::class, 'addBooksToLocation']);
+                Route::get('/{location}/books', [\App\Http\Controllers\LocationController::class, 'getBooksInLocation']);
+                Route::get('/{location}/books/{id}', [\App\Http\Controllers\LocationController::class, 'removeBookFromLocation']);
+                Route::get('/{id}', [\App\Http\Controllers\LocationController::class, 'view']);
+                Route::post('/{id}', [\App\Http\Controllers\LocationController::class, 'edit']);
+                Route::delete('/{id}', [\App\Http\Controllers\LocationController::class, 'delete']);
             });
         });
     });

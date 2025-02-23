@@ -6,6 +6,10 @@
         <li><a class="" href="#">Return</a></li>
         <li><a class="" href="#">About</a></li>
         <li><a class="" href="#">Contact</a></li>
+        <li>
+          <a class="" href="#" @click="logout" v-if="$store.state.auth.authorized">Logout</a>
+          <a class="" href="#" v-else @click="$router.push({name: 'login', params: {locale: this.$route.params.locale}})">Login</a>
+        </li>
       </ul>
     </nav>
     <div class="main clearfix">
@@ -43,6 +47,7 @@
 </template>
 <script>
 import $ from 'jquery'
+import authApi from "@/api/AuthApi";
 export default {
   name: 'HeaderView',
   data() {
@@ -66,7 +71,10 @@ export default {
       $('.overlay-full').on('click', function () {
         $('.main-container').removeClass('nav-menu-open');
       });
-    }
+    },
+    logout() {
+      authApi.logout();
+    },
   },
   mounted() {
     this.loadCatalog()
@@ -178,7 +186,6 @@ a.button:hover, a.button:focus {
   width: 150px;
   height: 40px;
   text-indent: -9999px;
-  background: url("http://interactivejoe.com/book-viewer/assets/images/logo.svg");
   background-color: #fff;
   transition: background-color 250ms ease-out;
 }

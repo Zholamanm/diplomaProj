@@ -138,7 +138,6 @@ a.button:hover, a.button:focus {
   width: 150px;
   height: 40px;
   text-indent: -9999px;
-  background: url("http://interactivejoe.com/book-viewer/assets/images/logo.svg");
   background-color: #fff;
   transition: background-color 250ms ease-out;
 }

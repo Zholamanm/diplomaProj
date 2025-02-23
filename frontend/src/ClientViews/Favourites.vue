@@ -61,25 +61,9 @@
                     <h2 class="overlay_title">{{ book.title }}</h2>
                     <p class="author">{{ book.author }}</p>
                     <p class="synopsis">{{ book.description }}</p>
-
                     <div class="d-flex justify-content-between mt-5">
-                      <a
-                          href="#"
-                          class="button"
-                          :class="{ disabled: !isAuthorized }"
-                          @click.prevent="handleBorrow"
-                      >
-                        Borrow
-                      </a>
-
-                      <a
-                          href="#"
-                          class="button"
-                          :class="{ disabled: !isAuthorized }"
-                          @click.prevent="handleFavourite"
-                      >
-                        Add to Favourites
-                      </a>
+                      <a href="#" class="button">Borrow</a>
+                      <a href="#" class="button">Add to Favourites</a>
                     </div>
                   </div>
                 </div>
@@ -123,22 +107,7 @@ export default {
       globalError: null,
     };
   },
-  computed: {
-    isAuthorized() {
-      return this.$store.state.auth.authorized;
-    }
-  },
   methods: {
-    handleBorrow() {
-      if (!this.isAuthorized) return;
-      console.log("Borrow book:", this.book.title);
-      // Implement borrow logic here
-    },
-    handleFavourite() {
-      if (!this.isAuthorized) return;
-      console.log("Added to favourites:", this.book.title);
-      // Implement add-to-favourite logic here
-    },
     loadCatalog() {
       $("li.book-item").each(function () {
         var $this = $(this);
@@ -212,28 +181,6 @@ body,
 .main,
 .main-container {
   height: 100%;
-}
-.button {
-  padding: 10px 15px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 3px;
-  background-color: #219e9a;
-  color: white;
-  text-align: center;
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-
-.button:hover {
-  background-color: #1a7e7b;
-}
-
-/* Disabled State */
-.button.disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 body {

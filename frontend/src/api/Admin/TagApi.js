@@ -14,7 +14,7 @@ const tagApi = {
         return client.post('/api/tag/' + id, data).then(res => res.data);
     },
     delete(id) {
-        return client.delete('/api/category/' + id).then(res => res.data);
+        return client.delete('/api/tag/' + id).then(res => res.data);
     },
 };
 export default tagApi;
