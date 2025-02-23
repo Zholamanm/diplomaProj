@@ -31,4 +31,13 @@ class LocationBook extends Pivot
     use HasFactory;
     protected $table = 'location_books';
     protected $fillable = ['location_id', 'book_id', 'quantity'];
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+    public function book()
+    {
+        return $this->belongsTo(Book::class);
+    }
 }

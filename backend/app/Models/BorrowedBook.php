@@ -35,7 +35,7 @@ class BorrowedBook extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'book_id', 'borrowed_at', 'due_date', 'status'];
+    protected $fillable = ['user_id', 'book_id', 'location_id', 'borrow_check', 'quantity', 'borrowed_at', 'due_date', 'status'];
 
     public function user() {
         return $this->belongsTo(User::class);

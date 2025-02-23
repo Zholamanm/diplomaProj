@@ -23,11 +23,14 @@ Route::middleware('auth:api')->get('/user-info', function (Request $request) {
     return $request->user();
 });
 Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
+Route::get('books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
+Route::get('book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
+Route::get('locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
 
 Route::middleware(['auth:api'])->group(function () {
-// role:1 - Admin
-// role:2 - Librarian
-// role:3 - Member
+    Route::post('books/{id}/borrow', [\App\Http\Controllers\ClientController::class, 'borrow']);
+    Route::post('/locations', [\App\Http\Controllers\ClientController::class, 'borrow']);
+
     Route::middleware(['admin_routes'])->group(function () {
 // role:1 - Admin
 // role:2 - Librarian
@@ -62,7 +65,7 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::post('/{id}', [\App\Http\Controllers\UserController::class, 'update']);
                 Route::delete('/{id}', [\App\Http\Controllers\UserController::class, 'destroy']);
             });
-            Route::prefix('locations')->group(function () {
+            Route::prefix('location')->group(function () {
                 Route::get('', [\App\Http\Controllers\LocationController::class, 'index']);
                 Route::post('', [\App\Http\Controllers\LocationController::class, 'store']);
                 Route::post('/{location}/books', [\App\Http\Controllers\LocationController::class, 'addBooksToLocation']);
