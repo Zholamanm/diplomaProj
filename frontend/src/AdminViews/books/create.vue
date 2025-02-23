@@ -29,12 +29,15 @@
                 <option v-for="option in tagOptions" :key="option.id" :value="option.id">{{ option.name }}</option>
               </select>
             </div>
-
+            <div class="form-group" v-if="coverImageUrl">
+              <label>Preview Image</label>
+              <img :src="coverImageUrl" alt="Book Image Preview" style="max-width: 200px; display: block; margin-bottom: 1rem;">
+            </div>
             <div class="form-group">
               <label for="exampleInputFile">Book Image</label>
               <div class="input-group">
                 <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="exampleInputFile">
+                  <input type="file" class="custom-file-input" id="exampleInputFile" @change="onFileChange">
                   <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                 </div>
                 <div class="input-group-append">
@@ -75,30 +78,41 @@ export default {
       errors: []
     }
   },
+  computed: {
+    coverImageUrl() {
+        return this.form.new_cover_image ? URL.createObjectURL(this.form.new_cover_image) : '';
+    }
+  },
   methods: {
+    onFileChange(e) {
+      const file = e.target.files[0];
+      if (file) {
+        this.form.new_cover_image = file;
+      }
+    },
     store() {
       this.errors = [];
-      bookApi.store(this.form).then(() => {
-        this.loading = false;
-        this.$router.push({name: 'BookIndex', params: {locale: this.$route.params.locale}});
-      }).catch(err => {
-        this.errors = err.response.data.errors;
-        this.loading = false;
-      });
-    },
-    setCategory() {
-      this.$nextTick(() => {
-        $('.category-select').on('change', (e) => {
-          this.form.category_id = $(e.target).val();
-        });
-      });
-    },
-    setTags() {
-      this.$nextTick(() => {
-        $('.tag-select').on('change', (e) => {
-          this.form.tags_id = $(e.target).val();
-        });
-      });
+      const formData = new FormData();
+      formData.append('title', this.form.title);
+      formData.append('author', this.form.author);
+      formData.append('description', this.form.description);
+      formData.append('category_id', this.form.category_id);
+
+      this.form.tags_id.forEach(tagId => formData.append('tags_id[]', tagId));
+
+      if (this.form.new_cover_image) {
+        formData.append('cover_image', this.form.new_cover_image);
+      }
+
+      bookApi.store(formData)
+          .then(() => {
+            this.loading = false;
+            this.$router.push({name: 'BookIndex', params: {locale: this.$route.params.locale}});
+          })
+          .catch(err => {
+            this.errors = err.response.data.errors;
+            this.loading = false;
+          });
     },
     getCategories() {
       this.loading = true
