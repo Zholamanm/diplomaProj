@@ -65,13 +65,13 @@
                     <div class="d-flex justify-content-between mt-5">
                       <a
                           href="#"
-                          class="button"
+                          class="overlay_borrow"
+                          :id="'location' + book.id"
                           :class="{ disabled: !isAuthorized }"
-                          @click.prevent="handleBorrow"
+                          @click.prevent="handleBorrow(book.id)"
                       >
                         Borrow
                       </a>
-
                       <a
                           href="#"
                           class="button"
@@ -129,17 +129,16 @@ export default {
     }
   },
   methods: {
-    handleBorrow() {
-      if (!this.isAuthorized) return;
-      console.log("Borrow book:", this.book.title);
-      // Implement borrow logic here
+    handleBorrow(id) {
+      // if (!this.isAuthorized) return;
+      this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}})
     },
     handleFavourite() {
       if (!this.isAuthorized) return;
       console.log("Added to favourites:", this.book.title);
-      // Implement add-to-favourite logic here
     },
     loadCatalog() {
+      const vm = this;
       $("li.book-item").each(function () {
         var $this = $(this);
 
@@ -159,21 +158,15 @@ export default {
 
         $this.find('.overlay-details').clone().prependTo('.main-overlay');
 
-        $('a.close-overlay-btn').on('click', function (e) {
-          e.preventDefault();
+        $('a.close-overlay-btn').on('click', function () {
           $('.main-container').removeClass('prevent-scroll');
           $('.main-overlay').fadeOut();
           $('.main-overlay').find('.overlay-details').remove();
         });
-
-        $('.main-overlay a.preview').on('click', function () {
-          $('.main-overlay .overlay-desc').toggleClass('activated');
-          $('.main-overlay .overlay-preview').toggleClass('activated');
-        });
-
-        $('.main-overlay a.back-preview-btn').on('click', function () {
-          $('.main-overlay .overlay-desc').toggleClass('activated');
-          $('.main-overlay .overlay-preview').toggleClass('activated');
+        $('.overlay_borrow').on('click', function () {
+          const fullId = $(this).attr('id');
+          const bookId = fullId.replace('location', '');
+          vm.handleBorrow(bookId);
         });
       }
 

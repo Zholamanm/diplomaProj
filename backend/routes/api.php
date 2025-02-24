@@ -37,6 +37,12 @@ Route::middleware(['auth:api'])->group(function () {
 // role:3 - Member
 
         Route::middleware('role:1,2')->group(function () {
+            Route::prefix('borrows')->group(function () {
+                Route::get('', [\App\Http\Controllers\BorrowController::class, 'get']);
+            });
+            Route::prefix('users')->group(function () {
+                Route::get('', [\App\Http\Controllers\UserController::class, 'get']);
+            });
             Route::prefix('book')->group(function () {
                 Route::get('', [\App\Http\Controllers\BookController::class, 'index']);
                 Route::get('/{id}', [\App\Http\Controllers\BookController::class, 'view']);

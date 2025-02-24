@@ -26,6 +26,7 @@
 
           <p v-if="message" class="alert" :class="{'alert-success': success, 'alert-danger': !success}">
             {{ message }}
+            Your check: {{ check }}
           </p>
         </div>
       </div>
@@ -45,6 +46,7 @@ export default {
       loading: false,
       message: "",
       success: false,
+      check: null
     };
   },
   methods: {
@@ -77,6 +79,7 @@ export default {
         }).then(res => {
         this.success = true;
         this.message = res.message;
+        this.check = res.borrow_check;
         this.location.quantity -= this.borrowQuantity;
       }).catch(err => {
         this.success = false;

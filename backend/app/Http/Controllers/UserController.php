@@ -13,6 +13,11 @@ class UserController extends Controller
         return User::orderBy('id', 'DESC')->filter($request->all())->paginate(20);
     }
 
+    public function get(Request $request)
+    {
+        return User::all();
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

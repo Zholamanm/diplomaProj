@@ -142,7 +142,7 @@ export default {
 
         this.locations[index] = {
           ...this.locations[index],
-          id: res.id,
+          id: res.location.id,
           saved: true,
         };
       } catch (err) {
