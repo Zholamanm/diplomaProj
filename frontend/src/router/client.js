@@ -3,6 +3,7 @@ import BorrowMap from "@/ClientViews/BorrowMap.vue";
 import BorrowBook from "@/ClientViews/BorrowBook.vue";
 import Main from "@/ClientViews/Main.vue";
 import Login from "@/views/Login.vue";
+import Register from "@/views/UserRegister.vue";
 
 const clientRoutes = [
     {
@@ -31,6 +32,11 @@ const clientRoutes = [
         path: 'login',
         name: 'login',
         component: Login
+    },
+    {
+        path: 'register',
+        name: 'UserRegister',
+        component: Register
     },
 ];
 

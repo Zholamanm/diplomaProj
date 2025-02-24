@@ -65,7 +65,7 @@
                     <div class="d-flex justify-content-between mt-5">
                       <a
                           href="#"
-                          class="overlay_borrow"
+                          class="overlay_borrow button"
                           :id="'location' + book.id"
                           :class="{ disabled: !isAuthorized }"
                           @click.prevent="handleBorrow(book.id)"

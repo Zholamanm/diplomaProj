@@ -2,15 +2,13 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router';
 import {checkLocale, requireAuth} from "./router-guards";
 import RegisterPage from '@/views/UserRegister.vue'; 
 import Login from '@/views/Login.vue';
-import Home from '@/views/Home.vue';
 import clientRoutes from "@/router/client";
 import adminRoutes from "@/router/admin";
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    redirect: '/ru/catalog',
     beforeEnter: checkLocale,
   },
   {
