@@ -14,7 +14,7 @@ class ClientController extends Controller
 {
     public function getBooks(Request $request)
     {
-        return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(20);
+        return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10);
     }
 
     public function getLocations($bookId)
@@ -38,6 +38,36 @@ class ClientController extends Controller
     public function getLocationById($id)
     {
         return Location::where('id', $id)->first();
+    }
+
+    public function getLocationBookById(Request $request)
+    {
+        $locationBooks = LocationBook::where('book_id', $request->bookId)
+            ->where('location_id', $request->id)
+            ->where('quantity', '>', 0)
+            ->with('location')
+            ->with('book')
+            ->get();  // Returns a collection
+
+        // Check if any records exist
+        if ($locationBooks->isEmpty()) {
+            return response()->json(['message' => 'No records found'], 404); // Optional: handle this case
+        }
+
+        // If records exist, apply the map
+        return $locationBooks->map(function ($locationBook) {
+            return [
+                'location' => [
+                    'id' => $locationBook->location->id,
+                    'name' => $locationBook->location->name,
+                    'address' => $locationBook->location->address,
+                    'latitude' => $locationBook->location->latitude,
+                    'longitude' => $locationBook->location->longitude,
+                    'quantity' => $locationBook->quantity,
+                ],
+                'book' => $locationBook->book
+            ];
+        });
     }
 
     public function getBookById($id)

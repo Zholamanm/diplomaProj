@@ -1,26 +1,29 @@
 <template>
   <div id="main-container" class="main-container nav-effect-1">
-    <header-view></header-view>
-    <router-view></router-view>
+    <header-view @update-search="handleSearchQuery"></header-view>
+    <router-view :search-query="searchQuery"></router-view>
+    <footer-view @update-search="handleSearchQuery"></footer-view>
   </div>
+<!--  <div class="main-overlay-nav" style="z-index: 10;">-->
+<!--    <div class="overlay-full"></div>-->
+<!--  </div>-->
 </template>
 <script>
 import HeaderView from './Elements/HeaderView.vue';
+import FooterView from './Elements/FooterView.vue';
 
 export default {
   name: 'ClientMainView',
-  components: {HeaderView},
+  components: {HeaderView, FooterView},
   data() {
     return {
-      form: {
-        email: '',
-        password: '',
-      },
-      errors: {},
-      globalError: null,
+      searchQuery: '',
     };
   },
   methods: {
+    handleSearchQuery(query) {
+      this.searchQuery = query;
+    },
   },
   mounted() {
   }

@@ -14,6 +14,9 @@ const ClientApi = {
     getLocationById(id) {
         return client.get('/api/locations/' + id).then(res => res.data);
     },
+    getLocationBookById(data) {
+        return client.get('/api/book/locations', {params: data}).then(res => res.data);
+    },
     borrowBook(id, data) {
         return client.post('/api/books/' + id + '/borrow',  data).then(res => res.data);
     },

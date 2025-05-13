@@ -23,9 +23,11 @@ Route::middleware('auth:api')->get('/user-info', function (Request $request) {
     return $request->user();
 });
 Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
+Route::get('book/locations', [\App\Http\Controllers\ClientController::class, 'getLocationBookById']);
 Route::get('books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
 Route::get('book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
 Route::get('locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
+Route::get('common_data', [\App\Http\Controllers\CommonController::class, 'index']);
 
 Route::middleware(['auth:api'])->group(function () {
     Route::post('books/{id}/borrow', [\App\Http\Controllers\ClientController::class, 'borrow']);

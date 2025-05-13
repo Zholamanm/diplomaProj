@@ -1,46 +1,13 @@
 <template>
-    <nav class="nav-menu nav-effect-1" id="menu-1">
-      <h2 class="">The Library</h2>
-      <ul>
-        <li><a class="" href="#">Checkout</a></li>
-        <li><a class="" href="#">Return</a></li>
-        <li><a class="" href="#">About</a></li>
-        <li><a class="" href="#">Contact</a></li>
-        <li>
-          <a class="" href="#" @click="logout" v-if="$store.state.auth.authorized">Logout</a>
-          <a class="" href="#" v-else @click="$router.push({name: 'login', params: {locale: this.$route.params.locale}})">Login</a>
-        </li>
-      </ul>
-    </nav>
-    <div class="main clearfix">
-      <header id="header" class="page-header">
-        <div class="page-header-container row">
-
-          <div class="main-logo">
-            <a href="#" class="logo">The Library</a>
-          </div>
-
-          <div class="menu-search">
-            <div class="main-navigation-nav">
-              <a href="#">Menu</a>
-            </div>
-
-            <div class="catalog-search" v-if="$route.name === 'CatalogView'">
-              <input v-model="searchQuery" @input="updateSearchQuery" class="shuffle-search input_field " autocomplete="off" value="" maxlength="128"
-                     id="input-search"/>
-              <label class="input_label" for="input-search">
-                <span class="input_label-content">Search Library</span>
-                <span class="input_label-search"></span>
-              </label>
-            </div>
-
-          </div>
-        </div>
-      </header>
+  <footer id="footer" class="page-footer">
+    <div class="row footer-wrapper">
+      <div class="original-version small-12 columns"><a href=""
+                                                        target="_blank"><em>Original Version can be found here.</em></a>
+      </div>
+      <div class="copyright small-12 columns">&copy; 2016 - <a href="" target="_blank">InteractiveJoe</a>
+      </div>
     </div>
-    <div class="main-overlay-nav" style="z-index: 10;">
-      <div class="overlay-full"></div>
-    </div>
+  </footer>
 </template>
 <script>
 import $ from 'jquery'
@@ -61,9 +28,10 @@ export default {
         $('.main-container').addClass('nav-menu-open');
         $('.main-overlay-nav').fadeIn();
       });
+
+
       $('.overlay-full').on('click', function () {
         $('.main-container').removeClass('nav-menu-open');
-        $('.main-overlay-nav').fadeOut();
       });
     },
     logout() {

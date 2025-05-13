@@ -4,31 +4,24 @@
       <div class="page-container">
         <div class="page-title category-title">
         </div>
-
         <section id="book_list">
 
           <div class="toolbar row">
-            <div class="filter-options small-12 medium-9 columns">
-              <a href="#" class="filter-item active" data-group="all">All Categories</a>
-              <a href="#" class="filter-item" data-group="fantasy">Fantasy</a>
-              <a href="#" class="filter-item" data-group="sci-fi">Sci-Fi</a>
-              <a href="#" class="filter-item" data-group="classic">Classics</a>
-              <a href="#" class="filter-item" data-group="fairy">Fairy Tale</a>
-              <a href="#" class="filter-item" data-group="young">Young Adult</a>
+            <div class="filter-options small-12 medium-9 columns mb-3">
+              <a href="#" class="filter-item" :class="filters.selectedCategory === null ? 'active' : ''" @click="setCategory(null)" data-group="all">All Categories</a>
+              <a v-for="category in categories" :key="category.id" href="#" class="filter-item" :class="filters.selectedCategory === category.id ? 'active' : ''" @click="setCategory(category.id)" data-group="fantasy">{{ category.name }}</a>
             </div>
 
             <div class="small-12 medium-3 columns">
-              <select class="sort-options">
+              <select class="sort-options" v-model="filters.sortBy">
                 <option value="" disabled selected>Sort by</option>
-                <option value="">Featured</option>
-                <option value="title">Alphabetical</option>
-                <option value="date-created">Published</option>
+                <option v-for="(sort, index) in sortBy" :key="index" :value="sort.value" >{{ sort.label }}</option>
               </select>
             </div>
           </div>
 
           <div class="grid-shuffle">
-            <ul id="grid" class="row" style="display: flex">
+            <ul v-if="!loading" id="grid" class="row" style="display: flex">
 
               <li class="book-item small-12 medium-6 columns" v-for="book in list" :key="book.id" :id="'book' + book.id">
                 <div class="bk-img" style="z-index: 0;">
@@ -86,23 +79,16 @@
               </li>
 
             </ul>
+            <div v-else style="display: flex; flex-direction: column; gap: 15px;" class="profile__main">
+              <div class="loader_wrapper">
+                <div class="loader"></div>
+              </div>
+            </div>
           </div>
 
         </section>
 
       </div>
-
-      <!-- Footer Content -->
-      <footer id="footer" class="page-footer">
-        <div class="row footer-wrapper">
-          <div class="original-version small-12 columns"><a href=""
-                                                            target="_blank"><em>Original Version can be found here.</em></a>
-          </div>
-          <div class="copyright small-12 columns">&copy; 2016 - <a href="" target="_blank">InteractiveJoe</a>
-          </div>
-        </div>
-      </footer>
-
     </div>
     <div class="main-overlay">
       <div class="overlay-full"></div>
@@ -121,14 +107,89 @@ export default {
       selectedBook: null,
       errors: {},
       globalError: null,
+      loading: false,
+      total: 0,
+      filters: {
+        selectedCategory: null,
+        sortBy: 0
+      },
+      sortBy: [
+        {
+          value: 0,
+          label: this.$t("Sort A to Z"),
+        },
+        {
+          value: 1,
+          label: this.$t("Sort Z to A"),
+        },
+      ],
+      last_page: null,
+      page: 1,
     };
+  },
+  props: {
+    searchQuery: {
+      type: String,
+      default: ''
+    }
+  },
+  watch: {
+    "searchQuery": {
+      handler: function (to, from) {
+        if (to != from) {
+          this.dropList();
+        }
+      },
+      deep: true,
+    },
+    "filters.selectedCategory": {
+      handler: function (to, from) {
+        if (to != from) {
+          this.dropList();
+        }
+      },
+      deep: true,
+    },
+    "filters.sortBy": {
+      handler: function (to, from) {
+        if (to != from) {
+          this.dropList();
+        }
+      },
+      deep: true,
+    },
   },
   computed: {
     isAuthorized() {
       return this.$store.state.auth.authorized;
+    },
+    categories() {
+      return this.$store.state.common?.data?.categories ?? []
+    },
+    tags() {
+      return this.$store.state.common.data.tags ?? []
     }
   },
   methods: {
+    dropList() {
+      this.list = [];
+      this.page = 1;
+      this.total = 0;
+      this.last_page = null;
+      this.loading = false;
+      this.$nextTick(() => {
+        this.handleLoad();
+      });
+    },
+    handleLoad() {
+      if (!this.loading && this.page !== this.last_page) this.getList();
+    },
+    setCategory(id) {
+      this.filters.selectedCategory = id
+    },
+    setSort(id) {
+      this.filters.sortBy = id
+    },
     handleBorrow(id) {
       // if (!this.isAuthorized) return;
       this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}})
@@ -139,8 +200,9 @@ export default {
     },
     loadCatalog() {
       const vm = this;
+
       $("li.book-item").each(function () {
-        var $this = $(this);
+        const $this = $(this);
 
         $this.find(".bk-front > div").css('background-color', $(this).data("color"));
         $this.find(".bk-left").css('background-color', $(this).data("color"));
@@ -178,12 +240,16 @@ export default {
     },
     getList() {
       this.loading = true;
-      clientApi.getList().then( res => {
+      clientApi.getList({
+        ...this.filters,
+        search: this.searchQuery,
+        page: this.page,
+      }).then( res => {
         this.list = res.data
-        this.loading = false;
         this.$nextTick(() => {
           this.loadCatalog();
         });
+        this.loading = false;
       }).catch(() => {
         console.log('error');
       })
@@ -191,6 +257,9 @@ export default {
   },
   mounted() {
     this.getList()
+  },
+  updated() {
+    this.loadCatalog()
   }
 };
 </script>
@@ -200,6 +269,37 @@ export default {
 @import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
 </style>
 <style scoped>
+.loader_wrapper {
+  width: 100%;
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.loader {
+  width: 50px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #219e9a;
+  --_m: conic-gradient(#0000 10%, #000),
+  linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 html,
 body,
 .main,

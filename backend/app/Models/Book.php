@@ -76,10 +76,14 @@ class Book extends Model
 
         if (isset($filters['sortBy'])){
             if($filters['sortBy'] == 0){
-                $query->reorder()->orderBy('id', 'desc');
+                $query->reorder()->orderBy('title', 'asc');;
             }elseif($filters['sortBy'] == 1) {
-                $query->reorder()->orderBy('id', 'asc');
+                $query->reorder()->orderBy('title', 'desc');;
             }
+        }
+
+        if (isset($filters['selectedCategory'])) {
+            $query->where('category_id', $filters['selectedCategory']);
         }
     }
 }
