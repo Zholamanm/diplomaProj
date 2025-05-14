@@ -145,7 +145,7 @@ export default {
     },
     getBooks() {
       bookApi.get().then(res => {
-        this.books = res.data;
+        this.books = res;
       })
     },
     getLocations() {

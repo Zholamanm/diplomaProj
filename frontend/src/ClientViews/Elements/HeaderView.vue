@@ -1,11 +1,12 @@
 <template>
     <nav class="nav-menu nav-effect-1" id="menu-1">
       <h2 class="">The Library</h2>
-      <ul>
-        <li><a class="" href="#">Checkout</a></li>
-        <li><a class="" href="#">Return</a></li>
-        <li><a class="" href="#">About</a></li>
-        <li><a class="" href="#">Contact</a></li>
+      <ul class="header-list">
+        <li><a class="" href="#" @click="$router.push({name: 'CheckoutView', params: {locale: $route.params.locale}})">Checkout</a></li>
+        <li><a class="" href="#" @click="$router.push({name: 'FavouriteView', params: {locale: $route.params.locale}})">Favourites</a></li>
+        <li><a class="" href="#" @click="$router.push({name: 'ReviewView', params: {locale: $route.params.locale}})">Reviews</a></li>
+        <li><a class="" href="#" @click="$router.push({name: 'AboutView', params: {locale: $route.params.locale}})">About</a></li>
+        <li><a class="" href="#" @click="$router.push({name: 'ContactView', params: {locale: $route.params.locale}})">Contact</a></li>
         <li>
           <a class="" href="#" @click="logout" v-if="$store.state.auth.authorized">Logout</a>
           <a class="" href="#" v-else @click="$router.push({name: 'login', params: {locale: this.$route.params.locale}})">Login</a>
@@ -62,6 +63,10 @@ export default {
         $('.main-overlay-nav').fadeIn();
       });
       $('.overlay-full').on('click', function () {
+        $('.main-container').removeClass('nav-menu-open');
+        $('.main-overlay-nav').fadeOut();
+      });
+      $('.header-list').on('click', function () {
         $('.main-container').removeClass('nav-menu-open');
         $('.main-overlay-nav').fadeOut();
       });

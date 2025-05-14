@@ -44,4 +44,19 @@ class BorrowedBook extends Model
     public function book() {
         return $this->belongsTo(Book::class);
     }
+
+    public function location() {
+        return $this->belongsTo(Location::class);
+    }
+
+    public function scopeFilter($query, $filters)
+    {
+        if (isset($filters['sortBy'])){
+            if($filters['sortBy'] == 0){
+                $query->reorder()->orderBy('id', 'desc');
+            }elseif($filters['sortBy'] == 1) {
+                $query->reorder()->orderBy('id', 'asc');
+            }
+        }
+    }
 }

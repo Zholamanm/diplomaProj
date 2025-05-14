@@ -2,6 +2,9 @@ import client from "../index";
 
 const bookApi = {
     get(data) {
+        return client.get('/api/books', {params: data}).then(res => res.data);
+    },
+    getList(data) {
         return client.get('/api/book', {params: data}).then(res => res.data);
     },
     store(data) {

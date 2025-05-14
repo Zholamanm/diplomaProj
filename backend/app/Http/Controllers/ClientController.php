@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\BorrowedBook;
+use App\Models\Favourite;
 use App\Models\Location;
 use App\Models\LocationBook;
 use Illuminate\Http\Request;
@@ -15,6 +16,11 @@ class ClientController extends Controller
     public function getBooks(Request $request)
     {
         return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10);
+    }
+
+    public function getFavourites(Request $request)
+    {
+        return Favourite::where('user_id', Auth::id())->with('book')->filter($request->all())->paginate(10);
     }
 
     public function getLocations($bookId)

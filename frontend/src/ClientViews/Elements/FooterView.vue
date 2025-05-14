@@ -1,5 +1,5 @@
 <template>
-  <footer id="footer" class="page-footer">
+  <footer id="footer" class="page-footer" style="position: fixed; bottom: 0; width: 100%">
     <div class="row footer-wrapper">
       <div class="original-version small-12 columns"><a href=""
                                                         target="_blank"><em>Original Version can be found here.</em></a>

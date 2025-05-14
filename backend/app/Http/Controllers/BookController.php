@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
+    public function get(Request $request)
+    {
+        return Book::all();
+    }
+
     public function index(Request $request)
     {
         return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(20);

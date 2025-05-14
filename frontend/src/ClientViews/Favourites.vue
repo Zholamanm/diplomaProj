@@ -4,89 +4,93 @@
       <div class="page-container">
         <div class="page-title category-title">
         </div>
-
         <section id="book_list">
 
           <div class="toolbar row">
-            <div class="filter-options small-12 medium-9 columns">
-              <a href="#" class="filter-item active" data-group="all">All Categories</a>
-              <a href="#" class="filter-item" data-group="fantasy">Fantasy</a>
-              <a href="#" class="filter-item" data-group="sci-fi">Sci-Fi</a>
-              <a href="#" class="filter-item" data-group="classic">Classics</a>
-              <a href="#" class="filter-item" data-group="fairy">Fairy Tale</a>
-              <a href="#" class="filter-item" data-group="young">Young Adult</a>
+            <div class="filter-options small-12 medium-9 columns mb-3">
+              <a href="#" class="filter-item" :class="filters.selectedCategory === null ? 'active' : ''" @click="setCategory(null)" data-group="all">All Categories</a>
+              <a v-for="category in categories" :key="category.id" href="#" class="filter-item" :class="filters.selectedCategory === category.id ? 'active' : ''" @click="setCategory(category.id)" data-group="fantasy">{{ category.name }}</a>
             </div>
 
             <div class="small-12 medium-3 columns">
-              <select class="sort-options">
+              <select class="sort-options" v-model="filters.sortBy">
                 <option value="" disabled selected>Sort by</option>
-                <option value="">Featured</option>
-                <option value="title">Alphabetical</option>
-                <option value="date-created">Published</option>
+                <option v-for="(sort, index) in sortBy" :key="index" :value="sort.value" >{{ sort.label }}</option>
               </select>
             </div>
           </div>
 
           <div class="grid-shuffle">
-            <ul id="grid" class="row" style="display: flex">
+            <div v-if="!loading">
+              <ul id="grid" class="row" style="display: flex;">
 
-              <li class="book-item small-12 medium-6 columns" v-for="book in list" :key="book.id" :id="'book' + book.id">
-                <div class="bk-img" style="z-index: 0;">
-                  <div class="bk-wrapper">
-                    <div class="bk-book bk-bookdefault">
-                      <div class="bk-front">
-                        <div class="bk-cover"
-                             :style="{ backgroundImage: `url('http://localhost:8000/storage/${book.cover_image}')` }">
+                <li class="book-item small-12 medium-6 columns" v-for="item in list" :key="item.id" :id="'book' + item.book.id">
+                  <div class="bk-img" style="z-index: 0;">
+                    <div class="bk-wrapper">
+                      <div class="bk-book bk-bookdefault">
+                        <div class="bk-front">
+                          <div class="bk-cover"
+                               :style="{ backgroundImage: `url('http://localhost:8000/storage/${item.book.cover_image}')` }">
+                          </div>
                         </div>
+                        <div class="bk-back"></div>
+                        <div class="bk-left"></div>
                       </div>
-                      <div class="bk-back"></div>
-                      <div class="bk-left"></div>
                     </div>
                   </div>
-                </div>
-                <div class="item-details">
-                  <h3 class="book-item_title">{{ book.title }}</h3>
-                  <p class="author">{{ book.author }}</p>
-                  <p>{{ book.description }}</p>
-                  <a href="#" class="button">Details</a>
-                </div>
-
-                <div class="overlay-details">
-                  <a href="#" class="close-overlay-btn">Close</a>
-                  <div class="overlay-image">
-                    <img :src="'http://localhost:8000/storage/' + book.cover_image" alt="Book Cover">
-                    <div class="back-color"></div>
+                  <div class="item-details">
+                    <h3 class="book-item_title">{{ item.book.title }}</h3>
+                    <p class="author">{{ item.book.author }}</p>
+                    <p>{{ item.book.description }}</p>
+                    <a href="#" class="button">Details</a>
                   </div>
-                  <div class="overlay-desc activated">
-                    <h2 class="overlay_title">{{ book.title }}</h2>
-                    <p class="author">{{ book.author }}</p>
-                    <p class="synopsis">{{ book.description }}</p>
-                    <div class="d-flex justify-content-between mt-5">
-                      <a href="#" class="button">Borrow</a>
-                      <a href="#" class="button">Add to Favourites</a>
+
+                  <div class="overlay-details">
+                    <a href="#" class="close-overlay-btn">Close</a>
+                    <div class="overlay-image">
+                      <img :src="'http://localhost:8000/storage/' + item.book.cover_image" alt="Book Cover">
+                      <div class="back-color"></div>
+                    </div>
+                    <div class="overlay-desc activated">
+                      <h2 class="overlay_title">{{ item.book.title }}</h2>
+                      <p class="author">{{ item.book.author }}</p>
+                      <p class="synopsis">{{ item.book.description }}</p>
+
+                      <div class="d-flex justify-content-between mt-5">
+                        <a
+                            href="#"
+                            class="overlay_borrow button"
+                            :id="'location' + item.book.id"
+                            :class="{ disabled: !isAuthorized }"
+                            @click.prevent="handleBorrow(item.book.id)"
+                        >
+                          Borrow
+                        </a>
+                        <a
+                            href="#"
+                            class="button"
+                            :class="{ disabled: !isAuthorized }"
+                            @click.prevent="handleFavourite"
+                        >
+                          Add to Favourites
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-
-            </ul>
+                </li>
+              </ul>
+              <recommend-view :list="list"/>
+            </div>
+            <div v-else style="display: flex; flex-direction: column; gap: 15px;" class="profile__main">
+              <div class="loader_wrapper">
+                <div class="loader"></div>
+              </div>
+            </div>
           </div>
 
         </section>
 
       </div>
-
-      <!-- Footer Content -->
-      <footer id="footer" class="page-footer">
-        <div class="row footer-wrapper">
-          <div class="original-version small-12 columns"><a href=""
-                                                            target="_blank"><em>Original Version can be found here.</em></a>
-          </div>
-          <div class="copyright small-12 columns">&copy; 2016 - <a href="" target="_blank">InteractiveJoe</a>
-          </div>
-        </div>
-      </footer>
-
     </div>
     <div class="main-overlay">
       <div class="overlay-full"></div>
@@ -96,21 +100,113 @@
 <script>
 import $ from 'jquery';
 import clientApi from "@/api/ClientApi";
+import RecommendView from "@/ClientViews/Elements/RecommendView.vue";
 
 export default {
-  name: 'CatalogView',
+  name: 'FavouriteView',
+  components: {RecommendView},
   data() {
     return {
       list: null,
       selectedBook: null,
       errors: {},
       globalError: null,
+      loading: false,
+      total: 0,
+      filters: {
+        selectedCategory: null,
+        sortBy: 0
+      },
+      sortBy: [
+        {
+          value: 0,
+          label: this.$t("Sort A to Z"),
+        },
+        {
+          value: 1,
+          label: this.$t("Sort Z to A"),
+        },
+      ],
+      last_page: null,
+      page: 1,
     };
   },
+  props: {
+    searchQuery: {
+      type: String,
+      default: ''
+    }
+  },
+  watch: {
+    "searchQuery": {
+      handler: function (to, from) {
+        if (to != from) {
+          this.dropList();
+        }
+      },
+      deep: true,
+    },
+    "filters.selectedCategory": {
+      handler: function (to, from) {
+        if (to != from) {
+          this.dropList();
+        }
+      },
+      deep: true,
+    },
+    "filters.sortBy": {
+      handler: function (to, from) {
+        if (to != from) {
+          this.dropList();
+        }
+      },
+      deep: true,
+    },
+  },
+  computed: {
+    isAuthorized() {
+      return this.$store.state.auth.authorized;
+    },
+    categories() {
+      return this.$store.state.common?.data?.categories ?? []
+    },
+    tags() {
+      return this.$store.state.common.data.tags ?? []
+    }
+  },
   methods: {
+    dropList() {
+      this.list = [];
+      this.page = 1;
+      this.total = 0;
+      this.last_page = null;
+      this.loading = false;
+      this.$nextTick(() => {
+        this.handleLoad();
+      });
+    },
+    handleLoad() {
+      if (!this.loading && this.page !== this.last_page) this.getList();
+    },
+    setCategory(id) {
+      this.filters.selectedCategory = id
+    },
+    setSort(id) {
+      this.filters.sortBy = id
+    },
+    handleBorrow(id) {
+      // if (!this.isAuthorized) return;
+      this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}})
+    },
+    handleFavourite() {
+      if (!this.isAuthorized) return;
+      console.log("Added to favourites:", this.book.title);
+    },
     loadCatalog() {
+      const vm = this;
+
       $("li.book-item").each(function () {
-        var $this = $(this);
+        const $this = $(this);
 
         $this.find(".bk-front > div").css('background-color', $(this).data("color"));
         $this.find(".bk-left").css('background-color', $(this).data("color"));
@@ -128,21 +224,15 @@ export default {
 
         $this.find('.overlay-details').clone().prependTo('.main-overlay');
 
-        $('a.close-overlay-btn').on('click', function (e) {
-          e.preventDefault();
+        $('a.close-overlay-btn').on('click', function () {
           $('.main-container').removeClass('prevent-scroll');
           $('.main-overlay').fadeOut();
           $('.main-overlay').find('.overlay-details').remove();
         });
-
-        $('.main-overlay a.preview').on('click', function () {
-          $('.main-overlay .overlay-desc').toggleClass('activated');
-          $('.main-overlay .overlay-preview').toggleClass('activated');
-        });
-
-        $('.main-overlay a.back-preview-btn').on('click', function () {
-          $('.main-overlay .overlay-desc').toggleClass('activated');
-          $('.main-overlay .overlay-preview').toggleClass('activated');
+        $('.overlay_borrow').on('click', function () {
+          const fullId = $(this).attr('id');
+          const bookId = fullId.replace('location', '');
+          vm.handleBorrow(bookId);
         });
       }
 
@@ -154,12 +244,16 @@ export default {
     },
     getList() {
       this.loading = true;
-      clientApi.getList().then( res => {
+      clientApi.getFavourites({
+        ...this.filters,
+        search: this.searchQuery,
+        page: this.page,
+      }).then( res => {
         this.list = res.data
-        this.loading = false;
         this.$nextTick(() => {
           this.loadCatalog();
         });
+        this.loading = false;
       }).catch(() => {
         console.log('error');
       })
@@ -167,6 +261,9 @@ export default {
   },
   mounted() {
     this.getList()
+  },
+  updated() {
+    this.loadCatalog()
   }
 };
 </script>
@@ -176,11 +273,64 @@ export default {
 @import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
 </style>
 <style scoped>
+.loader_wrapper {
+  width: 100%;
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.loader {
+  width: 50px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #219e9a;
+  --_m: conic-gradient(#0000 10%, #000),
+  linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 html,
 body,
 .main,
 .main-container {
   height: 100%;
+}
+.button {
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 3px;
+  background-color: #219e9a;
+  color: white;
+  text-align: center;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.button:hover {
+  background-color: #1a7e7b;
+}
+
+/* Disabled State */
+.button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 body {

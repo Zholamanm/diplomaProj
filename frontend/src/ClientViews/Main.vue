@@ -42,6 +42,9 @@ body,
   height: 100%;
 }
 
+.main-container {
+  padding-bottom: 60px;    /* = footer’s total height */
+}
 body {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #313131;

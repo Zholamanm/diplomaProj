@@ -38,4 +38,28 @@ class Favourite extends Model
     public function book() {
         return $this->belongsTo(Book::class);
     }
+
+    public function scopeFilter($query, $filters)
+    {
+        if (isset($filters['search'])) {
+            $query->whereHas('book', function ($q) use ($filters) {
+                $q->where('title', 'LIKE', '%' . $filters['search'] . '%')
+                    ->orWhere('author', 'LIKE', '%' . $filters['search'] . '%');
+            });
+        }
+
+        if (isset($filters['sortBy'])) {
+            if ($filters['sortBy'] == 0) {
+                $query->orderBy(Book::select('title')->whereColumn('books.id', 'favourites.book_id'), 'asc');
+            } elseif ($filters['sortBy'] == 1) {
+                $query->orderBy(Book::select('title')->whereColumn('books.id', 'favourites.book_id'), 'desc');
+            }
+        }
+
+        if (isset($filters['selectedCategory'])) {
+            $query->whereHas('book', function ($q) use ($filters) {
+                $q->where('category_id', $filters['selectedCategory']);
+            });
+        }
+    }
 }

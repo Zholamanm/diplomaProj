@@ -8,15 +8,16 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function get(Request $request)
+    {
+        return User::all();
+    }
+
     public function index(Request $request)
     {
         return User::orderBy('id', 'DESC')->filter($request->all())->paginate(20);
     }
 
-    public function get(Request $request)
-    {
-        return User::all();
-    }
 
     public function store(Request $request)
     {

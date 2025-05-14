@@ -31,6 +31,7 @@ Route::get('common_data', [\App\Http\Controllers\CommonController::class, 'index
 
 Route::middleware(['auth:api'])->group(function () {
     Route::post('books/{id}/borrow', [\App\Http\Controllers\ClientController::class, 'borrow']);
+    Route::get('book/favourite', [\App\Http\Controllers\ClientController::class, 'getFavourites']);
     Route::post('/locations', [\App\Http\Controllers\ClientController::class, 'borrow']);
 
     Route::middleware(['admin_routes'])->group(function () {
@@ -42,7 +43,18 @@ Route::middleware(['auth:api'])->group(function () {
             Route::prefix('borrows')->group(function () {
                 Route::get('', [\App\Http\Controllers\BorrowController::class, 'get']);
             });
+            Route::prefix('borrow')->group(function () {
+                Route::get('', [\App\Http\Controllers\BorrowController::class, 'index']);
+                Route::post('/checkout', [\App\Http\Controllers\BorrowController::class, 'checkout']);
+                Route::post('/return', [\App\Http\Controllers\BorrowController::class, 'returnBook']);
+            });
+            Route::prefix('black-list')->group(function () {
+                Route::get('', [\App\Http\Controllers\BlackListController::class, 'index']);
+            });
             Route::prefix('users')->group(function () {
+                Route::get('', [\App\Http\Controllers\UserController::class, 'get']);
+            });
+            Route::prefix('books')->group(function () {
                 Route::get('', [\App\Http\Controllers\UserController::class, 'get']);
             });
             Route::prefix('book')->group(function () {

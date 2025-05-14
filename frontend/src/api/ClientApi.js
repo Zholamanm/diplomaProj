@@ -3,7 +3,7 @@ import client from "./index";
 
 const ClientApi = {
     getList(data) {
-        return client.get('/api/books', {params: data}).then(res => res.data);
+        return client.get('/api/book', {params: data}).then(res => res.data);
     },
     getLocations(id) {
         return client.get('/api/book/locations/' + id).then(res => res.data);
@@ -24,7 +24,7 @@ const ClientApi = {
         return client.post('/api/book/' + id + '/favourite').then(res => res.data);
     },
     getFavourites(data) {
-        return client.post('/api/books/favourite', {params: data}).then(res => res.data);
+        return client.get('/api/book/favourite', {params: data}).then(res => res.data);
     }
 };
 export default ClientApi;

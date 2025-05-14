@@ -21,7 +21,7 @@
           </div>
 
           <div class="grid-shuffle">
-            <ul v-if="!loading" id="grid" class="row" style="display: flex">
+            <ul v-if="!loading" id="grid" class="row" style="display: flex;">
 
               <li class="book-item small-12 medium-6 columns" v-for="book in list" :key="book.id" :id="'book' + book.id">
                 <div class="bk-img" style="z-index: 0;">
