@@ -70,6 +70,7 @@ export default {
   name: 'RecommendView',
   data() {
     return {
+      list: null,
       selectedBook: null,
       errors: {},
       globalError: null,
@@ -92,12 +93,6 @@ export default {
       last_page: null,
       page: 1,
     };
-  },
-  props: {
-    list: {
-      type: Object,
-      default: null
-    }
   },
   watch: {
     "searchQuery": {

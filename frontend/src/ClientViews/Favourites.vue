@@ -79,7 +79,7 @@
                   </div>
                 </li>
               </ul>
-              <recommend-view :list="list"/>
+              <recommend-view />
             </div>
             <div v-else style="display: flex; flex-direction: column; gap: 15px;" class="profile__main">
               <div class="loader_wrapper">
