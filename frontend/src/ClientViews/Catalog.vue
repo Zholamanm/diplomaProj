@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="overlay-details">
-                  <a href="#" class="close-overlay-btn">Close</a>
+                  <a href="#" @click="closeModal" class="close-overlay-btn">Close</a>
                   <div class="overlay-image">
                     <img :src="'http://localhost:8000/storage/' + book.cover_image" alt="Book Cover">
                     <div class="back-color"></div>
@@ -61,17 +61,17 @@
                           class="overlay_borrow button"
                           :id="'location' + book.id"
                           :class="{ disabled: !isAuthorized }"
-                          @click.prevent="handleBorrow(book.id)"
                       >
                         Borrow
                       </a>
                       <a
                           href="#"
-                          class="button"
+                          class="overlay_favourite button"
+                          :id="'favourite' + book.id"
+                          :style="{ backgroundColor: listFav?.some(fav => fav?.book_id === book?.id) ? '#219e9a' : '' }"
                           :class="{ disabled: !isAuthorized }"
-                          @click.prevent="handleFavourite"
                       >
-                        Add to Favourites
+                        {{ listFav.some(fav => fav.book_id === book.id) ? 'Remove from Favourites' : 'Add to Favourites'}}
                       </a>
                     </div>
                   </div>
@@ -104,6 +104,7 @@ export default {
   data() {
     return {
       list: null,
+      listFav: null,
       selectedBook: null,
       errors: {},
       globalError: null,
@@ -191,12 +192,33 @@ export default {
       this.filters.sortBy = id
     },
     handleBorrow(id) {
-      // if (!this.isAuthorized) return;
-      this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}})
+      if (this.isAuthorized) {
+        this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}})
+      }
     },
-    handleFavourite() {
-      if (!this.isAuthorized) return;
-      console.log("Added to favourites:", this.book.title);
+    handleFavourite(id) {
+      if (this.isAuthorized) {
+        if (this.listFav.some(fav => fav.book_id === parseInt(id))) {
+          this.loading = true;
+          clientApi.removeFromFavourite(id).then(() => {
+            this.dropList();
+            this.loading = false;
+            this.closeModal();
+          });
+        } else {
+          this.loading = true;
+          clientApi.addToFavourite(id).then(() => {
+            this.dropList();
+            this.loading = false;
+            this.closeModal();
+          });
+        }
+      }
+    },
+    closeModal() {
+      $('.main-container').removeClass('prevent-scroll');
+      $('.main-overlay').fadeOut();
+      $('.main-overlay').find('.overlay-details').remove();
     },
     loadCatalog() {
       const vm = this;
@@ -230,6 +252,11 @@ export default {
           const bookId = fullId.replace('location', '');
           vm.handleBorrow(bookId);
         });
+        $('.overlay_favourite').on('click', function () {
+          const fullId = $(this).attr('id');
+          const bookId = fullId.replace('favourite', '');
+          vm.handleFavourite(bookId);
+        });
       }
 
       $('.overlay-full').on('click', function () {
@@ -240,19 +267,37 @@ export default {
     },
     getList() {
       this.loading = true;
-      clientApi.getList({
-        ...this.filters,
-        search: this.searchQuery,
-        page: this.page,
-      }).then( res => {
-        this.list = res.data
-        this.$nextTick(() => {
-          this.loadCatalog();
-        });
-        this.loading = false;
-      }).catch(() => {
-        console.log('error');
-      })
+      if (this.isAuthorized) {
+        clientApi.getList({
+          ...this.filters,
+          search: this.searchQuery,
+          page: this.page,
+        }).then( res => {
+          this.list = res.books.data
+          this.listFav = res.favourites
+          this.$nextTick(() => {
+            this.loadCatalog();
+          });
+          this.loading = false;
+        }).catch(err => {
+          console.log('error', err);
+        })
+      } else {
+        clientApi.getGuestList({
+          ...this.filters,
+          search: this.searchQuery,
+          page: this.page,
+        }).then( res => {
+          this.list = res.data
+          this.$nextTick(() => {
+            this.loadCatalog();
+          });
+          this.loading = false;
+        }).catch(() => {
+          console.log('error');
+        })
+      }
+
     }
   },
   mounted() {

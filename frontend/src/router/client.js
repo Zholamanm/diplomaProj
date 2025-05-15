@@ -4,7 +4,9 @@ import BorrowBook from "@/ClientViews/BorrowBook.vue";
 import Main from "@/ClientViews/Main.vue";
 import Login from "@/views/Login.vue";
 import Register from "@/views/UserRegister.vue";
+import Checkout from "@/ClientViews/Checkout.vue";
 import Favourites from "@/ClientViews/Favourites.vue";
+import About from "@/ClientViews/About.vue";
 
 const clientRoutes = [
     {
@@ -16,6 +18,11 @@ const clientRoutes = [
                 path: 'catalog',
                 name: 'CatalogView',
                 component: Catalog,
+            },
+            {
+                path: 'checkout',
+                name: 'CheckoutView',
+                component: Checkout,
             },
             {
                 path: 'favourites',
@@ -31,6 +38,11 @@ const clientRoutes = [
                 path: 'map/:id/:locId',
                 name: 'BorrowBook',
                 component: BorrowBook,
+            },
+            {
+                path: 'about',
+                name: 'AboutView',
+                component: About,
             },
         ],
     },

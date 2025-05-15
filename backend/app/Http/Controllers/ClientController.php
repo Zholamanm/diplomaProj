@@ -15,12 +15,62 @@ class ClientController extends Controller
 {
     public function getBooks(Request $request)
     {
+        return [
+            'books' => Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10),
+            'favourites' => Favourite::where('user_id', Auth::id())->get()
+        ];
+    }
+
+    public function getGuestBooks(Request $request)
+    {
         return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10);
     }
+
+    public function getRecommendBooks(Request $request)
+    {
+        return Book::getRecommendedBooks();;
+    }
+
+    public function getCheckouts(Request $request)
+    {
+        return BorrowedBook::with('book', 'location')->where('user_id', Auth::id())->filter($request->all())->paginate(10);
+    }
+
 
     public function getFavourites(Request $request)
     {
         return Favourite::where('user_id', Auth::id())->with('book')->filter($request->all())->paginate(10);
+    }
+
+    public function addToFavourites($id)
+    {
+        return Favourite::firstOrCreate([
+            'user_id' => Auth::id(),
+            'book_id' => $id
+        ]);
+    }
+
+    public function deleteFromFavourites($id)
+    {
+        try {
+            $deleted = Favourite::where('user_id', auth()->id())
+                ->where('book_id', $id)
+                ->delete();
+
+            return response()->json([
+                'success' => $deleted > 0,
+                'message' => $deleted > 0
+                    ? 'Book removed from favourites'
+                    : 'No favourite record found to delete'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to remove from favourites',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 
     public function getLocations($bookId)

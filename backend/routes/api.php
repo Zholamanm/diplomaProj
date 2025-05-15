@@ -22,18 +22,24 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 Route::middleware('auth:api')->get('/user-info', function (Request $request) {
     return $request->user();
 });
-Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
-Route::get('book/locations', [\App\Http\Controllers\ClientController::class, 'getLocationBookById']);
-Route::get('books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
-Route::get('book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
-Route::get('locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
+Route::get('guest/books', [\App\Http\Controllers\ClientController::class, 'getGuestBooks']);
+Route::get('client/books/recommend', [\App\Http\Controllers\ClientController::class, 'getRecommendBooks']);
+Route::get('client/book/locations', [\App\Http\Controllers\ClientController::class, 'getLocationBookById']);
+Route::get('client/books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
+Route::get('client/book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
+Route::get('client/locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
 Route::get('common_data', [\App\Http\Controllers\CommonController::class, 'index']);
 
 Route::middleware(['auth:api'])->group(function () {
-    Route::post('books/{id}/borrow', [\App\Http\Controllers\ClientController::class, 'borrow']);
-    Route::get('book/favourite', [\App\Http\Controllers\ClientController::class, 'getFavourites']);
-    Route::post('/locations', [\App\Http\Controllers\ClientController::class, 'borrow']);
-
+    Route::prefix('client')->group(function () {
+        Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
+        Route::get('checkout', [\App\Http\Controllers\ClientController::class, 'getCheckouts']);
+        Route::post('books/{id}/borrow', [\App\Http\Controllers\ClientController::class, 'borrow']);
+        Route::get('book/favourite', [\App\Http\Controllers\ClientController::class, 'getFavourites']);
+        Route::post('book/{id}/favourite', [\App\Http\Controllers\ClientController::class, 'addToFavourites']);
+        Route::delete('book/{id}/favourite', [\App\Http\Controllers\ClientController::class, 'deleteFromFavourites']);
+        Route::post('/locations', [\App\Http\Controllers\ClientController::class, 'borrow']);
+    });
     Route::middleware(['admin_routes'])->group(function () {
 // role:1 - Admin
 // role:2 - Librarian

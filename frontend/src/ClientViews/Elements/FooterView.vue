@@ -1,5 +1,5 @@
 <template>
-  <footer id="footer" class="page-footer" style="position: fixed; bottom: 0; width: 100%">
+  <footer id="footer" :class="{ visible: isVisible }" class="page-footer" style="position: fixed; bottom: 0; width: 100%">
     <div class="row footer-wrapper">
       <div class="original-version small-12 columns"><a href=""
                                                         target="_blank"><em>Original Version can be found here.</em></a>
@@ -10,37 +10,38 @@
   </footer>
 </template>
 <script>
-import $ from 'jquery'
 import authApi from "@/api/AuthApi";
 export default {
   name: 'HeaderView',
   data() {
     return {
       searchQuery: '',
+      isVisible: false,
     };
   },
   methods: {
+    handleScroll() {
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      const threshold = docHeight - 100; // 100px from bottom
+      console.log(docHeight);
+      this.isVisible = scrollPosition >= threshold || docHeight <= window.innerHeight;
+    },
     updateSearchQuery() {
       this.$emit('update-search', this.searchQuery);
-    },
-    loadCatalog() {
-      $('.main-navigation-nav a').on('click', function () {
-        $('.main-container').addClass('nav-menu-open');
-        $('.main-overlay-nav').fadeIn();
-      });
-
-
-      $('.overlay-full').on('click', function () {
-        $('.main-container').removeClass('nav-menu-open');
-      });
     },
     logout() {
       authApi.logout();
     },
   },
   mounted() {
-    this.loadCatalog()
-  }
+    window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener('click', this.handleScroll);
+  },
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener('click', this.handleScroll);
+  },
 };
 </script>
 <style>
@@ -49,6 +50,28 @@ export default {
 @import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
 </style>
 <style scoped>
+#footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #333;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  /* Initially hidden */
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none; /* so it doesn't block clicks when hidden */
+  z-index: 9999;
+}
+
+#footer.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
 html,
 body,
 .main,

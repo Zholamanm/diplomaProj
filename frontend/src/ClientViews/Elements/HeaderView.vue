@@ -2,8 +2,9 @@
     <nav class="nav-menu nav-effect-1" id="menu-1">
       <h2 class="">The Library</h2>
       <ul class="header-list">
-        <li><a class="" href="#" @click="$router.push({name: 'CheckoutView', params: {locale: $route.params.locale}})">Checkout</a></li>
-        <li><a class="" href="#" @click="$router.push({name: 'FavouriteView', params: {locale: $route.params.locale}})">Favourites</a></li>
+        <li><a class="" href="#" @click="$router.push({name: 'CatalogView', params: {locale: $route.params.locale}})">Catalog</a></li>
+        <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'CheckoutView', params: {locale: $route.params.locale}})">Checkout</a></li>
+        <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'FavouriteView', params: {locale: $route.params.locale}})">Favourites</a></li>
         <li><a class="" href="#" @click="$router.push({name: 'ReviewView', params: {locale: $route.params.locale}})">Reviews</a></li>
         <li><a class="" href="#" @click="$router.push({name: 'AboutView', params: {locale: $route.params.locale}})">About</a></li>
         <li><a class="" href="#" @click="$router.push({name: 'ContactView', params: {locale: $route.params.locale}})">Contact</a></li>

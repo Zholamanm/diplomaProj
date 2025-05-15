@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Models\Book
@@ -45,6 +47,8 @@ class Book extends Model
 
     protected $fillable = ['title', 'author', 'description', 'cover_image', 'category_id'];
 
+    protected $userId;
+
     public function category() {
         return $this->belongsTo(Category::class);
     }
@@ -64,6 +68,11 @@ class Book extends Model
     public function locations()
     {
         return $this->belongsToMany(Location::class, 'location_books')->using(LocationBook::class);
+    }
+
+    public function favourites()
+    {
+        return $this->hasMany(Favourite::class);
     }
 
     public function scopeFilter($query, $filters)
@@ -86,4 +95,18 @@ class Book extends Model
             $query->where('category_id', $filters['selectedCategory']);
         }
     }
+
+    /**
+     * Get top 5 recommended books ordered by number of favourites (descending)
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getRecommendedBooks()
+    {
+        return self::withCount('favourites')
+            ->orderBy('favourites_count', 'ASC')
+            ->limit(7)
+            ->get();
+    }
+
 }
