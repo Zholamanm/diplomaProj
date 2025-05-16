@@ -1,16 +1,18 @@
 <template>
   <div class="container card p-3" style="margin-top: 150px;">
     <h2 class="mb-4">Login</h2>
+
+    <!-- Email/password login form -->
     <form @submit.prevent="login">
       <div class="form-group mb-3 text-start">
         <label for="email">Email:</label>
         <input
-          type="email"
-          id="email"
-          v-model="form.email"
-          class="form-control"
-          :class="{ 'is-invalid': errors.email }"
-          required
+            type="email"
+            id="email"
+            v-model="form.email"
+            class="form-control"
+            :class="{ 'is-invalid': errors.email }"
+            required
         />
         <div v-if="errors.email" class="invalid-feedback">
           {{ errors.email[0] }}
@@ -20,12 +22,12 @@
       <div class="form-group mb-3 text-start">
         <label for="password">Password:</label>
         <input
-          type="password"
-          id="password"
-          v-model="form.password"
-          class="form-control"
-          :class="{ 'is-invalid': errors.password }"
-          required
+            type="password"
+            id="password"
+            v-model="form.password"
+            class="form-control"
+            :class="{ 'is-invalid': errors.password }"
+            required
         />
         <div v-if="errors.password" class="invalid-feedback">
           {{ errors.password[0] }}
@@ -40,17 +42,29 @@
         <button type="submit" class="btn btn-sm btn-dark">Login</button>
       </div>
     </form>
+
+    <hr />
+
+    <!-- Google Sign-in button -->
+    <div class="mt-3 text-center">
+      <button @click="loginWithGoogle" class="btn btn-outline-primary w-100">
+        <i class="fa fa-google me-2"></i> Sign in with Google
+      </button>
+    </div>
+
     <div class="mt-3 text-end">
       <p>Don't have an account? </p>
       <router-link to="/register" class="btn btn-dark btn-sm">Register here.</router-link>
     </div>
   </div>
+
   <div class="underlay-photo"></div>
   <div class="underlay-black"></div>
 </template>
 
 <script>
 import authApi from "@/api/AuthApi";
+import { messaging, getToken } from '@/firebase';
 
 export default {
   name: 'LoginPage',
@@ -62,24 +76,60 @@ export default {
       },
       errors: {},
       globalError: null,
+      loading: false,
     };
   },
   methods: {
-    login() {
-      this.errors = false;
+    async login() {
+      this.errors = {};
+      this.globalError = null;
       this.loading = true;
-      authApi.login(this.form).then(() => {
+      try {
+        await authApi.login(this.form);
+        await this.registerFcmToken();
+        this.$router.push({ name: 'CatalogView' });
+      } catch (error) {
         this.loading = false;
-          this.$router.push({name: 'DashboardView'});
-      }).catch(() => {
-        this.loading = false;
-        this.errors = true;
-      });
+        this.errors = error.response?.data?.errors || {};
+        this.globalError = error.response?.data?.message || 'Login failed';
+      }
+    },
 
+    async loginWithGoogle() {
+      this.errors = {};
+      this.globalError = null;
+      this.loading = true;
+
+      try {
+        await authApi.signInWithGoogle();
+        await this.registerFcmToken();
+
+        this.$router.push({ name: 'DashboardView' });
+      } catch (error) {
+        this.loading = false;
+        this.globalError = 'Google login failed';
+        console.error(error);
+      }
+    },
+
+    async registerFcmToken() {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const vapidKey = 'YOUR_VAPID_KEY_HERE';
+          const currentToken = await getToken(messaging, { vapidKey });
+          if (currentToken) {
+            await authApi.setFcmToken(currentToken);
+          }
+        }
+      } catch (e) {
+        console.warn('FCM token registration failed', e);
+      }
     }
-  },
+  }
 };
 </script>
+
 
 <style scoped>
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,700);

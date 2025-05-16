@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Notifications\BookAvailableNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * App\Models\LocationBook
@@ -39,5 +41,36 @@ class LocationBook extends Pivot
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($locationBook) {
+            \Log::info('LocationBook created', [
+                'quantity' => $locationBook->quantity,
+            ]);
+
+            if ($locationBook->quantity > 0) {
+                $users = $locationBook->book->favourites()->with('user')->get()->pluck('user');
+
+                foreach ($users as $user) {
+                    Notification::send($user, new BookAvailableNotification($locationBook));
+                }
+            }
+        });
+        static::updated(function ($locationBook) {
+            \Log::info('LocationBook updated', [
+                'original_quantity' => $locationBook->getOriginal('quantity'),
+                'new_quantity' => $locationBook->quantity,
+            ]);
+
+            if ($locationBook->getOriginal('quantity') == 0 && $locationBook->quantity > 0) {
+                $users = $locationBook->book->favourites()->with('user')->get()->pluck('user');
+
+                foreach ($users as $user) {
+                    Notification::send($user, new BookAvailableNotification($locationBook));
+                }
+            }
+        });
     }
 }

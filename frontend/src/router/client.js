@@ -7,6 +7,7 @@ import Register from "@/views/UserRegister.vue";
 import Checkout from "@/ClientViews/Checkout.vue";
 import Favourites from "@/ClientViews/Favourites.vue";
 import About from "@/ClientViews/About.vue";
+import Book from "@/ClientViews/Book.vue";
 
 const clientRoutes = [
     {
@@ -28,6 +29,11 @@ const clientRoutes = [
                 path: 'favourites',
                 name: 'FavouriteView',
                 component: Favourites,
+            },
+            {
+                path: 'book/:id',
+                name: 'BookView',
+                component: Book,
             },
             {
                 path: 'map/:id',

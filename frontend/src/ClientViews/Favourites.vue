@@ -1,113 +1,153 @@
 <template>
-  <div id="main-container" class="main-container nav-effect-1">
-    <div class="main clearfix">
+  <div id="main-container" class="catalog-container">
+    <div class="catalog-main mb-5">
       <div class="page-container">
-        <div class="page-title category-title">
+        <div class="catalog-header">
+          <h2 class="catalog-title">Book Catalog</h2>
+          <p class="catalog-subtitle">Browse our collection of books</p>
         </div>
-        <section id="book_list">
 
-          <div class="toolbar row">
-            <div class="filter-options small-12 medium-9 columns mb-3">
-              <a href="#" class="filter-item" :class="filters.selectedCategory === null ? 'active' : ''" @click="setCategory(null)" data-group="all">All Categories</a>
-              <a v-for="category in categories" :key="category.id" href="#" class="filter-item" :class="filters.selectedCategory === category.id ? 'active' : ''" @click="setCategory(category.id)" data-group="fantasy">{{ category.name }}</a>
+        <section class="book-list-section">
+          <div class="toolbar">
+            <div class="category-filters">
+              <button
+                  v-for="category in categories"
+                  :key="category.id"
+                  class="filter-btn"
+                  :class="{ 'active': filters.selectedCategory === category.id }"
+                  @click="setCategory(category.id)"
+              >
+                {{ category.name }}
+              </button>
+              <button
+                  class="filter-btn"
+                  :class="{ 'active': filters.selectedCategory === null }"
+                  @click="setCategory(null)"
+              >
+                All Categories
+              </button>
             </div>
 
-            <div class="small-12 medium-3 columns">
-              <select class="sort-options" v-model="filters.sortBy">
+            <div class="sort-control">
+              <select class="sort-select" v-model="filters.sortBy">
                 <option value="" disabled selected>Sort by</option>
-                <option v-for="(sort, index) in sortBy" :key="index" :value="sort.value" >{{ sort.label }}</option>
+                <option v-for="(sort, index) in sortBy" :key="index" :value="sort.value">
+                  {{ sort.label }}
+                </option>
               </select>
             </div>
           </div>
 
-          <div class="grid-shuffle">
-            <div v-if="!loading">
-              <ul id="grid" class="row" style="display: flex;">
-
-                <li class="book-item small-12 medium-6 columns" v-for="item in list" :key="item.id" :id="'book' + item.book.id">
-                  <div class="bk-img" style="z-index: 0;">
-                    <div class="bk-wrapper">
-                      <div class="bk-book bk-bookdefault">
-                        <div class="bk-front">
-                          <div class="bk-cover"
-                               :style="{ backgroundImage: `url('http://localhost:8000/storage/${item.book.cover_image}')` }">
-                          </div>
-                        </div>
-                        <div class="bk-back"></div>
-                        <div class="bk-left"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="item-details">
-                    <h3 class="book-item_title">{{ item.book.title }}</h3>
-                    <p class="author">{{ item.book.author }}</p>
-                    <p>{{ item.book.description }}</p>
-                    <a href="#" class="button">Details</a>
-                  </div>
-
-                  <div class="overlay-details">
-                    <a href="#" class="close-overlay-btn">Close</a>
-                    <div class="overlay-image">
-                      <img :src="'http://localhost:8000/storage/' + item.book.cover_image" alt="Book Cover">
-                      <div class="back-color"></div>
-                    </div>
-                    <div class="overlay-desc activated">
-                      <h2 class="overlay_title">{{ item.book.title }}</h2>
-                      <p class="author">{{ item.book.author }}</p>
-                      <p class="synopsis">{{ item.book.description }}</p>
-
-                      <div class="d-flex justify-content-between mt-5">
-                        <a
-                            href="#"
-                            class="overlay_borrow button"
-                            :id="'location' + item.book.id"
-                            :class="{ disabled: !isAuthorized }"
-                            @click.prevent="handleBorrow(item.book.id)"
-                        >
-                          Borrow
-                        </a>
-                        <a
-                            href="#"
-                            class="button"
-                            :class="{ disabled: !isAuthorized }"
-                            @click.prevent="handleFavourite"
-                        >
-                          Add to Favourites
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-              <recommend-view />
-            </div>
-            <div v-else style="display: flex; flex-direction: column; gap: 15px;" class="profile__main">
-              <div class="loader_wrapper">
-                <div class="loader"></div>
+          <div class="book-grid-container">
+            <div v-if="loading" class="loading-state">
+              <div class="loader">
+                <svg viewBox="0 0 50 50">
+                  <circle cx="25" cy="25" r="20" fill="none" stroke="#219e9a" stroke-width="5"></circle>
+                </svg>
+                <p>Loading books...</p>
               </div>
             </div>
+
+            <ul v-else class="book-grid">
+              <li class="book-item" v-for="item in list" :key="item.book.id" :id="'book' + item.book.id">
+                <div class="book-cover-container">
+                  <div class="book-3d">
+                    <div class="bk-book">
+                      <div class="bk-front">
+                        <div
+                            class="bk-cover"
+                            :style="{ backgroundImage: `url('http://localhost:8000/storage/${item.book.cover_image}')` }"
+                            @error="handleImageError"
+                        ></div>
+                      </div>
+                      <div class="bk-back"></div>
+                      <div class="bk-left"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="book-info">
+                  <h3 class="book-title">{{ item.book.title }}</h3>
+                  <p class="book-author">{{ item.book.author }}</p>
+                  <p class="book-description">{{ truncateDescription(item.book.description) }}</p>
+                  <button class="details-btn" @click="showBookDetails($event, item.book)">
+                    View Details
+                  </button>
+                </div>
+
+                <div class="overlay-details">
+                  <button class="close-overlay-btn" @click="closeModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+
+                  <div class="overlay-content">
+                    <div class="overlay-image-container">
+                      <div class="overlay-image">
+                        <img
+                            :src="'http://localhost:8000/storage/' + item.book.cover_image"
+                            alt="Book Cover"
+                            @error="handleImageError"
+                        >
+                      </div>
+                    </div>
+
+                    <div class="overlay-info">
+                      <h2 class="overlay-title">{{ item.book.title }}</h2>
+                      <p class="overlay-author">{{ item.book.author }}</p>
+                      <p class="overlay-synopsis">{{ item.book.description }}</p>
+
+                      <div class="overlay-actions">
+                        <button
+                            class="overlay-btn borrow-btn"
+                            :class="{ 'disabled': !isAuthorized }"
+                            @click="handleBorrow(item.book.id)"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                          </svg>
+                          Borrow
+                        </button>
+
+                        <button
+                            class="overlay-btn favorite-btn"
+                            :class="{ 'disabled': !isAuthorized, 'active': listFav?.some(fav => fav?.book_id === book?.id) }"
+                            @click="handleFavourite(item.book.id)"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                          </svg>
+                          {{ listFav?.some(fav => fav.book_id === item.book.id) ? 'Remove Favorite' : 'Add Favorite' }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
           </div>
-
         </section>
-
       </div>
     </div>
-    <div class="main-overlay">
-      <div class="overlay-full"></div>
-    </div>
+    <recommend-view :listFav="list"></recommend-view>
+    <div class="overlay-backdrop"></div>
   </div>
 </template>
+
 <script>
 import $ from 'jquery';
 import clientApi from "@/api/ClientApi";
 import RecommendView from "@/ClientViews/Elements/RecommendView.vue";
 
 export default {
-  name: 'FavouriteView',
+  name: 'CatalogView',
   components: {RecommendView},
   data() {
     return {
       list: null,
+      listFav: null,
       selectedBook: null,
       errors: {},
       globalError: null,
@@ -175,6 +215,10 @@ export default {
     }
   },
   methods: {
+    truncateDescription(desc) {
+      if (!desc) return '';
+      return desc.length > 100 ? desc.substring(0, 100) + '...' : desc;
+    },
     dropList() {
       this.list = [];
       this.page = 1;
@@ -189,58 +233,64 @@ export default {
       if (!this.loading && this.page !== this.last_page) this.getList();
     },
     setCategory(id) {
-      this.filters.selectedCategory = id
+      this.filters.selectedCategory = id;
     },
     setSort(id) {
-      this.filters.sortBy = id
+      this.filters.sortBy = id;
     },
     handleBorrow(id) {
-      // if (!this.isAuthorized) return;
-      this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}})
-    },
-    handleFavourite() {
-      if (!this.isAuthorized) return;
-      console.log("Added to favourites:", this.book.title);
-    },
-    loadCatalog() {
-      const vm = this;
-
-      $("li.book-item").each(function () {
-        const $this = $(this);
-
-        $this.find(".bk-front > div").css('background-color', $(this).data("color"));
-        $this.find(".bk-left").css('background-color', $(this).data("color"));
-        $this.find(".back-color").css('background-color', $(this).data("color"));
-
-        $this.find(".item-details a.button").on('click', function () {
-          displayBookDetails($this);
-        });
-      });
-
-      function displayBookDetails(el) {
-        var $this = $(el);
-        $('.main-container').addClass('prevent-scroll');
-        $('.main-overlay').fadeIn();
-
-        $this.find('.overlay-details').clone().prependTo('.main-overlay');
-
-        $('a.close-overlay-btn').on('click', function () {
-          $('.main-container').removeClass('prevent-scroll');
-          $('.main-overlay').fadeOut();
-          $('.main-overlay').find('.overlay-details').remove();
-        });
-        $('.overlay_borrow').on('click', function () {
-          const fullId = $(this).attr('id');
-          const bookId = fullId.replace('location', '');
-          vm.handleBorrow(bookId);
-        });
+      if (this.isAuthorized) {
+        this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}});
       }
+    },
+    handleFavourite(id) {
+      if (this.isAuthorized) {
+        if (this.listFav.some(fav => fav.book_id === parseInt(id))) {
+          this.loading = true;
+          clientApi.removeFromFavourite(id).then(() => {
+            this.dropList();
+            this.loading = false;
+            this.closeModal();
+          });
+        } else {
+          this.loading = true;
+          clientApi.addToFavourite(id).then(() => {
+            this.dropList();
+            this.loading = false;
+            this.closeModal();
+          });
+        }
+      }
+    },
+    showBookDetails(event, book) {
+      const $el = $(event.currentTarget).closest('.book-item');
+      this.selectedBook = book
+      this.displayBookDetails($el);
+    },
+    displayBookDetails(el) {
+      $('.catalog-container').addClass('prevent-scroll');
+      $('.overlay-backdrop').fadeIn();
 
-      $('.overlay-full').on('click', function () {
-        $('.main-container').removeClass('prevent-scroll');
-        $(this).parent().fadeOut();
-        $(this).parent().find('.overlay-details').remove();
+      const $overlay = $(el).find('.overlay-details').clone();
+      $overlay.prependTo('.overlay-backdrop');
+      $overlay.css('display', 'block');
+      $overlay.find('.borrow-btn').on('click', () => {
+        this.handleBorrow(el.attr('id').replace('book', ''));
       });
+
+      $overlay.find('.favorite-btn').on('click', () => {
+        this.handleFavourite(el.attr('id').replace('book', ''));
+      });
+      $overlay.find('.close-overlay-btn').on('click', () => {
+        this.closeModal();
+      });
+    },
+    closeModal() {
+      $('.catalog-container').removeClass('prevent-scroll');
+      $('.overlay-backdrop').fadeOut();
+      this.selectedBook = null
+      $('.overlay-details').css('display', 'none');
+      $('.overlay-backdrop').find('.overlay-details').remove();
     },
     getList() {
       this.loading = true;
@@ -251,739 +301,504 @@ export default {
       }).then( res => {
         this.list = res.data
         this.$nextTick(() => {
-          this.loadCatalog();
+          this.initBookAnimations();
         });
         this.loading = false;
       }).catch(() => {
         console.log('error');
       })
+    },
+    initBookAnimations() {
+      $(".bk-book").each(function() {
+        const $book = $(this);
+        $book.hover(
+            function() {
+              $book.css('transform', 'rotate3d(0, 1, 0, 25deg)');
+              $book.find('.bk-back').css('opacity', '1');
+            },
+            function() {
+              $book.css('transform', '');
+              $book.find('.bk-back').css('opacity', '0');
+            }
+        );
+      });
     }
   },
   mounted() {
-    this.getList()
-  },
-  updated() {
-    this.loadCatalog()
+    this.getList();
   }
 };
 </script>
-<style>
-@import url(https://fonts.googleapis.com/css?family=Lato:400,300,700,900);
-@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,700);
-@import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
-</style>
+
 <style scoped>
-.loader_wrapper {
-  width: 100%;
-  min-height: 150px;
+/* Base Styles */
+.catalog-container {
+  padding: 2rem 0;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+  min-height: 100vh;
+}
+
+.catalog-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.catalog-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.catalog-title {
+  font-size: 2rem;
+  color: #2c3e50;
+  font-family: 'Roboto Slab', serif;
+  margin-bottom: 0.5rem;
+}
+
+.catalog-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 300;
+}
+
+/* Toolbar Styles */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(33, 158, 154, 0.2);
+}
+
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(33, 158, 154, 0.1);
+  color: #219e9a;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  background: rgba(33, 158, 154, 0.2);
+}
+
+.filter-btn.active {
+  background: #219e9a;
+  color: white;
+}
+
+.sort-control {
+  margin-bottom: 1rem;
+}
+
+.sort-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(33, 158, 154, 0.3);
+  border-radius: 4px;
+  background: white;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #219e9a;
+  box-shadow: 0 0 0 2px rgba(33, 158, 154, 0.2);
+}
+
+/* Book Grid Styles */
+.book-grid-container {
+  position: relative;
+  min-height: 300px;
+}
+
+.loading-state {
   display: flex;
   justify-content: center;
   align-items: center;
-
+  min-height: 300px;
 }
 
 .loader {
-  width: 50px;
-  padding: 8px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #219e9a;
-  --_m: conic-gradient(#0000 10%, #000),
-  linear-gradient(#000 0 0) content-box;
-  -webkit-mask: var(--_m);
-  mask: var(--_m);
-  -webkit-mask-composite: source-out;
-  mask-composite: subtract;
-  animation: l3 1s infinite linear;
-}
-@keyframes l3 {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-html,
-body,
-.main,
-.main-container {
-  height: 100%;
-}
-.button {
-  padding: 10px 15px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 3px;
-  background-color: #219e9a;
-  color: white;
   text-align: center;
-  transition: all 0.3s ease;
-  text-decoration: none;
 }
 
-.button:hover {
-  background-color: #1a7e7b;
+.loader svg {
+  width: 50px;
+  height: 50px;
+  animation: rotate 1s linear infinite;
 }
 
-/* Disabled State */
-.button.disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-body {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #313131;
-  background: #ecf0f1;
-}
-
-/*
- *  Typography
-*/
-body,
-p,
-a,
-li {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 15px;
-}
-
-a {
+.loader p {
+  margin-top: 1rem;
   color: #219e9a;
+  font-weight: 500;
 }
 
-h2,
-h3 {
-  margin-top: 6px;
-  margin-bottom: 6px;
-  font-size: 28px;
-  font-weight: bold;
-  letter-spacing: -1px;
-  color: #313131;
-}
-
-h2 {
-  font-size: 28px;
-}
-
-h3 {
-  font-size: 24px;
-}
-
-h4 {
-  margin-bottom: 12px;
-  font-size: 22px;
-  line-height: 40px;
-  color: rgba(49, 49, 49, 0.7);
-}
-
-p:not(.author) {
-  font-size: 15px;
-  font-weight: 300;
-  line-height: 1.4;
-}
-
-p.author {
-  margin-bottom: 10px;
-  letter-spacing: -1px;
-  font-weight: 400;
-  color: rgba(49, 49, 49, 0.5);
-}
-
-/*
- *  Button
-*/
-a.button {
-  margin-bottom: 0;
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 3px;
-  background-color: rgba(49, 49, 49, 0.5);
-}
-a.button:hover, a.button:focus {
-  background-color: #219e9a;
-}
-
-/*
- *  Header
-*/
-.page-header {
-  position: relative;
-  margin-bottom: 55px;
-  width: 100%;
-  border-bottom: 1px solid #d2d6d5;
-  background-color: #fff;
-}
-
-.main-logo {
-  display: inline-block;
-  padding: 1em;
-  width: auto;
-}
-.main-logo a.logo {
-  display: block;
-  width: 150px;
-  height: 40px;
-  text-indent: -9999px;
-  background-color: #fff;
-  transition: background-color 250ms ease-out;
-}
-.main-logo a.logo:hover, .main-logo a.logo:focus {
-  background-color: #ecf0f1;
-}
-
-.menu-search {
-  float: right;
-  width: calc(100% - 200px);
-}
-
-/*
- *  Search Input
-*/
-.catalog-search {
-  position: relative;
-  margin: 0 20px;
-  max-width: 275px;
-  width: calc(100% - 2em);
-  vertical-align: top;
-  overflow: hidden;
-  float: right;
-}
-
-.input_field {
-  position: relative;
-  display: block;
-  float: right;
-  margin-top: 10px;
-  padding: 14px 7px 0;
-  width: 100%;
-  border: none;
-  border-radius: 0;
-  color: #313131;
-  font-weight: normal;
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: none;
-  box-shadow: none;
-  -webkit-appearance: none;
-  /* for box shadows to show on iOS */
-}
-.input_field:focus {
-  outline: none;
-  border: none;
-  background: none;
-  box-shadow: none;
-  -webkit-appearance: none;
-}
-.input_field:focus .input_label-content {
-  bottom: 20px;
-}
-
-.input_label {
-  position: absolute;
-  display: inline-block;
-  bottom: 0;
-  left: 0;
-  padding: 0 0.25em;
-  width: 100%;
-  height: calc(100% - 1em);
-  color: #d2d6d5;
-  font-weight: light;
-  font-size: 15px;
-  text-align: left;
-  pointer-events: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.input_label:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 10px);
-  border-bottom: 1px solid rgba(49, 49, 49, 0.45);
-}
-.input_label:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin-top: 2px;
-  width: 100%;
-  height: calc(100% - 10px);
-  border-bottom: 3px solid #219e9a;
-  transform: translate3d(-100%, 0, 0);
-  transition: transform 0.3s;
-}
-
-.input_label-content {
-  position: absolute;
-  width: 100%;
-  bottom: 14px;
-}
-
-.input_label-search {
-  position: relative;
-  display: block;
-  color: rgba(49, 49, 49, 0.45);
-}
-.input_label-search:after {
-  content: "";
-  position: absolute;
-  top: 7px;
-  right: 5px;
-  font-family: "fontawesome";
-}
-
-.input_field:focus + .input_label::after,
-.input--filled .input_label::after {
-  transform: translate3d(0, 0, 0);
-}
-
-.toolbar {
-  margin-bottom: 30px;
-  border-bottom: 1px solid #d2d6d5;
-}
-.toolbar select {
-  margin-bottom: 7px;
-  color: #313131;
-  font-size: 14px;
-  border: none;
-  background-color: transparent;
-}
-.toolbar .filter-options {
-  line-height: 40px;
-}
-.toolbar a.filter-item {
-  margin-right: 16px;
-  padding-bottom: 18px;
-  font-size: 14px;
-  color: #313131;
-  border-bottom: 0px solid transparent;
-  transition: all 250ms ease-out;
-}
-.toolbar a.filter-item:last-child {
-  margin-right: 0;
-}
-.toolbar a.filter-item.active {
-  padding-bottom: 15px;
-  color: #219e9a;
-  font-weight: bold;
-  border-bottom: 3px solid #219e9a;
-}
-
-#grid {
-  margin-bottom: 60px;
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .book-item {
-  left: unset !important;
-  width: 50%;
-  margin: 15px 0;
-  padding: 15px;
-  list-style-type: none;
-}
-.book-item:hover .item-img img {
-  box-shadow: 0px 0px 10px 0px rgba(49, 49, 49, 0.25);
-}
-.book-item:hover a.button {
-  background-color: #219e9a;
-}
-.book-item:hover .bk-bookdefault {
-  transform: rotate3d(0, 1, 0, 25deg);
-}
-.book-item:hover .bk-back {
-  opacity: 1;
-}
-.book-item .item-img {
-  display: inline-block;
-  float: left;
-  padding-right: 30px;
-}
-.book-item .item-img img {
-  box-shadow: 0 0 0 0 transparent;
-  transition: all 250ms ease-out;
-}
-.book-item .item-details {
-  padding-right: 30px;
-}
-.book-item h3 {
-  white-space: nowrap;
+  position: relative;
+  background: white;
+  border-radius: 8px;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-.book-item p:not(.author) {
-  display: block;
-  display: -webkit-box;
-  height: 63px;
-  /* Fallback for non-webkit */
-  font-size: 15px;
-  line-height: 1.4;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
-/*
- *  Book Rotate
-*/
-.bk-img {
-  position: relative;
-  display: inline-block;
-  float: left;
-  padding-right: 30px;
-  list-style: none;
-  /* Individual style & artwork */
+.book-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
-.bk-img .bk-wrapper {
+
+/* Book Cover 3D Effect */
+.book-cover-container {
+  padding: 1.5rem;
+  background: rgba(33, 158, 154, 0.05);
+  text-align: center;
+}
+
+.book-3d {
+  perspective: 1400px;
+  height: 250px;
+}
+
+.bk-book {
   position: relative;
   width: 150px;
   height: 215px;
-  float: left;
-  z-index: 1;
-  perspective: 1400px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
 }
-.bk-img .bk-wrapper:last-child {
-  margin-right: 0;
-}
-.bk-img .bk-book {
+
+.bk-front, .bk-back, .bk-left {
   position: absolute;
   width: 100%;
-  height: 215px;
+  height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.5s;
 }
-.bk-img .bk-book > div,
-.bk-img .bk-front > div {
-  display: block;
-  position: absolute;
-}
-.bk-img .bk-front {
-  transform-style: preserve-3d;
-  transform-origin: 0% 50%;
-  transition: transform 0.5s;
+
+.bk-front {
   transform: translate3d(0, 0, 20px);
   z-index: 10;
 }
-.bk-img .bk-front > div {
-  z-index: 1;
-  -webkit-backface-visibility: hidden;
+
+.bk-front > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
   backface-visibility: hidden;
   transform-style: preserve-3d;
   border-radius: 0 3px 3px 0;
   box-shadow: inset 4px 0 10px rgba(0, 0, 0, 0.1);
 }
-.bk-img .bk-front:after {
-  content: "";
-  position: absolute;
-  top: 1px;
-  bottom: 1px;
-  left: -1px;
-  width: 1px;
+
+.bk-cover {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
 }
-.bk-img .bk-front,
-.bk-img .bk-back,
-.bk-img .bk-front > div {
-  width: 150px;
-  height: 215px;
-}
-.bk-img .bk-left,
-.bk-img .bk-right {
-  width: 40px;
-  left: -20px;
-}
-.bk-img .bk-back {
+
+.bk-back {
   transform: rotate3d(0, 1, 0, -180deg) translate3d(0, 0, 20px);
   box-shadow: 5px 7px 15px rgba(0, 0, 0, 0.3);
   border-radius: 3px 0 0 3px;
   opacity: 0;
-  transition: opacity 250ms ease-out;
+  transition: opacity 0.3s ease;
+  background: white;
 }
-.bk-img .bk-back:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 10px;
-  bottom: 0;
-  width: 3px;
-  background: rgba(0, 0, 0, 0.06);
-  box-shadow: 1px 0 3px rgba(255, 255, 255, 0.1);
-}
-.bk-img .bk-left {
-  height: 215px;
+
+.bk-left {
+  width: 40px;
+  left: -20px;
   transform: rotate3d(0, 1, 0, -90deg);
-}
-.bk-img .bk-left h2 {
-  width: 215px;
-  height: 40px;
-  transform-origin: 0 0;
-  transform: rotate(90deg) translateY(-40px);
-}
-.bk-cover {
-  background-size: contain;  /* Ensures the image covers the entire div */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents repeating */
-  width: 100%;  /* Ensure the div takes full width */
-  height: 100%; /* Ensure the div takes full height */
+  background: #219e9a;
 }
 
-.bk-img .bk-cover:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 10px;
-  bottom: 0;
-  width: 3px;
-  background: rgba(0, 0, 0, 0.06);
-  box-shadow: 1px 0 3px rgba(255, 255, 255, 0.1);
-}
-.bk-img .bk-cover {
-  background-repeat: no-repeat;
-  background-position: center !important;
-}
-.bk-img .bk-front > div,
-.bk-img .bk-left {
-  background-color: #219e9a;
+/* Book Info Styles */
+.book-info {
+  padding: 1.5rem;
 }
 
-/*
- *  Lightbox
-*/
-.main-overlay {
+.book-title {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+}
+
+.book-author {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+}
+
+.book-description {
+  color: #495057;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.details-btn {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(33, 158, 154, 0.1);
+  color: #219e9a;
+  border: 1px solid #219e9a;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.details-btn:hover {
+  background: #219e9a;
+  color: white;
+}
+
+/* Overlay Styles */
+.overlay-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background: rgba(0, 0, 0, 0.7);
   display: none;
-  background-color: rgba(49, 49, 49, 0.65);
-}
-.main-overlay .overlay-full {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.main-overlay .overlay-details {
-  position: absolute;
-  display: flex;
-  z-index: 1;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  max-width: 800px;
-  max-height: 480px;
-  padding: 40px;
-  overflow: hidden;
-  border-radius: 3px;
-  background-color: #fff;
-  box-shadow: 0px 2px 1px 2px rgba(0, 0, 0, 0.3);
-  transform: translate(-50%, -50%);
-}
-.main-overlay .overlay-image {
-  display: inline-block;
-  margin-right: 30px;
-  max-width: 275px;
-  height: 340px; /* Ensure it takes full height */
-  vertical-align: top;
-  overflow: hidden; /* Prevents image from overflowing */
-  position: relative;
-}
-
-.main-overlay .overlay-image img {
-  position: relative; /* Allows the image to fill the div */
-  top: 0;
-  left: 0;
-  width: 100%; /* Fills the width of .overlay-image */
-  height: 100%; /* Fills the height of .overlay-image */
-  object-fit: contain; /* Ensures the image covers the whole div */
-  z-index: 1;
-  box-shadow: -12px 12px 15px -5px rgba(0, 0, 0, 0.3);
-}
-
-.main-overlay .overlay-image .back-color {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 275px;
-  height: 100%;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-  background-color: green;
-  z-index: 0; /* Keeps background behind the image */
-}
-
-.main-overlay .close-overlay-btn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 30px;
-  height: 30px;
-  opacity: 0.3;
-  text-indent: -9999px;
-  transition: opacity 250ms ease-out;
-}
-.main-overlay .close-overlay-btn:hover {
-  opacity: 1;
-}
-.main-overlay .close-overlay-btn:before {
-  content: " ";
-  position: absolute;
-  left: 15px;
-  width: 2px;
-  height: 33px;
-  background-color: #313131;
-}
-.main-overlay .close-overlay-btn:after {
-  content: " ";
-  position: absolute;
-  left: 15px;
-  width: 2px;
-  height: 33px;
-  background-color: #313131;
-}
-.main-overlay .close-overlay-btn:before {
-  transform: rotate(45deg);
-}
-.main-overlay .close-overlay-btn:after {
-  transform: rotate(-45deg);
-}
-.main-overlay .back-preview-btn {
-  position: absolute;
-  top: 7px;
-  left: -34px;
-  width: 30px;
-  height: 30px;
-  opacity: 0.3;
-  text-indent: -9999px;
-  transition: opacity 250ms ease-out;
-}
-.main-overlay .back-preview-btn:hover {
-  opacity: 1;
-}
-.main-overlay .back-preview-btn:before {
-  content: " ";
-  position: absolute;
-  left: 15px;
-  width: 2px;
-  height: 15px;
-  background-color: #313131;
-}
-.main-overlay .back-preview-btn:after {
-  content: " ";
-  position: absolute;
-  top: 10px;
-  left: 15px;
-  width: 2px;
-  height: 15px;
-  background-color: #313131;
-}
-.main-overlay .back-preview-btn:before {
-  transform: rotate(45deg);
-}
-.main-overlay .back-preview-btn:after {
-  transform: rotate(-45deg);
-}
-.main-overlay .overlay-desc {
-  align-content: center;
-  display: inline;
-  margin-top: -400px;
-  width: calc(100% - 320px);
-  vertical-align: top;
-  transition: all 500ms ease-out;
-}
-.main-overlay .overlay-desc.activated {
-  display: inline-block;
-  margin-top: 0;
-}
-.main-overlay .overlay-preview {
-  position: relative;
-  display: inline-block;
-  float: right;
-  margin-top: 40px;
-  width: calc(100% - 310px);
-  vertical-align: top;
-  transition: all 500ms ease-out;
-}
-.main-overlay .overlay-preview.activated {
-  margin-top: -430px;
-}
-.main-overlay .preview-content {
-  padding-right: 24px;
-  padding-top: 10px;
-  display: block;
-  display: -webkit-box;
-  height: 360px;
-  /* Fallback for non-webkit */
-  font-size: 15px;
-  line-height: 1.5;
-  -webkit-line-clamp: 16;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  overflow: scroll;
-  text-overflow: clip;
-  font-weight: 400;
-}
-.main-overlay .preview-content h5,
-.main-overlay .preview-content p {
-  font-family: "Roboto Slab", serif;
-}
-.main-overlay .preview-content h5 {
-  font-weight: bold;
-}
-.main-overlay .preview-content p {
-  font-weight: normal;
-}
-.main-overlay .preview-content:before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 40px;
-  width: 100%;
-  heightheight: 30px;
-  background: rgba(255, 255, 255, 0);
-  background: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 30%, white 80%);
-}
-.main-overlay .preview-content:after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 50px;
-  background: rgba(255, 255, 255, 0);
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 30%, white 80%);
+  z-index: 1000;
+  overflow-y: auto;
 }
 
 .overlay-details {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   display: none;
 }
 
-/*
- *  Footer
-*/
-#footer {
-  margin-top: 60px;
-  padding: 15px 0 20px;
-  border-top: 1px solid #fff;
-  background-color: rgba(49, 49, 49, 0.5);
+.close-overlay-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
 }
-#footer div,
-#footer a,
-#footer p {
-  color: #fff;
-  font-size: 12px;
-  text-align: center;
+
+.close-overlay-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: #2c3e50;
+}
+
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.overlay-image-container {
+  position: relative;
+  height: 300px;
+  background: rgba(33, 158, 154, 0.1);
+}
+
+.overlay-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 300px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.overlay-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay-info {
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.overlay-title {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.overlay-author {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.overlay-synopsis {
+  color: #495057;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.overlay-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.overlay-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.borrow-btn {
+  background: rgba(33, 158, 154, 0.1);
+  color: #219e9a;
+}
+
+.borrow-btn:hover {
+  background: #219e9a;
+  color: white;
+}
+
+.favorite-btn {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.favorite-btn:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.favorite-btn.active {
+  background: #219e9a;
+  color: white;
+}
+
+.overlay-btn.disabled {
+  background: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.overlay-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Animations */
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .overlay-content {
+    flex-direction: column;
+  }
+
+  .overlay-image-container {
+    height: 200px;
+  }
+
+  .overlay-image {
+    width: 150px;
+    height: 225px;
+  }
+
+  .overlay-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .category-filters {
+    justify-content: center;
+  }
+
+  .sort-control {
+    width: 100%;
+  }
+
+  .sort-select {
+    width: 100%;
+  }
+
+  .overlay-details {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .overlay-info {
+    padding: 1.5rem;
+  }
 }
 </style>

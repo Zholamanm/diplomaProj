@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Kreait\Firebase\Auth as FirebaseAuth;
+use Kreait\Firebase\Factory;
 
 class AuthController extends Controller
 {
@@ -102,5 +105,72 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ], $statusCode);
+    }
+
+//    public function loginWithGoogle(Request $request, FirebaseAuth $firebaseAuth)
+//    {
+//        $idTokenString = $request->input('idToken');
+//
+//        try {
+//            $verifiedIdToken = $firebaseAuth->verifyIdToken($idTokenString);
+//            $firebaseUser = $firebaseAuth->getUser($verifiedIdToken->claims()->get('sub'));
+//
+//            // Find user by email
+//            $user = User::where('email', $firebaseUser->email)->first();
+//
+//            if (!$user) {
+//                // Create new user if not exists
+//                $user = User::create([
+//                    'name' => $firebaseUser->displayName ?? 'No Name',
+//                    'email' => $firebaseUser->email,
+//                    // 'firebase_uid' => $firebaseUser->uid, // optional
+//                ]);
+//            }
+//
+//            // Optionally update fcm_token here if sent from frontend
+//
+//            $token = $user->createToken('api-token')->plainTextToken;
+//
+//            return response()->json([
+//                'email' => $user->email,
+//                'password' => '123456',
+//                'token' => $token,
+//            ]);
+//        } catch (\Exception $e) {
+//            return response()->json(['error' => 'Unauthorized'], 401);
+//        }
+//    }
+
+    public function loginWithGoogle(Request $request)
+    {
+        $idTokenString = $request->input('idToken');
+
+        try {
+            $firebase = (new Factory)
+                ->withServiceAccount(env('FIREBASE_CREDENTIALS'))
+                ->createAuth();
+
+            $firebaseAuth = $firebase;
+
+            $verifiedIdToken = $firebaseAuth->verifyIdToken($idTokenString);
+            $firebaseUser = $firebaseAuth->getUser($verifiedIdToken->claims()->get('sub'));
+
+            $user = User::where('email', $firebaseUser->email)->first();
+
+            if (!$user) {
+                // Create new user if not exists
+                $user = User::create([
+                    'name' => $firebaseUser->displayName ?? 'No Name',
+                    'password' => Hash::make('123456'),
+                    'email' => $firebaseUser->email,
+                    // 'firebase_uid' => $firebaseUser->uid, // optional
+                ]);
+            }
+
+            return $this->respondWithToken($user);
+        } catch (\Exception $e) {
+            \Log::error('Firebase Auth error: ' . $e->getMessage());
+            return response()->json(['error' => 'Unauthorized', 'details' => $e->getMessage()], 401);
+        }
     }
 }

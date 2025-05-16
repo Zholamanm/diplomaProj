@@ -7,12 +7,58 @@ use App\Models\BorrowedBook;
 use App\Models\Favourite;
 use App\Models\Location;
 use App\Models\LocationBook;
+use App\Services\GeoapifyService;
+use App\Services\OpenLibraryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
+    protected $openLibrary;
+    protected $geoapify;
+
+    public function __construct(OpenLibraryService $openLibrary, GeoapifyService $geoapify)
+    {
+        $this->openLibrary = $openLibrary;
+        $this->geoapify = $geoapify;
+    }
+
+    public function searchSimilar($title)
+    {
+        $results = $this->openLibrary->searchBooks($title);
+
+        return response()->json($results);
+    }
+
+    public function searchBook($title)
+    {
+        $results = $this->openLibrary->searchBookByTitle($title);
+
+        return response()->json($results);
+    }
+
+    public function coffeeShopsNearby($latitude, $longitude)
+    {
+        $shops = $this->geoapify->getNearbyCoffeeShops(
+            $latitude,
+            $longitude,
+            500,
+            7
+        );
+
+        return response()->json($shops);
+    }
+    public function getBookById($id)
+    {
+        $book = Book::find($id);
+        return [
+            'book' => $book,
+            'similar' => $this->searchSimilar($book->title),
+            'details' => $this->searchBook($book->title),
+        ];
+    }
+
     public function getBooks(Request $request)
     {
         return [
@@ -103,15 +149,16 @@ class ClientController extends Controller
             ->where('quantity', '>', 0)
             ->with('location')
             ->with('book')
-            ->get();  // Returns a collection
+            ->get();
 
-        // Check if any records exist
         if ($locationBooks->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404); // Optional: handle this case
         }
-
-        // If records exist, apply the map
-        return $locationBooks->map(function ($locationBook) {
+        $locationBook = $locationBooks->first();
+        $latitude = $locationBook->location->latitude;
+        $longitude = $locationBook->location->longitude;
+        $shops = $this->coffeeShopsNearby($latitude, $longitude);
+        return $locationBooks->map(function ($locationBook) use ($shops) {
             return [
                 'location' => [
                     'id' => $locationBook->location->id,
@@ -121,14 +168,10 @@ class ClientController extends Controller
                     'longitude' => $locationBook->location->longitude,
                     'quantity' => $locationBook->quantity,
                 ],
-                'book' => $locationBook->book
+                'book' => $locationBook->book,
+                'shops' => $shops
             ];
         });
-    }
-
-    public function getBookById($id)
-    {
-        return Book::where('id', $id)->first();
     }
 
     public function borrow(Request $request)

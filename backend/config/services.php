@@ -31,4 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'geoapify' => [
+        'key' => env('GEOAPIFY_API_KEY'),
+    ]
 ];

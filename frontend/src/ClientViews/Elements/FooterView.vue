@@ -23,7 +23,7 @@ export default {
     handleScroll() {
       const scrollPosition = window.scrollY + window.innerHeight;
       const docHeight = document.documentElement.scrollHeight;
-      const threshold = docHeight - 100; // 100px from bottom
+      const threshold = docHeight - 50; // 100px from bottom
       console.log(docHeight);
       this.isVisible = scrollPosition >= threshold || docHeight <= window.innerHeight;
     },

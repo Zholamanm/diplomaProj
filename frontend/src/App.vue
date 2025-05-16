@@ -47,4 +47,7 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
+
+body {
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);}
 </style>

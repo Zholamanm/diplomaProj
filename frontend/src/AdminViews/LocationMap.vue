@@ -75,7 +75,7 @@ export default {
     async fetchAllBooks() {
       try {
         const res = await bookApi.get();
-        this.allBooks = res.data || [];
+        this.allBooks = res || [];
       } catch (err) {
         console.error("Error fetching books:", err);
       }

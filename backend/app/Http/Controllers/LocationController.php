@@ -48,8 +48,12 @@ class LocationController extends Controller
     }
 
     public function removeBookFromLocation($locationId, $id) {
-        LocationBook::where(['location_id' => $locationId, 'book_id' => $id])->delete();
-        return response()->json(['message' => 'Book removed from location']);
+        $record = LocationBook::where(['location_id' => $locationId, 'book_id' => $id])->first();
+        if ($record) {
+            $record->delete();
+            return response()->json(['message' => 'Book removed from location']);
+        }
+        return response()->json(['message' => 'Record not found'], 404);
     }
 
     public function store(Request $request)

@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AuthController;
 
 /*
@@ -18,6 +17,8 @@ use App\Http\Controllers\AuthController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/google-login', [AuthController::class, 'loginWithGoogle']);
+
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 Route::middleware('auth:api')->get('/user-info', function (Request $request) {
     return $request->user();
@@ -29,6 +30,17 @@ Route::get('client/books/{id}', [\App\Http\Controllers\ClientController::class, 
 Route::get('client/book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
 Route::get('client/locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
 Route::get('common_data', [\App\Http\Controllers\CommonController::class, 'index']);
+
+Route::middleware('auth:api')->post('/save-fcm-token', function(Request $request) {
+    $request->validate(['fcm_token' => 'required|string']);
+
+    $user = $request->user();
+    $user->fcm_token = $request->fcm_token;
+    $user->save();
+
+    return response()->json(['message' => 'FCM token saved']);
+});
+
 
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('client')->group(function () {
@@ -61,7 +73,7 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::get('', [\App\Http\Controllers\UserController::class, 'get']);
             });
             Route::prefix('books')->group(function () {
-                Route::get('', [\App\Http\Controllers\UserController::class, 'get']);
+                Route::get('', [\App\Http\Controllers\BookController::class, 'get']);
             });
             Route::prefix('book')->group(function () {
                 Route::get('', [\App\Http\Controllers\BookController::class, 'index']);
@@ -96,7 +108,7 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::post('', [\App\Http\Controllers\LocationController::class, 'store']);
                 Route::post('/{location}/books', [\App\Http\Controllers\LocationController::class, 'addBooksToLocation']);
                 Route::get('/{location}/books', [\App\Http\Controllers\LocationController::class, 'getBooksInLocation']);
-                Route::get('/{location}/books/{id}', [\App\Http\Controllers\LocationController::class, 'removeBookFromLocation']);
+                Route::delete('/{location}/books/{id}', [\App\Http\Controllers\LocationController::class, 'removeBookFromLocation']);
                 Route::get('/{id}', [\App\Http\Controllers\LocationController::class, 'view']);
                 Route::post('/{id}', [\App\Http\Controllers\LocationController::class, 'edit']);
                 Route::delete('/{id}', [\App\Http\Controllers\LocationController::class, 'delete']);

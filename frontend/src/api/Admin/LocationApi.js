@@ -23,7 +23,7 @@ const locationApi = {
         return await client.delete('/api/location/' + id).then(res => res.data);
     },
     removeBook(locId, id) {
-        return client.delete(`/api/location/${id}/books/` + id).then(res => res.data);
+        return client.delete(`/api/location/${locId}/books/` + id).then(res => res.data);
     }
 };
 export default locationApi;
