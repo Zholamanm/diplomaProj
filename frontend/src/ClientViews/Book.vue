@@ -36,6 +36,7 @@
                   v-for="similar in similarBooks.slice(0, 4)"
                   :key="similar.key"
                   class="similar-book"
+                  @click="openSimilarBookModal(similar)"
               >
                 <img
                     :src="`https://covers.openlibrary.org/b/olid/${similar.cover_edition_key}-M.jpg`"
@@ -68,13 +69,17 @@
                 <strong>Category:</strong>
                 <span>{{ getCategoryName(book.category_id) }}</span>
               </li>
+              <li v-if="details && details.author_name">
+                <strong>Author:</strong>
+                <span v-for="(author, index) in details.author_name" :key="index">{{ author || 'Unknown' }} </span>
+              </li>
               <li v-if="details && details.language">
                 <strong>Languages:</strong>
                 <span>{{ formatLanguages(details.language) }}</span>
               </li>
               <li v-if="details && details.ebook_access">
                 <strong>Availability:</strong>
-                <span class="availability">{{ formatAvailability(details.ebook_access) }}</span>
+                <span class="availability">{{ formatAvailability() }}</span>
               </li>
             </ul>
           </div>
@@ -110,17 +115,40 @@
           <div class="social-sharing">
             <p>Share this book:</p>
             <div class="social-icons">
-              <a href="#" class="social-icon facebook">
+              <!-- Facebook Share -->
+              <a
+                  :href="`https://www.facebook.com/sharer/sharer.php?u=${currentPageUrl}&quote=Check out this book: ${book.title} by ${book.author}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon facebook"
+                  aria-label="Share on Facebook"
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
                 </svg>
               </a>
-              <a href="#" class="social-icon twitter">
+
+              <!-- Twitter Share -->
+              <a
+                  :href="`https://twitter.com/intent/tweet?url=${currentPageUrl}&text=Check out ${book.title} by ${book.author}&hashtags=Books`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon twitter"
+                  aria-label="Share on Twitter"
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
                 </svg>
               </a>
-              <a href="#" class="social-icon whatsapp">
+
+              <!-- WhatsApp Share -->
+              <a
+                  :href="`https://wa.me/?text=Check out this book: ${book.title} by ${book.author} - ${currentPageUrl}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="social-icon whatsapp"
+                  aria-label="Share on WhatsApp"
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
@@ -165,6 +193,50 @@
       <button class="back-btn" @click="$router.go(-1)">Go Back</button>
     </div>
   </div>
+  <!-- Similar Books Modal -->
+  <div v-if="showSimilarModal" class="similar-modal">
+    <div class="modal-overlay" @click="showSimilarModal = false"></div>
+    <div class="modal-content">
+      <button class="modal-close" @click="showSimilarModal = false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div v-if="selectedSimilarBook" class="similar-modal-body">
+        <div class="modal-book-cover">
+          <img :src="`https://covers.openlibrary.org/b/olid/${selectedSimilarBook.cover_edition_key}-M.jpg`"
+               :alt="selectedSimilarBook.title"
+               @error="handleSimilarImageError">
+        </div>
+
+        <div class="modal-book-details">
+          <h3>{{ selectedSimilarBook.title }}</h3>
+
+          <div v-if="selectedSimilarBook.author_name" class="modal-book-author">
+            <p>by {{ selectedSimilarBook.author_name.join(', ') }}</p>
+          </div>
+
+          <div v-if="selectedSimilarBook.first_publish_year" class="modal-book-year">
+            <p>First published: {{ selectedSimilarBook.first_publish_year }}</p>
+          </div>
+
+          <div v-if="selectedSimilarBook.language" class="modal-book-languages">
+            <p>Languages: {{ formatLanguages(selectedSimilarBook.language) }}</p>
+          </div>
+
+          <a :href="`https://openlibrary.org${selectedSimilarBook.key}`"
+             target="_blank"
+             class="open-library-btn">
+            View on Open Library
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6m4-3h6v6m-11 5L21 3"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -177,10 +249,15 @@ export default {
       book: null,
       similar: null,
       details: null,
+      locations: null,
       errors: {},
       loading: false,
-      placeholderImage: 'https://via.placeholder.com/300x450?text=No+Cover',
-      similarPlaceholder: 'https://via.placeholder.com/100x150?text=No+Cover'
+      placeholderImage: 'http://localhost:8000/defaults/default-cover.jpg',
+      similarPlaceholder: 'http://localhost:8000/defaults/default-cover.jpg',
+      showSimilarModal: false,
+      selectedSimilarBook: null,
+      isFav: null,
+      currentPageUrl: window.location.href
     };
   },
   computed: {
@@ -188,14 +265,17 @@ export default {
       return this.$store.state.auth.authorized;
     },
     isFavorite() {
-      // This would need to be implemented based on your favorites logic
-      return false;
+      return this.isFav.length > 0;
     },
     similarBooks() {
       return this.similar?.original?.docs || [];
     }
   },
   methods: {
+    openSimilarBookModal(book) {
+      this.selectedSimilarBook = book;
+      this.showSimilarModal = true;
+    },
     handleImageError(e) {
       e.target.src = this.placeholderImage;
     },
@@ -203,15 +283,13 @@ export default {
       e.target.src = this.similarPlaceholder;
     },
     getCategoryName() {
-      // Implement category name lookup based on your categories data
-      return 'Fantasy'; // Placeholder
+      return this.book.category.name;
     },
-    formatAvailability(access) {
-      switch(access) {
-        case 'borrowable': return 'Available to borrow';
-        case 'public': return 'Publicly available';
-        case 'restricted': return 'Restricted access';
-        default: return 'Availability unknown';
+    formatAvailability() {
+      if(this.locations.length > 0) {
+        return 'Available to borrow';
+        } else {
+        return 'Not available';
       }
     },
     formatLanguages(languages) {
@@ -232,48 +310,63 @@ export default {
         rus: 'Russian',
         jpn: 'Japanese',
         chi: 'Chinese',
-        // Add more language codes as needed
       };
       return languageNames[code] || code;
     },
     handleBorrow(id) {
       if (this.isAuthorized) {
         this.$router.push({name: 'BorrowMap', params: {id: id, locale: this.$route.params.locale}});
-      } else {
-        // Show login modal or redirect to login
-        alert('Please login to borrow books');
       }
+    },
+    dropBook() {
+      this.loading = true;
+      this.book = null;
+      this.isFav = null
+      this.similar = null;
+      this.details = null;
+      this.locations = null;
+      this.getBook()
     },
     handleFavourite(id) {
       if (this.isAuthorized) {
         this.loading = true;
         if (this.isFavorite) {
           clientApi.removeFromFavourite(id).then(() => {
-            this.loading = false;
-            // Update UI to reflect removal
+            this.dropBook();
           });
         } else {
           clientApi.addToFavourite(id).then(() => {
-            this.loading = false;
-            // Update UI to reflect addition
+            this.dropBook()
           });
         }
-      } else {
-        // Show login modal or redirect to login
-        alert('Please login to add favorites');
       }
     },
     getBook() {
       this.loading = true;
-      clientApi.getBookById(this.$route.params.id).then(res => {
-        this.book = res.book;
-        this.similar = res.similar;
-        this.details = res.details.original.docs[0];
-        this.loading = false;
-      }).catch(err => {
-        console.error('Error fetching book:', err);
-        this.loading = false;
-      });
+      if(this.isAuthorized) {
+        clientApi.getClientBookById(this.$route.params.id).then(res => {
+          this.book = res.book;
+          this.isFav = res.is_favourite
+          this.similar = res.similar;
+          this.details = res.details.original.docs[0];
+          this.locations = res.locations;
+          this.loading = false;
+        }).catch(err => {
+          console.error('Error fetching book:', err);
+          this.loading = false;
+        });
+      } else {
+        clientApi.getGuestBookById(this.$route.params.id).then(res => {
+          this.book = res.book;
+          this.similar = res.similar;
+          this.details = res.details.original.docs[0];
+          this.locations = res.locations;
+          this.loading = false;
+        }).catch(err => {
+          console.error('Error fetching book:', err);
+          this.loading = false;
+        });
+      }
     }
   },
   mounted() {
@@ -283,7 +376,131 @@ export default {
 </script>
 
 <style scoped>
-/* Base Styles */
+.similar-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 2;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.modal-close svg {
+  width: 24px;
+  height: 24px;
+  stroke: #6c757d;
+  transition: stroke 0.2s ease;
+}
+
+.modal-close:hover svg {
+  stroke: #e63946;
+}
+
+.similar-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .similar-modal-body {
+    flex-direction: row;
+  }
+}
+
+.modal-book-cover {
+  flex: 0 0 40%;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.modal-book-cover img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-book-details {
+  flex: 1;
+}
+
+.modal-book-details h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #12263a;
+}
+
+.modal-book-author p {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.modal-book-year p,
+.modal-book-languages p {
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.open-library-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #219e9a;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.open-library-btn:hover {
+  background: #1a7f7b;
+}
+
+.open-library-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .book-detail-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -554,11 +771,13 @@ export default {
 }
 
 .social-icons {
+  justify-content: space-around;
   display: flex;
   gap: 1rem;
 }
 
 .social-icon {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -567,6 +786,21 @@ export default {
   border-radius: 50%;
   color: white;
   transition: all 0.2s ease;
+}
+
+.social-icon:hover::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 10;
 }
 
 .social-icon svg {

@@ -215,6 +215,9 @@ export default {
     }
   },
   methods: {
+    handleImageError(e) {
+      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+    },
     truncateDescription(desc) {
       if (!desc) return '';
       return desc.length > 100 ? desc.substring(0, 100) + '...' : desc;

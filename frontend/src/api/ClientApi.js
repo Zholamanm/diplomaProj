@@ -11,14 +11,23 @@ const ClientApi = {
     getRecommendList(data) {
         return client.get('/api/client/books/recommend', {params: data}).then(res => res.data);
     },
+    getFeaturedList(data) {
+        return client.get('/api/client/books/recent', {params: data}).then(res => res.data);
+    },
+    getRecentList(data) {
+        return client.get('/api/client/books/featured', {params: data}).then(res => res.data);
+    },
     getCheckoutList(data) {
         return client.get('/api/client/checkout', {params: data}).then(res => res.data);
     },
     getLocations(id) {
         return client.get('/api/client/book/locations/' + id).then(res => res.data);
     },
-    getBookById(id) {
+    getClientBookById(id) {
         return client.get('/api/client/books/' + id).then(res => res.data);
+    },
+    getGuestBookById(id) {
+        return client.get('/api/guest/books/' + id).then(res => res.data);
     },
     getLocationById(id) {
         return client.get('/api/client/locations/' + id).then(res => res.data);

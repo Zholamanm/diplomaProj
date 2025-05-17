@@ -15,7 +15,7 @@ export const requireAuth = async (to, from, next) => {
     if (store.state.auth.authorized) {
         const user = await checkUserLoaded();
         if (user.role_id === 3) {
-            window.location.href = `/${i18nService.getCurrentLocale()}/catalog`;
+            window.location.href = `/${i18nService.getCurrentLocale()}`;
         } else {
             next();
         }
@@ -42,8 +42,8 @@ function checkUserLoaded() {
 export const requireClientAuth = (to, from, next) => {
     if (store.state.auth.authorized) {
         next();
-    } else if (to.name !== 'CatalogView') {
-        next({name: 'CatalogView', params: {locale: i18nService.getCurrentLocale()}});
+    } else if (to.name !== 'HomeView') {
+        next({name: 'HomeView', params: {locale: i18nService.getCurrentLocale()}});
     }
     next();
 };

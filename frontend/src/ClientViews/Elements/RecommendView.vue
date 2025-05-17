@@ -126,6 +126,9 @@ export default {
         this.handleLoad();
       });
     },
+    handleImageError(e) {
+      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+    },
     handleLoad() {
       if (!this.loading && this.page !== this.last_page) this.getList();
     },

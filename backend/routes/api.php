@@ -23,10 +23,12 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 Route::middleware('auth:api')->get('/user-info', function (Request $request) {
     return $request->user();
 });
-Route::get('guest/books', [\App\Http\Controllers\ClientController::class, 'getGuestBooks']);
+Route::get('guest/books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
 Route::get('client/books/recommend', [\App\Http\Controllers\ClientController::class, 'getRecommendBooks']);
+Route::get('client/books/featured', [\App\Http\Controllers\ClientController::class, 'getFeatured']);
+Route::get('client/books/recent', [\App\Http\Controllers\ClientController::class, 'getRecent']);
 Route::get('client/book/locations', [\App\Http\Controllers\ClientController::class, 'getLocationBookById']);
-Route::get('client/books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
+Route::get('guest/books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
 Route::get('client/book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
 Route::get('client/locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
 Route::get('common_data', [\App\Http\Controllers\CommonController::class, 'index']);
@@ -44,6 +46,7 @@ Route::middleware('auth:api')->post('/save-fcm-token', function(Request $request
 
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('client')->group(function () {
+        Route::get('books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
         Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
         Route::get('checkout', [\App\Http\Controllers\ClientController::class, 'getCheckouts']);
         Route::post('books/{id}/borrow', [\App\Http\Controllers\ClientController::class, 'borrow']);

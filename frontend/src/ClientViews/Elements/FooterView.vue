@@ -15,7 +15,6 @@ export default {
   name: 'HeaderView',
   data() {
     return {
-      searchQuery: '',
       isVisible: false,
     };
   },
@@ -24,11 +23,7 @@ export default {
       const scrollPosition = window.scrollY + window.innerHeight;
       const docHeight = document.documentElement.scrollHeight;
       const threshold = docHeight - 50; // 100px from bottom
-      console.log(docHeight);
       this.isVisible = scrollPosition >= threshold || docHeight <= window.innerHeight;
-    },
-    updateSearchQuery() {
-      this.$emit('update-search', this.searchQuery);
     },
     logout() {
       authApi.logout();

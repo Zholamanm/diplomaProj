@@ -1,6 +1,6 @@
 <template>
     <nav class="nav-menu nav-effect-1" id="menu-1">
-      <h2 class="">The Library</h2>
+      <h2 class="" style="color: #2c3e50;" @click="$router.push({ name: 'HomeView', parmas: { locale: $route.params.locale }})">The Library</h2>
       <ul class="header-list">
         <li><a class="" href="#" @click="$router.push({name: 'CatalogView', params: {locale: $route.params.locale}})">Catalog</a></li>
         <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'CheckoutView', params: {locale: $route.params.locale}})">Checkout</a></li>
@@ -19,7 +19,7 @@
         <div class="page-header-container row">
 
           <div class="main-logo">
-            <a href="#" class="logo">The Library</a>
+            <a href="#" class="logo" style="color: #2c3e50;" @click="$router.push({ name: 'HomeView', parmas: { locale: $route.params.locale }})">The Library</a>
           </div>
 
           <div class="menu-search">
@@ -185,7 +185,12 @@ a.button:hover, a.button:focus {
   display: block;
   width: 150px;
   height: 40px;
-  text-indent: -9999px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.2;
+  font-family: 'Roboto Slab', serif;
+  text-decoration: none;
+  align-content: center;
   background-color: #fff;
   transition: background-color 250ms ease-out;
 }

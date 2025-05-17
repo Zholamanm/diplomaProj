@@ -51,25 +51,51 @@ class ClientController extends Controller
     }
     public function getBookById($id)
     {
-        $book = Book::find($id);
-        return [
-            'book' => $book,
-            'similar' => $this->searchSimilar($book->title),
-            'details' => $this->searchBook($book->title),
-        ];
+        $book = Book::with('category', 'tags')->find($id);
+
+        $locations = LocationBook::where('book_id', $id)
+            ->where('quantity', '>', 0)
+            ->with('location')
+            ->get()
+            ->map(function ($locationBook) {
+                return [
+                    'id' => $locationBook->location->id,
+                    'name' => $locationBook->location->name,
+                    'address' => $locationBook->location->address,
+                    'latitude' => $locationBook->location->latitude,
+                    'longitude' => $locationBook->location->longitude,
+                    'quantity' => $locationBook->quantity,
+                ];
+            });
+        if (Auth::user()) {
+            $isFav = Favourite::where('book_id', $id)->where('user_id', Auth::id())->get();
+            return [
+                'book' => $book,
+                'similar' => $this->searchSimilar($book->title),
+                'details' => $this->searchBook($book->title),
+                'locations' => $locations,
+                'is_favourite' => $isFav
+            ];
+        } else {
+            return [
+                'book' => $book,
+                'similar' => $this->searchSimilar($book->title),
+                'details' => $this->searchBook($book->title),
+                'locations' => $locations
+            ];
+        }
     }
 
     public function getBooks(Request $request)
     {
-        return [
-            'books' => Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10),
-            'favourites' => Favourite::where('user_id', Auth::id())->get()
-        ];
-    }
-
-    public function getGuestBooks(Request $request)
-    {
-        return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10);
+        if(Auth::user()) {
+            return [
+                'books' => Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10),
+                'favourites' => Favourite::where('user_id', Auth::id())->get()
+            ];
+        } else {
+            return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10);
+        }
     }
 
     public function getRecommendBooks(Request $request)
@@ -77,11 +103,34 @@ class ClientController extends Controller
         return Book::getRecommendedBooks();;
     }
 
+    public function getFeatured(Request $request)
+    {
+        $limit = $request->input('limit', 7);
+
+        $books = Book::withCount('borrowedBooks') // borrowedBooks relationship exists in Book model
+        ->orderBy('borrowed_books_count', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return response()->json($books);
+    }
+
+    public function getRecent(Request $request)
+    {
+        $limit = $request->input('limit', 7);
+
+        $books = Book::whereHas('locations')
+            ->orderBy('updated_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return response()->json($books);
+    }
+
     public function getCheckouts(Request $request)
     {
         return BorrowedBook::with('book', 'location')->where('user_id', Auth::id())->filter($request->all())->paginate(10);
     }
-
 
     public function getFavourites(Request $request)
     {

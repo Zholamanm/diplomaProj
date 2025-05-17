@@ -1,27 +1,82 @@
 <template>
-  <div class="back"><a href="#">&#11178; shop</a></div>
-  <h1>Your Checkouts</h1>
-  <div class="container-fluid mt-5">
-    <div class="row align-items-start" style="justify-content: center;">
-      <div class="col-12 col-sm-8 items">
-        <div v-for="(item, index) in list" :key="index">
-          <div class="cartItem row align-items-start">
-            <div class="col-3 mb-2">
-              <img class="w-100" :src="`http://localhost:8000/storage/${item.book.cover_image}`" alt="art image">
-            </div>
-            <div class="col-5 mb-2">
-              <h6 class="">{{ item.book.title }}</h6>
-              <p class="pl-1 mb-0">{{ item.book.author }}</p>
-              <p class="pl-1 mb-0">{{ item.location.name }}</p>
-            </div>
-            <div class="col-2">
-              <p class="cartItemQuantity p-1 text-center">{{ item.quantity }}</p>
-            </div>
-            <div class="col-2">
-              <p id="cartItem1Price">{{ item.borrow_check }}</p>
+  <div class="checkout-container">
+    <!-- Back button -->
+    <div class="back">
+      <a href="#" class="back-link">&#11178; Back to Shop</a>
+    </div>
+
+    <!-- Title -->
+    <h1 class="checkout-title">Your Checkouts</h1>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="loading-state">
+      <div class="loader">
+        <svg viewBox="0 0 50 50">
+          <circle cx="25" cy="25" r="20" fill="none" stroke="#219e9a" stroke-width="5"></circle>
+        </svg>
+        <p>Loading checkouts...</p>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div v-else-if="!list || list.length === 0" class="empty-state">
+      <div class="empty-content">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#95a5a6" width="48" height="48">
+          <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
+        </svg>
+        <p>No books checked out yet</p>
+        <a href="#" class="browse-btn" @click="$router.push({name: 'CatalogView', params: {locale: $route.params.locale}})">Browse Books</a>
+      </div>
+    </div>
+
+    <!-- Checkout Items -->
+    <div v-else class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-12">
+          <div class="checkout-items">
+            <div v-for="(item, index) in list" :key="index" class="checkout-item">
+              <div class="row align-items-center">
+                <!-- Book Cover -->
+                <div class="col-4 col-sm-3">
+                  <img
+                      class="book-cover"
+                      :src="`http://localhost:8000/storage/${item.book.cover_image}`"
+                      :alt="item.book.title"
+                      @error="handleImageError"
+                  >
+                </div>
+
+                <!-- Book Info -->
+                <div class="col-5 col-sm-5 book-info" style="display: flex; gap: 150px">
+                  <div style="align-content: center;">
+                    <p class="book-location">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#219e9a">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      </svg>
+                      {{ item.location.name }}
+                    </p>
+                  </div>
+                  <div>
+                    <h5 class="book-title">{{ item.book.title }}</h5>
+                    <p class="book-author">{{ item.book.author }}</p>
+                  </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="col-1 col-sm-1 text-center">
+                  <span class="quantity-badge">{{ item.quantity }}</span>
+                </div>
+
+                <!-- Status -->
+                <div class="col-2 col-sm-2 text-end">
+                  <span class="status" :class="{'text-success': item.borrow_check === 'Active', 'text-warning': item.borrow_check !== 'Active'}">
+                    CODE: {{ item.borrow_check }}
+                  </span>
+                </div>
+              </div>
+              <hr class="item-divider" v-if="list.length !== 1">
             </div>
           </div>
-          <hr>
         </div>
       </div>
     </div>
@@ -102,6 +157,9 @@ export default {
     }
   },
   methods: {
+    handleImageError(e) {
+      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+    },
     dropList() {
       this.list = [];
       this.page = 1;
@@ -127,6 +185,7 @@ export default {
       }
     },
     getList() {
+      this.loading = true
       clientApi.getCheckoutList({
         ...this.filters,
         search: this.searchQuery,
@@ -150,201 +209,178 @@ export default {
 @import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
 </style>
 <style scoped>
-#cart {
-  max-width: 1440px;
-  padding-top: 60px;
-  margin: auto;
+.checkout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Lato', sans-serif;
+  min-height: calc(100vh - 150px); /* Adjust based on your header height */
 }
 
-.form div {
-  margin-bottom: 0.4em;
-}
-
-.cartItem {
-  --bs-gutter-x: 1.5rem;
-}
-
-.cartItemQuantity,
-.proceed {
-  background: #f4f4f4;
-}
-
-.items {
-  padding-right: 30px;
-}
-
-#btn-checkout {
-  min-width: 100%;
-}
-
-/* stasysiia.com */
-@import url("https://fonts.googleapis.com/css2?family=Exo&display=swap");
-body {
-  background-color: #fff;
-  font-family: "Exo", sans-serif;
-  font-size: 22px;
-  margin: 0;
-  padding: 0;
-  color: #111111;
-  justify-content: center;
+.empty-state {
+  display: flex;
   align-items: center;
-}
-
-a {
-  color: #0e1111;
-  text-decoration: none;
-}
-
-.btn-check:focus + .btn-primary,
-.btn-primary:focus {
-  color: #fff;
-  background-color: #111;
-  border-color: transparent;
-  box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
-}
-
-button:hover,
-.btn:hover {
-  box-shadow: 5px 5px 7px #c8c8c8, -5px -5px 7px white;
-}
-
-button:active {
-  box-shadow: 2px 2px 2px #c8c8c8, -2px -2px 2px white;
-}
-
-/*PREVENT BROWSER SELECTION*/
-a:focus,
-button:focus,
-input:focus,
-textarea:focus {
-  outline: none;
-}
-
-/*main*/
-main:before {
-  content: "";
-  display: block;
-  height: 88px;
-}
-
-h1 {
-  font-size: 2.4em;
-  font-weight: 600;
-  letter-spacing: 0.15rem;
+  justify-content: center;
+  min-height: 60vh; /* Takes majority of viewport */
   text-align: center;
-  margin: 30px 6px;
+  margin-top: -2rem; /* Compensate for container padding */
 }
 
-h2 {
-  color: rgb(37, 44, 54);
-  font-weight: 700;
-  font-size: 2.5em;
+.empty-content {
+  max-width: 300px;
+  margin: 0 auto;
 }
 
-h3 {
-  border-bottom: solid 2px #000;
-}
-
-h5 {
-  padding: 0;
-  font-weight: bold;
-  color: #92afcc;
-}
-
-p {
-  color: #333;
-  font-family: "Roboto", sans-serif;
-  margin: 0.6em 0;
-}
-
-h1,
-h2,
-h4 {
-  text-align: center;
-  padding-top: 16px;
-}
-
-/* yukito bloody */
 .back {
-  position: relative;
-  top: -30px;
-  font-size: 16px;
-  margin: 10px 10px 3px 15px;
+  margin-bottom: 1rem;
 }
 
-.inline {
-  display: inline-block;
-}
-
-.shopnow,
-.contact {
-  background-color: #000;
-  padding: 10px 20px;
-  font-size: 30px;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.5s;
-  cursor: pointer;
-}
-
-.shopnow:hover {
+.back-link {
+  color: #219e9a;
+  font-weight: 500;
   text-decoration: none;
-  color: white;
-  background-color: #c41505;
+  transition: color 0.2s;
 }
 
-/* for button animation*/
-.shopnow span {
-  cursor: pointer;
+.back-link:hover {
+  color: #1a7f7b;
+}
+
+.checkout-title {
+  font-size: 2rem;
+  color: #12263a;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-family: 'Roboto Slab', serif;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.loader svg {
+  width: 50px;
+  height: 50px;
+  animation: rotate 1s linear infinite;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.empty-state svg {
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  color: #95a5a6;
+  margin-bottom: 1.5rem;
+}
+
+.browse-btn {
   display: inline-block;
-  position: relative;
-  transition: all 0.5s;
+  padding: 0.5rem 1.5rem;
+  background: #219e9a;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.2s;
 }
 
-.shopnow span:after {
-  content: url("https://badux.co/smc/codepen/caticon.png");
-  position: absolute;
-  font-size: 30px;
-  opacity: 0;
-  top: 2px;
-  right: -6px;
-  transition: all 0.5s;
+.browse-btn:hover {
+  background: #1a7f7b;
+  color: white;
 }
 
-.shopnow:hover span {
-  padding-right: 25px;
+.checkout-items {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
 }
 
-.shopnow:hover span:after {
-  opacity: 1;
-  top: 2px;
-  right: -6px;
+.checkout-item {
+  margin-bottom: 1rem;
 }
 
-.ma {
-  margin: auto;
+.book-cover {
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.price {
-  color: slategrey;
-  font-size: 2em;
+.book-info {
+  padding-left: 1rem;
 }
 
-#mycart {
-  min-width: 90px;
+.book-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #12263a;
 }
 
-#cartItems {
-  font-size: 17px;
+.book-author {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
 }
 
-#product .container .row .pr4 {
-  padding-right: 15px;
+.book-location {
+  font-size: 0.875rem;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-#product .container .row .pl4 {
-  padding-left: 15px;
+.quantity-badge {
+  display: inline-block;
+  background: #f4f4f4;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
+.status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-warning {
+  color: #ffc107;
+}
+
+.item-divider {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 576px) {
+  .book-title {
+    font-size: 0.875rem;
+  }
+
+  .book-author,
+  .book-location {
+    font-size: 0.75rem;
+  }
+}
 </style>

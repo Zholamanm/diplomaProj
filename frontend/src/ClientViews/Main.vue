@@ -1,8 +1,8 @@
 <template>
   <div id="main-container" class="main-container nav-effect-1">
     <header-view @update-search="handleSearchQuery"></header-view>
-    <router-view :search-query="searchQuery"></router-view>
-    <footer-view @update-search="handleSearchQuery"></footer-view>
+    <router-view :search-query="searchQuery" @update-search="handleSearchQuery"></router-view>
+    <footer-view></footer-view>
   </div>
 <!--  <div class="main-overlay-nav" style="z-index: 10;">-->
 <!--    <div class="overlay-full"></div>-->

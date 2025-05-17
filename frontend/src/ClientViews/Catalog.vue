@@ -260,6 +260,9 @@ export default {
         }
       }
     },
+    handleImageError(e) {
+      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+    },
     showBookDetails(event, book) {
       const $el = $(event.currentTarget).closest('.book-item');
       this.selectedBook = book
@@ -295,7 +298,7 @@ export default {
       if (this.isAuthorized) {
         clientApi.getList({
           ...this.filters,
-          search: this.searchQuery,
+          search: this.searchQuery ?? this.$route.query.search,
           page: this.page,
         }).then(res => {
           this.list = res.books.data;

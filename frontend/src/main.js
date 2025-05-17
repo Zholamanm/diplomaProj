@@ -9,6 +9,7 @@ import 'v3-infinite-loading/lib/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createHead } from '@vueuse/head';
 import { messaging, onMessage } from '@/firebase';
+import './assets/styles.css';
 
 const app = createApp(App);
 const head = createHead(); // Create an instance

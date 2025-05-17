@@ -13,13 +13,70 @@
     animation: spin 1s linear infinite;
 }
 
-body {
-    background: linear-gradient(to bottom, #f9f9f9, #fff);
-}
+/* styles/variables.css */
+:root {
+    /* Colors */
+    --primary: #219e9a;
+    --primary-dark: #1a7f7b;
+    --secondary: #2c3e50;
+    --accent: #ef9f00;
+    --danger: #e74c3c;
+    --success: #28a745;
 
+    /* Neutrals */
+    --light: #f8f9fa;
+    --medium: #e9ecef;
+    --dark: #495057;
+    --darker: #343a40;
+
+    /* Typography */
+    --font-sans: 'Lato', sans-serif;
+    --font-serif: 'Roboto Slab', serif;
+
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 20px rgba(0,0,0,0.16);
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
 
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+/* Add to your global styles */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity var(--transition-normal);
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+    transition: all var(--transition-normal);
+}
+.slide-up-enter-from,
+.slide-up-leave-to {
+    transform: translateY(20px);
+    opacity: 0;
 }

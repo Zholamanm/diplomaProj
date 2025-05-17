@@ -8,6 +8,7 @@ import Checkout from "@/ClientViews/Checkout.vue";
 import Favourites from "@/ClientViews/Favourites.vue";
 import About from "@/ClientViews/About.vue";
 import Book from "@/ClientViews/Book.vue";
+import Home from "@/ClientViews/Home.vue";
 
 const clientRoutes = [
     {
@@ -15,6 +16,11 @@ const clientRoutes = [
         name: 'ClientMainView',
         component: Main,
         children: [
+            {
+                path: '',
+                name: 'HomeView',
+                component: Home,
+            },
             {
                 path: 'catalog',
                 name: 'CatalogView',

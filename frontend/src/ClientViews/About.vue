@@ -1,37 +1,94 @@
 <template>
-  <div class="book-section">
-    <p>About us</p>
-    <div class="container">
-      <div class="right">
-        <figure class="back" id="back-cover"></figure>
-        <figure class="front" style="background-image: url('https://pixabay.com/get/gddfa70a7eb05131eb1d3bd2b6667e4397d3ca559b02e638b999fb15096eb5e6ca30d20cc903f216003acb583eb7ed64c_1280.jpg');"></figure>
+  <div class="about-page">
+    <h1 class="page-title">Our Story</h1>
+    <p class="page-subtitle">Discover the journey behind our book-sharing community</p>
+
+    <div class="book-carousel">
+      <div class="container">
+        <!-- Page 1: Cover -->
+        <div class="right">
+          <figure class="back" id="back-cover"></figure>
+          <figure class="front" id="cover">
+            <div class="cover-content">
+              <h1>BookShare</h1>
+              <p class="tagline">Connecting readers since 2023</p>
+              <div class="cover-logo">📚</div>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Page 2: Mission -->
+        <div class="right">
+          <figure class="back" style="background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></figure>
+          <figure class="front">
+            <div class="page-content">
+              <h2>Our Mission</h2>
+              <p>To make reading accessible to everyone by creating a community where books can be shared, borrowed, and enjoyed without barriers.</p>
+              <div class="icon">💫</div>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Page 3: Community -->
+        <div class="right">
+          <figure class="back" style="background-image: url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></figure>
+          <figure class="front">
+            <div class="page-content">
+              <h2>The Community</h2>
+              <p>Over 10,000 members strong, our platform connects book lovers across the country. Join discussions, share recommendations, and meet fellow bibliophiles.</p>
+              <div class="icon">👥</div>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Page 4: Features -->
+        <div class="right">
+          <figure class="back" style="background-image: url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></figure>
+          <figure class="front">
+            <div class="page-content">
+              <h2>Unique Features</h2>
+              <ul>
+                <li>Real-time book availability</li>
+                <li>Personalized recommendations</li>
+                <li>Local pickup locations</li>
+                <li>Reading challenges</li>
+              </ul>
+              <div class="icon">✨</div>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Page 5: Team -->
+        <div class="right">
+          <figure class="back" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></figure>
+          <figure class="front">
+            <div class="page-content">
+              <h2>Our Team</h2>
+              <p>Founded by a group of passionate readers and tech enthusiasts who believe books should be shared, not shelved.</p>
+              <div class="icon">❤️</div>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Page 6: Join Us -->
+        <div class="right">
+          <figure class="back" style="background-image: url('https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></figure>
+          <figure class="front">
+            <div class="page-content">
+              <h2>Join Us</h2>
+              <p>Ready to start your book-sharing journey?</p>
+              <button class="join-btn">Become a Member</button>
+              <div class="icon">📖</div>
+            </div>
+          </figure>
+        </div>
       </div>
-      <div class="right">
-        <figure class="back" style="background-image: url('https://pixabay.com/get/gddfa70a7eb05131eb1d3bd2b6667e4397d3ca559b02e638b999fb15096eb5e6ca30d20cc903f216003acb583eb7ed64c_1280.jpg');"></figure>
-        <figure class="front" style="background-image: url('https://pixabay.com/get/gb46f858d834c467d012d890214ee584025e70645dce58f87ef359bc4186c324cf80799862710eed4631eaf0464a6a3c6_1280.jpg');"></figure>
-      </div>
-      <div class="right">
-        <figure class="back" style="background-image: url('https://pixabay.com/get/gb46f858d834c467d012d890214ee584025e70645dce58f87ef359bc4186c324cf80799862710eed4631eaf0464a6a3c6_1280.jpg');"></figure>
-        <figure class="front" style="background-image: url('https://pixabay.com/get/g4df987b5bfa39878c10050859486a03f198027e2212376a2ccf6355644691efde0afe432da7e6644dd54fa12b3454a38_1280.jpg');"></figure>
-      </div>
-      <div class="right">
-        <figure class="back" style="background-image: url('https://pixabay.com/get/g4df987b5bfa39878c10050859486a03f198027e2212376a2ccf6355644691efde0afe432da7e6644dd54fa12b3454a38_1280.jpg');"></figure>
-        <figure class="front" style="background-image: url('https://pixabay.com/get/g21bf4539dcf9431362b0cdf0abd78d2578e9be101332dde74784aa43999043165f97edf8cbeffb236be99665f51bb560_1280.jpg');"></figure>
-      </div>
-      <div class="right">
-        <figure class="back" style="background-image: url('https://pixabay.com/get/g21bf4539dcf9431362b0cdf0abd78d2578e9be101332dde74784aa43999043165f97edf8cbeffb236be99665f51bb560_1280.jpg');"></figure>
-        <figure class="front" style="background-image: url('https://pixabay.com/get/ge136176f664b9cbc9bcb02ab48ec235083d9c4d7d7acee2f5a95098484cfb887e98c58aa4084f9f8bd6fc8c015be7ca0_1280.png');">Hello</figure>
-      </div>
-      <div class="right">
-        <figure class="back" style="background-image: url('https://pixabay.com/get/ge136176f664b9cbc9bcb02ab48ec235083d9c4d7d7acee2f5a95098484cfb887e98c58aa4084f9f8bd6fc8c015be7ca0_1280.png');"></figure>
-        <figure class="front" id="cover">
-          <h1>Book Title</h1>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, modi.</p>
-        </figure>
+
+      <div class="controls">
+        <button class="nav-button left-button" @click="turnLeft">‹</button>
+        <button class="nav-button right-button" @click="turnRight">›</button>
       </div>
     </div>
-    <button class="left-button">Prev</button> <button class="right-button">Next</button>
-    <br/>
   </div>
 </template>
 <script>
@@ -100,107 +157,203 @@ export default {
 @import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
 </style>
 <style scoped>
-.book-section{
-  height: 100vh;
-  width: 100%;
-  padding: 40px 0;
+.about-page {
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f9f9f9 0%, #e8f4f8 100%);
   text-align: center;
+  font-family: 'Lato', sans-serif;
 }
-.book-section > .container{
-  height: 400px;
-  width: 500px;
+
+.page-title {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-family: 'Roboto Slab', serif;
+}
+
+.page-subtitle {
+  color: #7f8c8d;
+  margin-bottom: 3rem;
+  font-size: 1.2rem;
+}
+
+.book-carousel {
+  max-width: 900px;
+  margin: 0 auto;
   position: relative;
-  border-radius: 2%;
-  margin-bottom: 30px;
+}
+
+.container {
+  height: 500px;
+  width: 700px;
+  position: relative;
+  margin: 0 auto;
   perspective: 1200px;
 }
-.container > .right{
+
+.right {
   position: absolute;
   height: 100%;
   width: 50%;
   transition: 0.7s ease-in-out;
   transform-style: preserve-3d;
-}
-.book-section > .container > .right{
-  right:0;
+  right: 0;
   transform-origin: left;
-  border-radius: 10px 0 0 10px;
 }
-.right > figure.front, .right > figure.back{
+
+.right > figure.front,
+.right > figure.back {
   margin: 0;
   height: 100%;
   width: 100%;
   position: absolute;
-  left:0;
-  top:0;
-  background-size: 200%;
-  background-repeat: no-repeat;
+  left: 0;
+  top: 0;
+  background-size: cover;
+  background-position: center;
   backface-visibility: hidden;
-  background-color: white;
   overflow: hidden;
+  border-radius: 5px;
 }
-.right > figure.front{
-  background-position: right;
-  border-radius: 0 10px 10px 0;
-  box-shadow: 2px 2px 15px -2px rgba(0,0,0,0.2);
+
+.right > figure.front {
+  background-color: #ffffff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
 }
-.right > figure.back{
-  background-position: left;
-  border-radius: 10px 0 0 10px;
-  box-shadow: -2px 2px 15px -2px rgba(0,0,0,0.2);
+
+.right > figure.back {
   transform: rotateY(180deg);
 }
-.flip{
+
+.flip {
   transform: rotateY(-180deg);
 }
-.flip::before{
-  content: "";
-  position: absolute;
-  top:0;
-  left:0;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
-  border-radius: 0 10px 10px 0;
-  background-color: rgba(0,0,0,0.1);
+
+.controls {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
-.book-section > button{
-  border: 2px solid #ef9f00;
-  background-color: transparent;
-  color: #ef9f00;
-  padding: 10px 20px;
-  border-radius: 5px;
+
+.nav-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: #219e9a;
+  color: white;
+  font-size: 1.5rem;
   cursor: pointer;
-  margin: 10px;
-  transition: 0.3s ease-in-out;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.book-section > button:focus, .book-section > button:active{
-  outline: none;
+
+.nav-button:hover {
+  background: #1a7f7b;
+  transform: scale(1.1);
 }
-.book-section > p{
-  color: rgba(0,0,0,0.7);
-  font-family: calibri;
-  font-size: 24px;
+
+/* Page Content Styles */
+.page-content {
+  max-width: 90%;
+  text-align: center;
 }
-.book-section > p > a{
-  text-decoration: none;
-  color: #ef9f00;
+
+.page-content h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-family: 'Roboto Slab', serif;
 }
-.book-section > button:hover{
-  background-color: #ef9f00;
-  color: #fff;
+
+.page-content p {
+  color: #34495e;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
 }
-.front#cover, .back#back-cover{
-  background-color: #ffcb63;
-  font-family: calibri;
+
+.page-content ul {
   text-align: left;
-  padding: 0 30px;
+  padding-left: 1.5rem;
 }
-.front#cover h1{
-  color: #fff;
+
+.page-content li {
+  margin-bottom: 0.5rem;
+  color: #34495e;
 }
-.front#cover p{
-  color: rgba(0,0,0,0.8);
-  font-size: 14px;
+
+.icon {
+  font-size: 2.5rem;
+  margin-top: 1rem;
+  opacity: 0.8;
+}
+
+/* Cover Styles */
+#cover {
+  background: linear-gradient(135deg, #ffcb63 0%, #ef9f00 100%);
+}
+
+.cover-content {
+  text-align: center;
+  color: white;
+}
+
+.cover-content h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.tagline {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.cover-logo {
+  font-size: 4rem;
+  margin-top: 2rem;
+}
+
+/* Join Button */
+.join-btn {
+  padding: 0.8rem 2rem;
+  background: #219e9a;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1rem;
+}
+
+.join-btn:hover {
+  background: #1a7f7b;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    width: 90%;
+    height: 400px;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .page-content {
+    padding: 1rem;
+  }
 }
 </style>

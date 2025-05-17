@@ -8,7 +8,7 @@ import adminRoutes from "@/router/admin";
 const routes = [
   {
     path: '/',
-    redirect: '/ru/catalog',
+    redirect: '/ru',
     beforeEnter: checkLocale,
   },
   {
