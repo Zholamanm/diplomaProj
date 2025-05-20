@@ -4,6 +4,7 @@ import borrowRoutes from "@/router/admin/borrow";
 import blackListRoutes from "@/router/admin/blackList";
 import Login from "@/views/Login.vue";
 import categoryRoutes from "@/router/admin/category";
+import genreRoutes from "@/router/admin/genre";
 import tagRoutes from "@/router/admin/tag";
 
 const adminRoutes = [
@@ -12,6 +13,7 @@ const adminRoutes = [
     ...borrowRoutes,
     ...blackListRoutes,
     ...categoryRoutes,
+    ...genreRoutes,
     ...tagRoutes,
     {
         path: 'login',

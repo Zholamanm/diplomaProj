@@ -37,13 +37,19 @@ class BookAvailableNotification extends Notification
         return ['firebase'];
     }
 
-    public function toFirebase($notifiable)
+    public function toFirebase($notifiable): CloudMessage
     {
-        return CloudMessage::withTarget('token', $notifiable->fcm_token)
-            ->withNotification(FirebaseNotification::create(
-                'Book Available!',
-                "The book '{$this->locationBook->book->title}' is now available at location '{$this->locationBook->location->name}'."
-            ));
+        // note: we re-use their fcm_token here to target this client
+        $token = $notifiable->fcm_token;
+
+        $title = 'Book Available!';
+        $body  = "The book '{$this->locationBook->book->title}' is now available at '{$this->locationBook->location->name}'.";
+
+        return CloudMessage::withTarget('token', $token)
+            ->withNotification(FirebaseNotification::create($title, $body))
+            ->withData([
+                'location_book_id' => (string) $this->locationBook->id,
+            ]);
     }
 
     /**

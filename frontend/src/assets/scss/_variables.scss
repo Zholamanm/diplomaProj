@@ -1,0 +1,26 @@
+// Colors
+$primary:       #219e9a;
+$primary-light: rgba($primary, 0.1);
+$secondary:     #6c757d;
+$bg-light:      #f8f9fa;
+$bg-white:      #ffffff;
+$text-dark:     #313131;
+$text-muted:    #6c757d;
+
+// Typography
+$font-sans:     'Lato', sans-serif;
+$font-serif:    'Roboto Slab', serif;
+$h1-size:       3.5rem;
+$h2-size:       2.2rem;
+$body-size:     1rem;
+
+// Spacing
+$spacer:        1rem;
+$spacer-sm:     0.5rem;
+$spacer-lg:     2rem;
+
+// Breakpoints
+$break-sm:      576px;
+$break-md:      768px;
+$break-lg:      1024px;
+$break-xl:      1200px;

@@ -303,6 +303,9 @@ export default {
         page: this.page,
       }).then( res => {
         this.list = res.data
+        this.total = res.total
+        this.page = res.page;
+        this.last_page = res.last_page;
         this.$nextTick(() => {
           this.initBookAnimations();
         });

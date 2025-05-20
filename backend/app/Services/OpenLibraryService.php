@@ -40,7 +40,7 @@ class OpenLibraryService
     {
         $response = Http::get("{$this->baseUrl}/search.json", [
             'title' => $query,
-            'limit' => 1,
+            'limit' => 10,
         ]);
 
         if ($response->successful()) {

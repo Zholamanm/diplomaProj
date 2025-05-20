@@ -33,6 +33,11 @@ class Category extends Model
         return $this->hasMany(Book::class);
     }
 
+    public function genres()
+    {
+        return $this->hasMany(Genre::class);
+    }
+
     public function scopeFilter($query, $filters)
     {
         if (isset($filters['search']))

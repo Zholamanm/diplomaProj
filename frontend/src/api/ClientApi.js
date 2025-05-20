@@ -11,17 +11,29 @@ const ClientApi = {
     getRecommendList(data) {
         return client.get('/api/client/books/recommend', {params: data}).then(res => res.data);
     },
+    getSimilarList(data) {
+        return client.get('/api/client/books/similar', {params: data}).then(res => res.data);
+    },
     getFeaturedList(data) {
         return client.get('/api/client/books/recent', {params: data}).then(res => res.data);
     },
     getRecentList(data) {
         return client.get('/api/client/books/featured', {params: data}).then(res => res.data);
     },
+    getCategoriesWithMostBorrowed(data) {
+        return client.get('/api/client/books/categories', {params: data}).then(res => res.data);
+    },
+    getCategoryWithBooks(id) {
+        return client.get(`/api/client/categories/${id}/books`).then(res => res.data);
+    },
     getCheckoutList(data) {
         return client.get('/api/client/checkout', {params: data}).then(res => res.data);
     },
     getLocations(id) {
         return client.get('/api/client/book/locations/' + id).then(res => res.data);
+    },
+    getLocationList(data) {
+        return client.get('/api/client/locations', {params: data}).then(res => res.data);
     },
     getClientBookById(id) {
         return client.get('/api/client/books/' + id).then(res => res.data);

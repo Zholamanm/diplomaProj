@@ -28,6 +28,7 @@ class BookController extends Controller
             'description' => 'required|string',
             'category_id' => 'nullable',
             'tags_id' => 'nullable|array',
+            'genres_id' => 'nullable|array',
             'cover_image' => 'nullable|file|mimes:jpg,png,jpeg,gif|max:2048',
         ]);
 
@@ -47,6 +48,9 @@ class BookController extends Controller
         if (!empty($validated['tags_id'])) {
             $book->tags()->sync($validated['tags_id']);
         }
+        if (!empty($validated['genres_id'])) {
+            $book->genres()->sync($validated['genres_id']);
+        }
 
         return ['success' => true];
     }
@@ -59,6 +63,7 @@ class BookController extends Controller
             'description' => 'required|string',
             'category_id' => 'nullable',
             'tags_id'     => 'nullable|array',
+            'genres_id'     => 'nullable|array',
             'cover_image' => 'sometimes|nullable|file|image|max:2048',
         ]);
 
@@ -86,6 +91,11 @@ class BookController extends Controller
         } else {
             $book->tags()->sync([]);
         }
+        if (array_key_exists('genres_id', $validated)) {
+            $book->genres()->sync($validated['genres_id']);
+        } else {
+            $book->genres()->sync([]);
+        }
 
         return ['success' => true];
     }
@@ -93,7 +103,7 @@ class BookController extends Controller
 
     public function view($id)
     {
-        return Book::where('id', $id)->with('tags')->first();
+        return Book::where('id', $id)->with('tags', 'genres')->first();
     }
 
     public function destroy($id)

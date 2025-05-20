@@ -61,12 +61,14 @@ export default {
     },
   },
   mounted() {
-
     document.body.classList.add('sidebar-mini');
     document.body.classList.add('layout-fixed');
     window.$ = window.jQuery = $;
     this.loadScript("/plugins/select2/js/select2.full.min.js", () => {
       $('.select2bs4').select2({ theme: 'bootstrap4' });
+      window.initializeSelect2 = () => {
+        $('.select2bs4').select2({ theme: 'bootstrap4' });
+      };
     });
     this.loadScript("/plugins/bootstrap/js/bootstrap.bundle.min.js");
 

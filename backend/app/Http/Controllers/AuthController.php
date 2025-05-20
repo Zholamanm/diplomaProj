@@ -144,7 +144,6 @@ class AuthController extends Controller
     public function loginWithGoogle(Request $request)
     {
         $idTokenString = $request->input('idToken');
-
         try {
             $firebase = (new Factory)
                 ->withServiceAccount(env('FIREBASE_CREDENTIALS'))

@@ -116,7 +116,7 @@ export default {
       try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-          const vapidKey = 'YOUR_VAPID_KEY_HERE';
+          const vapidKey = 'BA4R0_gkHFZmIsSzW0luYnMF9cHpvwLLepxatb9jU2o31pZwobYQGYHhwZ8mmgTj2kQuS7vvEhN1JzwO7SFRxuY';
           const currentToken = await getToken(messaging, { vapidKey });
           if (currentToken) {
             await authApi.setFcmToken(currentToken);

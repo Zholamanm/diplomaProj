@@ -57,6 +57,10 @@ class Book extends Model
         return $this->belongsToMany(Tag::class, 'book_tags')->using(BookTag::class);
     }
 
+    public function genres() {
+        return $this->belongsToMany(Genre::class, 'book_genres')->using(BookGenre::class);
+    }
+
     public function reviews() {
         return $this->hasMany(Review::class);
     }
@@ -89,6 +93,18 @@ class Book extends Model
             }elseif($filters['sortBy'] == 1) {
                 $query->reorder()->orderBy('title', 'desc');;
             }
+        }
+
+        if (isset($filters['genre_id'])) {
+            $query->whereHas('genres', function ($q) use ($filters) {
+                $q->where('genres.id', $filters['genre_id']);
+            });
+        }
+
+        if (!empty($filters['tags']) && is_array($filters['tags'])) {
+            $query->whereHas('tags', function ($q) use ($filters) {
+                $q->whereIn('tags.id', $filters['tags']);
+            });
         }
 
         if (isset($filters['selectedCategory'])) {

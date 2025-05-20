@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\BorrowedBook;
+use App\Models\Category;
 use App\Models\Favourite;
 use App\Models\Location;
 use App\Models\LocationBook;
 use App\Services\GeoapifyService;
+use App\Services\GoogleBookService;
 use App\Services\OpenLibraryService;
+use App\Services\WikipediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -22,13 +25,6 @@ class ClientController extends Controller
     {
         $this->openLibrary = $openLibrary;
         $this->geoapify = $geoapify;
-    }
-
-    public function searchSimilar($title)
-    {
-        $results = $this->openLibrary->searchBooks($title);
-
-        return response()->json($results);
     }
 
     public function searchBook($title)
@@ -51,7 +47,7 @@ class ClientController extends Controller
     }
     public function getBookById($id)
     {
-        $book = Book::with('category', 'tags')->find($id);
+        $book = Book::with('category', 'tags', 'genres')->find($id);
 
         $locations = LocationBook::where('book_id', $id)
             ->where('quantity', '>', 0)
@@ -61,7 +57,6 @@ class ClientController extends Controller
                 return [
                     'id' => $locationBook->location->id,
                     'name' => $locationBook->location->name,
-                    'address' => $locationBook->location->address,
                     'latitude' => $locationBook->location->latitude,
                     'longitude' => $locationBook->location->longitude,
                     'quantity' => $locationBook->quantity,
@@ -69,21 +64,64 @@ class ClientController extends Controller
             });
         if (Auth::user()) {
             $isFav = Favourite::where('book_id', $id)->where('user_id', Auth::id())->get();
+            $details = $this->searchBook($book->title);
             return [
                 'book' => $book,
-                'similar' => $this->searchSimilar($book->title),
-                'details' => $this->searchBook($book->title),
+                'similar' => $details,
+                'details' => $details,
                 'locations' => $locations,
                 'is_favourite' => $isFav
             ];
         } else {
+            $details = $this->searchBook($book->title);
             return [
                 'book' => $book,
-                'similar' => $this->searchSimilar($book->title),
-                'details' => $this->searchBook($book->title),
+                'similar' => $details,
+                'details' => $details,
                 'locations' => $locations
             ];
         }
+    }
+
+    public function getCategoryWithBooks($id)
+    {
+        $wikipediaService = new WikipediaService();
+        $googleBookService = new GoogleBookService();
+        $category = Category::with(['genres', 'books' => function($query) {
+            $query->withCount('borrowedBooks')
+                ->orderBy('borrowed_books_count', 'desc')
+                ->with('genres', 'tags');
+        }])->findOrFail($id);
+        $subject = request('subject', $category->name);
+        // Get Wikipedia data
+        $wikipediaData = [
+            'info' => $wikipediaService->getCategoryInfo($category->name),
+            'history' => $wikipediaService->getCategoryHistory($category->name),
+            'notable_books' => $googleBookService->getBooksBySubject($subject, 5),
+            'authors' => $wikipediaService->getNotableAuthors($category->name)
+        ];
+
+        return response()->json([
+            'data' => [
+                'category' => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'genres' => $category->genres
+                ],
+                'books' => $category->books->map(function($book) {
+                    return [
+                        'id' => $book->id,
+                        'title' => $book->title,
+                        'author' => $book->author,
+                        'description' => $book->description,
+                        'cover_image' => $book->cover_image,
+                        'genres' => $book->genres,
+                        'tags' => $book->tags
+                    ];
+                }),
+                'wikipedia' => $wikipediaData
+            ]
+        ]);
     }
 
     public function getBooks(Request $request)
@@ -94,13 +132,50 @@ class ClientController extends Controller
                 'favourites' => Favourite::where('user_id', Auth::id())->get()
             ];
         } else {
-            return Book::orderBy('id', 'DESC')->filter($request->all())->paginate(10);
+            return Book::with('category', 'tags')->orderBy('id', 'DESC')->filter($request->all())->paginate(10);
         }
     }
 
     public function getRecommendBooks(Request $request)
     {
-        return Book::getRecommendedBooks();;
+        return Book::getRecommendedBooks();
+    }
+
+    public function getSimilarBooks(Request $request)
+    {
+        $data = $request->validate([
+            'category_id' => 'nullable',
+            'tags'        => 'nullable',
+            'genre_id'        => 'nullable',
+        ]);
+
+        // 2) Build the query—matching category OR any of the tags OR the one genre:
+        $query = Book::query()
+            ->where(function ($q) use ($data) {
+                if (! empty($data['category_id'])) {
+                    $q->where('category_id', $data['category_id']);
+                }
+
+                if (! empty($data['tags'])) {
+                    $q->orWhereHas('tags', function ($q2) use ($data) {
+                        $q2->whereIn('tags.id', $data['tags']);
+                    });
+                }
+                if (! empty($data['genre_id'])) {
+                    $q->orWhereHas('tags', function ($q2) use ($data) {
+                        $q2->whereIn('tags.id', $data['tags']);
+                    });
+                }
+            });
+
+        $similar = $query
+            ->inRandomOrder()
+            ->limit(7)
+            ->get();
+
+        return response()->json([
+            'data' => $similar
+        ]);
     }
 
     public function getFeatured(Request $request)
@@ -125,6 +200,29 @@ class ClientController extends Controller
             ->get();
 
         return response()->json($books);
+    }
+
+    public function getCategoriesWithMostBorrowedBooks()
+    {
+        $categories = Category::with(['books' => function($query) {
+            $query->withCount('borrowedBooks')
+                ->orderBy('borrowed_books_count', 'desc')
+                ->take(1); // Get only the most borrowed book
+        }])
+            ->limit(7) // Limit to 7 categories
+            ->get()
+            ->map(function($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'book' => $category->books->first() ? [
+                        'cover_image' => $category->books->first()->cover_image,
+                        'title' => $category->books->first()->title
+                    ] : null
+                ];
+            });
+
+        return response()->json($categories);
     }
 
     public function getCheckouts(Request $request)
@@ -178,7 +276,6 @@ class ClientController extends Controller
                 return [
                     'id' => $locationBook->location->id,
                     'name' => $locationBook->location->name,
-                    'address' => $locationBook->location->address,
                     'latitude' => $locationBook->location->latitude,
                     'longitude' => $locationBook->location->longitude,
                     'quantity' => $locationBook->quantity,
@@ -212,7 +309,6 @@ class ClientController extends Controller
                 'location' => [
                     'id' => $locationBook->location->id,
                     'name' => $locationBook->location->name,
-                    'address' => $locationBook->location->address,
                     'latitude' => $locationBook->location->latitude,
                     'longitude' => $locationBook->location->longitude,
                     'quantity' => $locationBook->quantity,
@@ -221,6 +317,47 @@ class ClientController extends Controller
                 'shops' => $shops
             ];
         });
+    }
+
+    public function getLocationList(Request $request)
+    {
+        // Get books with their available locations
+        $books = Book::query()
+            ->with(['locations' => function($query) {
+                $query->where('quantity', '>', 0)
+                    ->select('locations.id', 'name', 'latitude', 'longitude')
+                    ->withPivot('quantity');
+            }], 'category')
+            ->whereHas('locations', function($query) {
+                $query->where('quantity', '>', 0);
+            })
+            ->whereHas('category')
+            ->select('books.id', 'title', 'author', 'description', 'cover_image', 'category_id', 'updated_at')
+            ->get();
+
+        // Transform the data to match frontend expectations
+        $transformedData = [];
+
+        foreach ($books as $book) {
+            foreach ($book->locations as $location) {
+                $transformedData[] = [
+                    'id' => $book->id,
+                    'title' => $book->title,
+                    'author' => $book->author,
+                    'description' => $book->description,
+                    'cover_image' => $book->cover_image,
+                    'category' => $book->category->name,
+                    'available_copies' => $location->pivot->quantity,
+                    'latitude' => $location->latitude,
+                    'longitude' => $location->longitude,
+                    'location_id' => $location->id,
+                    'location_name' => $location->name,
+                    'last_activity' => $book->updated_at->toIso8601String()
+                ];
+            }
+        }
+
+        return $transformedData;
     }
 
     public function borrow(Request $request)

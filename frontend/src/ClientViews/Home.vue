@@ -44,9 +44,9 @@
         <div class="stat-label">Pickup Locations</div>
       </div>
     </section>
-
+    <categories-list />
     <!-- Interactive Book Globe -->
-
+<!--    <top-book-list />-->
     <!-- Personalized Recommendations -->
     <section class="personalized-section">
       <h2 class="section-title">Curated Just <span class="highlight">For You</span></h2>
@@ -95,9 +95,11 @@
 <script>
 import { gsap } from 'gsap';
 import clientApi from "@/api/ClientApi";
+import CategoriesList from "@/ClientViews/Elements/CategoriesList.vue";
 
 export default {
   name: 'DashboardView',
+  components: {CategoriesList},
   data() {
     return {
       searchQuery: '',
@@ -128,7 +130,7 @@ export default {
           clientApi.getRecentList()
         ]);
         this.featuredBooks = featured.slice(0, 5);
-        this.globeBooks = globe.books.data;
+        this.globeBooks = globe;
         this.personalizedRecs = recs;
         this.recentActivity = activity;
 
@@ -177,7 +179,7 @@ export default {
 
 <style scoped>
 .dashboard-container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 20px;
   color: #2c3e50;

@@ -181,6 +181,7 @@
           </div>
         </div>
       </div>
+      <book-list-view :category="bookCategory" :genre_id="bookGenres" :tags="bookTags"/>
     </div>
 
     <!-- Error State -->
@@ -241,9 +242,11 @@
 
 <script>
 import clientApi from "@/api/ClientApi";
+import BookListView from "@/ClientViews/Elements/BookListView.vue";
 
 export default {
   name: 'BookView',
+  components: {BookListView},
   data() {
     return {
       book: null,
@@ -251,6 +254,8 @@ export default {
       details: null,
       locations: null,
       errors: {},
+      tags: null,
+      genre_id: null,
       loading: false,
       placeholderImage: 'http://localhost:8000/defaults/default-cover.jpg',
       similarPlaceholder: 'http://localhost:8000/defaults/default-cover.jpg',
@@ -269,6 +274,22 @@ export default {
     },
     similarBooks() {
       return this.similar?.original?.docs || [];
+    },
+    bookCategory() {
+      return this.book.category_id || null
+    },
+    bookTags() {
+      return this.tags || null
+    },
+    bookGenres() {
+      return this.genre_id || null
+    },
+  },
+  watch: {
+    '$route.params.id'(newId, oldId) {
+      if (newId !== oldId) {
+        this.getBook(); // or your data fetching method
+      }
     }
   },
   methods: {
@@ -346,6 +367,8 @@ export default {
       if(this.isAuthorized) {
         clientApi.getClientBookById(this.$route.params.id).then(res => {
           this.book = res.book;
+          this.tags = res.book.tags.map(tag => tag.id);
+          this.genre_id = res.book.genres.map(genre => genre.id);
           this.isFav = res.is_favourite
           this.similar = res.similar;
           this.details = res.details.original.docs[0];
@@ -359,6 +382,8 @@ export default {
         clientApi.getGuestBookById(this.$route.params.id).then(res => {
           this.book = res.book;
           this.similar = res.similar;
+          this.tags = res.book.tags.map(tag => tag.id);
+          this.genre_id = res.book.genres.map(genre => genre.id);
           this.details = res.details.original.docs[0];
           this.locations = res.locations;
           this.loading = false;
@@ -502,7 +527,7 @@ export default {
 }
 
 .book-detail-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2rem 1rem;
   font-family: 'Lato', sans-serif;
@@ -621,6 +646,7 @@ export default {
 }
 
 .similar-book {
+  max-width: 250px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }

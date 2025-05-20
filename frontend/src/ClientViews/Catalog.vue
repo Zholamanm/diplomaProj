@@ -302,6 +302,9 @@ export default {
           page: this.page,
         }).then(res => {
           this.list = res.books.data;
+          this.total = res.total
+          this.page = res.page;
+          this.last_page = res.last_page;
           this.listFav = res.favourites;
           this.$nextTick(() => {
             this.initBookAnimations();
@@ -318,6 +321,9 @@ export default {
           page: this.page,
         }).then(res => {
           this.list = res.data;
+          this.total = res.total
+          this.page = res.page;
+          this.last_page = res.last_page;
           this.$nextTick(() => {
             this.initBookAnimations();
           });

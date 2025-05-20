@@ -25,9 +25,13 @@ Route::middleware('auth:api')->get('/user-info', function (Request $request) {
 });
 Route::get('guest/books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
 Route::get('client/books/recommend', [\App\Http\Controllers\ClientController::class, 'getRecommendBooks']);
+Route::get('client/books/similar', [\App\Http\Controllers\ClientController::class, 'getSimilarBooks']);
 Route::get('client/books/featured', [\App\Http\Controllers\ClientController::class, 'getFeatured']);
 Route::get('client/books/recent', [\App\Http\Controllers\ClientController::class, 'getRecent']);
+Route::get('client/books/categories', [\App\Http\Controllers\ClientController::class, 'getCategoriesWithMostBorrowedBooks']);
+Route::get('client/categories/{id}/books', [\App\Http\Controllers\ClientController::class, 'getCategoryWithBooks']);
 Route::get('client/book/locations', [\App\Http\Controllers\ClientController::class, 'getLocationBookById']);
+Route::get('client/locations', [\App\Http\Controllers\ClientController::class, 'getLocationList']);
 Route::get('guest/books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
 Route::get('client/book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
 Route::get('client/locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
@@ -91,6 +95,13 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::post('/', [\App\Http\Controllers\CategoryController::class, 'store']);
                 Route::post('/{id}', [\App\Http\Controllers\CategoryController::class, 'update']);
                 Route::delete('/{id}', [\App\Http\Controllers\CategoryController::class, 'destroy']);
+            });
+            Route::prefix('genre')->group(function () {
+                Route::get('', [\App\Http\Controllers\GenreController::class, 'index']);
+                Route::get('/{id}', [\App\Http\Controllers\GenreController::class, 'view']);
+                Route::post('/', [\App\Http\Controllers\GenreController::class, 'store']);
+                Route::post('/{id}', [\App\Http\Controllers\GenreController::class, 'update']);
+                Route::delete('/{id}', [\App\Http\Controllers\GenreController::class, 'destroy']);
             });
             Route::prefix('tag')->group(function () {
                 Route::get('', [\App\Http\Controllers\TagController::class, 'index']);

@@ -1,4 +1,5 @@
 import Catalog from "@/ClientViews/Catalog.vue";
+import CategoryView from "@/ClientViews/CategoryView.vue";
 import BorrowMap from "@/ClientViews/BorrowMap.vue";
 import BorrowBook from "@/ClientViews/BorrowBook.vue";
 import Main from "@/ClientViews/Main.vue";
@@ -25,6 +26,11 @@ const clientRoutes = [
                 path: 'catalog',
                 name: 'CatalogView',
                 component: Catalog,
+            },
+            {
+                path: 'category/:id',
+                name: 'CategoryView',
+                component: CategoryView,
             },
             {
                 path: 'checkout',

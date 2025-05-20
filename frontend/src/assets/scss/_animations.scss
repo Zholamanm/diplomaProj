@@ -1,0 +1,23 @@
+@import 'variables';
+
+// Fade In Up
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// Card Tilt on Hover
+.card-tilt {
+  transition: transform 0.3s ease;
+  &:hover { transform: rotateX(6deg) rotateY(-6deg); }
+}
+
+// Pulse Skeleton
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0.4; }
+}
+.skeleton {
+  animation: pulse 1.5s infinite;
+  background: $bg-light;
+}

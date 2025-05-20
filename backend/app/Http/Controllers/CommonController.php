@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Genre;
 use App\Models\Role;
 use App\Models\Tag;
-use App\Services\QuoteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,15 +13,14 @@ class CommonController extends Controller
 {
     protected $quoteService;
 
-    public function __construct(QuoteService $quoteService)
-    {
-        $this->quoteService = $quoteService;
-    }
-
     public function index()
     {
         $categories = Cache::remember('categories', 60 * 24, function () {
             return Category::all();
+        });
+
+        $genres = Cache::remember('genres', 60 * 24, function () {
+            return Genre::all();
         });
 
         $tags = Cache::remember('tags', 60 * 24, function () {
@@ -32,15 +31,11 @@ class CommonController extends Controller
             return Role::all();
         });
 
-        $quote = Cache::remember('random_quote', 60, function () {
-            return $this->quoteService->getRandomQuote();
-        });
-
         return [
             'categories' => $categories,
+            'genres' => $genres,
             'tags' => $tags,
             'roles' => $roles,
-            'quote' => $quote,
         ];
     }
 }
