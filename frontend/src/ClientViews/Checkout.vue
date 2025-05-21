@@ -74,7 +74,106 @@
                   </span>
                 </div>
               </div>
+
+              <!-- Review Button -->
+              <div class="review-section">
+                <button
+                    class="review-btn"
+                    @click="openReviewModal(item)"
+                    v-if="item.status === 'returned'"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#219e9a">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                  </svg>
+                  Send Review
+                </button>
+              </div>
+
               <hr class="item-divider" v-if="list.length !== 1">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div v-if="showReviewModal" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>Leave a Review</h3>
+          <button class="close-btn" @click="closeReviewModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#6c757d">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="book-info">
+            <img
+                class="modal-book-cover"
+                :src="`http://localhost:8000/storage/${selectedBook.book.cover_image}`"
+                :alt="selectedBook.book.title"
+                @error="handleImageError"
+            >
+            <div>
+              <h4>{{ selectedBook.book.title }}</h4>
+              <p>{{ selectedBook.book.author }}</p>
+            </div>
+          </div>
+
+          <div>
+            <div class="rating-section">
+              <p>Your Rating:</p>
+              <div class="star-rating">
+                <svg
+                    v-for="star in 5"
+                    :key="star"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    :fill="star <= form.rating ? '#FFC107' : '#E0E0E0'"
+                    @click="form.rating = star"
+                    class="star"
+                >
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="review-text">Your Review:</label>
+              <textarea
+                  id="review-text"
+                  v-model="form.comment"
+                  placeholder="Share your thoughts about this book..."
+                  rows="5"
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button
+                  type="button"
+                  class="cancel-btn"
+                  @click="closeReviewModal"
+              >
+                Cancel
+              </button>
+              <button
+                  type="button"
+                  class="submit-btn"
+                  :disabled="submitting"
+                  @click="submitReview"
+              >
+                <span v-if="!submitting">Submit Review</span>
+                <span v-else class="loading-text">
+                  <svg class="spinner" viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>
+                  </svg>
+                  Submitting...
+                </span>
+              </button>
             </div>
           </div>
         </div>
@@ -82,6 +181,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import clientApi from "@/api/ClientApi";
 
@@ -111,6 +211,15 @@ export default {
       ],
       last_page: null,
       page: 1,
+
+      // Review modal data
+      showReviewModal: false,
+      submitting: false,
+      form: {
+        rating: 0,
+        comment: '',
+        book_id: null
+      }
     };
   },
   props: {
@@ -196,6 +305,42 @@ export default {
       }).catch(err => {
         console.log('error', err);
       })
+    },
+
+    // Review methods
+    openReviewModal(item) {
+      this.selectedBook = item;
+      this.form.book_id = item.book.id;
+      this.showReviewModal = true;
+    },
+
+    closeReviewModal() {
+      this.showReviewModal = false;
+      this.form.rating = 0;
+      this.form.comment = '';
+      this.form.book_id = null;
+    },
+
+    submitReview() {
+      if (this.form.rating === 0) {
+        // this.$toast.error('Please select a rating');
+        return;
+      }
+      this.form.book_id = this.selectedBook.book.id
+      this.submitting = true;
+
+      clientApi.submitReview(this.form)
+          .then(() => {
+            // this.$toast.success('Review submitted successfully!');
+            this.closeReviewModal();
+          })
+          .catch(error => {
+            console.error('Error submitting review:', error);
+            // this.$toast.error('Failed to submit review. Please try again.');
+          })
+          .finally(() => {
+            this.submitting = false;
+          });
     }
   },
   mounted() {
@@ -203,14 +348,11 @@ export default {
   },
 };
 </script>
-<style>
-@import url(https://fonts.googleapis.com/css?family=Lato:400,300,700,900);
-@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,700);
-@import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
-</style>
+
 <style scoped>
+/* Existing styles remain the same */
 .checkout-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2rem 1rem;
   font-family: 'Lato', sans-serif;
@@ -254,6 +396,49 @@ export default {
   font-family: 'Roboto Slab', serif;
 }
 
+/* Review Button */
+.review-section {
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(33, 158, 154, 0.1);
+  color: #219e9a;
+  border: 1px solid rgba(33, 158, 154, 0.3);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.review-btn:hover {
+  background: rgba(33, 158, 154, 0.2);
+}
+
+.review-btn svg {
+  fill: #219e9a;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+
 .loading-state {
   display: flex;
   justify-content: center;
@@ -279,6 +464,179 @@ export default {
   color: #95a5a6;
   margin-bottom: 1.5rem;
 }
+
+
+.modal-container {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.close-btn svg {
+  transition: fill 0.2s ease;
+}
+
+.close-btn:hover svg {
+  fill: #495057;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.book-info {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.modal-book-cover {
+  width: 80px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.book-info h4 {
+  margin: 0 0 0.5rem;
+  color: #2c3e50;
+}
+
+.book-info p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.rating-section {
+  margin-bottom: 1.5rem;
+}
+
+.rating-section p {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.star-rating {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.star {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.star:hover {
+  transform: scale(1.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #219e9a;
+  box-shadow: 0 0 0 2px rgba(33, 158, 154, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.cancel-btn {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: #6c757d;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #f8f9fa;
+}
+
+.submit-btn {
+  padding: 0.75rem 1.5rem;
+  background: #219e9a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #1a7f7b;
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loading-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  animation: rotate 1s linear infinite;
+}
+
 
 .browse-btn {
   display: inline-block;
@@ -381,6 +739,21 @@ export default {
   .book-author,
   .book-location {
     font-size: 0.75rem;
+  }
+}
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .modal-container {
+    width: 95%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
   }
 }
 </style>

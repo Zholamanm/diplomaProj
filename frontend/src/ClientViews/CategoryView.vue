@@ -12,12 +12,6 @@
               <div class="wikipedia-card">
                 <h3 class="section-title">About {{ category.name }}</h3>
                 <p class="wikipedia-text">{{ wikipedia.info.extract }}</p>
-              </div>
-
-              <!-- History Section -->
-              <div v-if="wikipedia.history" class="wikipedia-card">
-                <h3 class="section-title">History</h3>
-                <p class="wikipedia-text">{{ wikipedia.history.history }}</p>
                 <a :href="wikipedia.info.url" target="_blank" class="wikipedia-link">
                   Read more
                 </a>

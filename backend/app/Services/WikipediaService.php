@@ -40,11 +40,21 @@ class WikipediaService
                         'origin'        => '*',
                     ]
                 ]);
+
                 $data = json_decode($response->getBody(), true);
                 $page = current($data['query']['pages']);
 
                 if (isset($page['missing'])) {
                     return null;
+                }
+
+                if (isset($page['extract'])) {
+                    $infoText = $page['extract'] ?? 'No historical information available';
+
+                    if (strlen($infoText) > 250) {
+                        $infoText = substr($infoText, 0, 250) . '...';
+                    }
+                    $page['extract'] = $infoText;
                 }
 
                 return [
@@ -61,65 +71,22 @@ class WikipediaService
     }
 
     /**
-     * Get historical development of the category
-     */
-    public function getCategoryHistory(string $categoryName): ?array
-    {
-        $cacheKey = 'wikipedia_history_' . md5($categoryName);
-
-        return Cache::remember($cacheKey, now()->addDays(7), function() use ($categoryName) {
-            try {
-                $response = $this->client->get('', [
-                    'query' => [
-                        'action' => 'query',
-                        'format' => 'json',
-                        'prop' => 'extracts',
-                        'exsectionformat' => 'plain',
-                        'explaintext' => true,
-                        'titles' => $categoryName,
-                        'exsections' => 'History|Development'
-                    ]
-                ]);
-
-                $data = json_decode($response->getBody(), true);
-                $page = current($data['query']['pages']);
-
-                if (isset($page['extract'])) {
-                    $historyText = $page['extract'] ?? 'No historical information available';
-
-                    // Truncate to 150 characters if longer
-                    if (strlen($historyText) > 250) {
-                        $historyText = substr($historyText, 0, 250) . '...';
-                    }
-
-                    return [
-                        'history' => $historyText,
-                        'url' => 'https://en.wikipedia.org/wiki/' . str_replace(' ', '_', $page['title'])
-                    ];
-                }
-
-                return null;
-            } catch (\Exception $e) {
-                \Log::error("Wikipedia API history error: " . $e->getMessage());
-                return null;
-            }
-        });
-    }
-    /**
      * Get authors associated with this category
      */
     public function getNotableAuthors(string $categoryName): ?array
     {
         $cacheKey = 'wikipedia_authors_' . md5($categoryName);
-
-        return Cache::remember($cacheKey, now()->addDays(7), function() use ($categoryName) {
+        $encoded = str_replace(' ', '_', $categoryName);
+        $encoded = urlencode($encoded);
+        $encoded = str_replace('%26', '&', $encoded);
+        return Cache::remember($cacheKey, now()->addDays(7), function() use ($encoded) {
             try {
                 $response = $this->client->get('', [
                     'query' => [
                         'action' => 'query',
                         'format' => 'json',
                         'list' => 'categorymembers',
-                        'cmtitle' => 'Category:' . $categoryName . ' writers',
+                        'cmtitle' => 'Category:' . $encoded . ' writers',
                         'cmlimit' => 10,
                         'cmprop' => 'title'
                     ]

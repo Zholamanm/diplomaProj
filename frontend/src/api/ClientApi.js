@@ -8,11 +8,17 @@ const ClientApi = {
     getGuestList(data) {
         return client.get('/api/guest/books', {params: data}).then(res => res.data);
     },
+    submitReview(data) {
+        return client.get('/api/client/review', {params: data}).then(res => res.data);
+    },
     getRecommendList(data) {
         return client.get('/api/client/books/recommend', {params: data}).then(res => res.data);
     },
     getSimilarList(data) {
         return client.get('/api/client/books/similar', {params: data}).then(res => res.data);
+    },
+    getTopsLists(data) {
+        return client.get('/api/client/books/top-list', {params: data}).then(res => res.data);
     },
     getFeaturedList(data) {
         return client.get('/api/client/books/recent', {params: data}).then(res => res.data);

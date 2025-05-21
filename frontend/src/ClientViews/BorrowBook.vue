@@ -1,15 +1,19 @@
 <template>
   <div class="borrow-book-container">
     <div v-if="book && location" class="borrow-book-content">
-      <div class="borrow-card">
-        <div class="card-header">
-          <h2>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#219e9a" width="28" height="28">
-              <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
-            </svg>
-            Borrow <span class="book-title">"{{ book.title }}"</span>
-          </h2>
-        </div>
+      <!-- First Row - Split into two columns -->
+      <div class="first-row">
+        <!-- Borrowing Form Column -->
+        <div class="borrow-column">
+          <div class="borrow-card">
+            <div class="card-header">
+              <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#219e9a" width="28" height="28">
+                  <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+                </svg>
+                Borrow <span class="book-title">"{{ book.title }}"</span>
+              </h2>
+            </div>
 
         <div class="card-body">
           <div class="location-section">
@@ -78,20 +82,81 @@
             </span>
           </button>
 
-          <div v-if="message" class="message-alert" :class="{'success': success, 'error': !success}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" v-if="success"/>
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" v-else/>
-            </svg>
-            <div>
-              <p>{{ message }}</p>
-              <small v-if="check" class="check-number">Reference: {{ check }}</small>
+              <div v-if="message" class="message-alert" :class="{'success': success, 'error': !success}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" v-if="success"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" v-else/>
+                </svg>
+                <div>
+                  <p>{{ message }}</p>
+                  <small v-if="check" class="check-number">Reference: {{ check }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Book Details Column -->
+        <div class="book-details-column">
+          <div class="book-details-card">
+            <div class="book-cover-container">
+              <img
+                  :src="getImageUrl(book.cover_image)"
+                  :alt="book.title"
+                  @error="handleImageError"
+                  class="book-cover"
+              >
+            </div>
+
+            <div class="book-info">
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-author">by {{ book.author }}</p>
+
+              <div class="book-meta">
+                <div class="meta-item">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+                  </svg>
+                  <span>Category: {{ book.category?.name || 'N/A' }}</span>
+                </div>
+
+                <div class="meta-item">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"/>
+                  </svg>
+                  <span>Pages: {{ book.pages || 'N/A' }}</span>
+                </div>
+
+                <div class="meta-item">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  <span>Published: {{ book.published_year || 'N/A' }}</span>
+                </div>
+              </div>
+
+              <div class="book-description">
+                <h4>Description</h4>
+                <p>{{ book.description || 'No description available' }}</p>
+              </div>
+
+              <div class="book-tags">
+                <span
+                    v-for="tag in book.tags"
+                    :key="tag.id"
+                    class="tag"
+                >
+                  {{ tag.name }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <coffee-shops :shops="shops" />
+      <coffee-shops :shops="shops" :borrowLoc="location"/>
+      <!-- Second Row (will contain coffee shops component later) -->
+      <!-- <coffee-shops :shops="shops" /> -->
     </div>
 
     <div v-else class="loading-state">
@@ -106,12 +171,12 @@
 </template>
 
 <script>
-import CoffeeShops from "@/ClientViews/Elements/CoffeeShops.vue";
 import clientApi from "@/api/ClientApi";
+import CoffeeShops from "@/ClientViews/Elements/CoffeeShops.vue";
 
 export default {
   name: 'BorrowBook',
-  components: { CoffeeShops },
+  components: {CoffeeShops},
   data() {
     return {
       book: null,
@@ -125,6 +190,12 @@ export default {
     };
   },
   methods: {
+    getImageUrl(path) {
+      return path ? `http://localhost:8000/storage/${path}` : 'http://localhost:8000/defaults/default-cover.jpg';
+    },
+    handleImageError(e) {
+      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+    },
     fetchBookDetails() {
       // Your existing implementation
     },
@@ -180,42 +251,66 @@ export default {
 </script>
 
 <style scoped>
-.borrow-book-container {
-  padding: 2rem 0;
-  min-height: calc(100vh - 100px);
-  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+.borrow-book-container{
+  max-width: 1600px;
+  margin: auto;
 }
-
-.borrow-book-content {
-  justify-items: center;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.borrow-card {
-  width: 100%;
-  max-width: 800px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+/* Enhanced styles for first-row columns */
+.first-row {
+  display: flex;
+  gap: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(33, 158, 154, 0.1);
+  align-items: stretch; /* Make both columns equal height */
+}
+
+.borrow-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.book-details-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+/* Enhanced Borrow Card */
+.borrow-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(33, 158, 154, 0.15);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.borrow-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .card-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 1.5rem;
-  background: linear-gradient(to right, rgba(33, 158, 154, 0.05), rgba(33, 158, 154, 0.02));
-  border-bottom: 1px solid rgba(33, 158, 154, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .card-header h2 {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   margin: 0;
   color: #2c3e50;
   font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card-header svg {
+  flex-shrink: 0;
 }
 
 .book-title {
@@ -225,15 +320,219 @@ export default {
 
 .card-body {
   padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.section-title {
+/* Enhanced Book Details Card */
+.book-details-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(33, 158, 154, 0.15);
+  height: 100%;
+  width: 100%;
+  padding: 1.75rem;
+  display: flex;
+  gap: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-details-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.book-cover-container {
+  flex: 0 0 220px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.book-cover {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.book-cover:hover {
+  transform: scale(1.03);
+}
+
+.book-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.book-title {
+  margin-top: 0;
+  color: #2c3e50;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.book-author {
+  color: #6c757d;
+  margin-bottom: 1.75rem;
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+.book-meta {
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.meta-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  color: #495057;
+  font-size: 0.95rem;
+  background: rgba(33, 158, 154, 0.05);
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.meta-item svg {
+  fill: #219e9a;
+  flex-shrink: 0;
+}
+
+.book-description {
+  margin-bottom: 2rem;
+  background: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 10px;
+}
+
+.book-description h4 {
+  margin-bottom: 0.75rem;
   color: #2c3e50;
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.book-description p {
+  color: #495057;
+  line-height: 1.7;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.book-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.tag {
+  background: rgba(33, 158, 154, 0.1);
+  color: #219e9a;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background: rgba(33, 158, 154, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .first-row {
+    gap: 1.5rem;
+  }
+
+  .book-details-card {
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .book-cover-container {
+    flex: 0 0 180px;
+  }
+}
+
+@media (max-width: 992px) {
+  .first-row {
+    flex-direction: column;
+  }
+
+  .book-details-card {
+    flex-direction: column;
+  }
+
+  .book-cover-container {
+    flex: 0 0 auto;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .book-cover {
+    max-height: 250px;
+    width: auto;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .book-details-card {
+    padding: 1.25rem;
+  }
+
+  .book-title {
+    font-size: 1.5rem;
+  }
+
+  .book-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .first-row {
+    flex-direction: column;
+  }
+
+  .book-details-card {
+    flex-direction: column;
+  }
+
+  .book-cover-container {
+    flex: 0 0 auto;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .borrow-card, .book-details-card {
+    margin: 0 -1rem;
+    border-radius: 0;
+  }
+
+  .card-header, .card-body {
+    padding: 1.25rem;
+  }
 }
 
 .location-info {
@@ -415,4 +714,5 @@ export default {
     padding: 1.25rem;
   }
 }
+
 </style>

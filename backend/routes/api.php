@@ -28,6 +28,7 @@ Route::get('client/books/recommend', [\App\Http\Controllers\ClientController::cl
 Route::get('client/books/similar', [\App\Http\Controllers\ClientController::class, 'getSimilarBooks']);
 Route::get('client/books/featured', [\App\Http\Controllers\ClientController::class, 'getFeatured']);
 Route::get('client/books/recent', [\App\Http\Controllers\ClientController::class, 'getRecent']);
+Route::get('client/books/top-list', [\App\Http\Controllers\ClientController::class, 'getGenresWithMostFavoritedBook']);
 Route::get('client/books/categories', [\App\Http\Controllers\ClientController::class, 'getCategoriesWithMostBorrowedBooks']);
 Route::get('client/categories/{id}/books', [\App\Http\Controllers\ClientController::class, 'getCategoryWithBooks']);
 Route::get('client/book/locations', [\App\Http\Controllers\ClientController::class, 'getLocationBookById']);
@@ -50,6 +51,7 @@ Route::middleware('auth:api')->post('/save-fcm-token', function(Request $request
 
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('client')->group(function () {
+        Route::get('review', [\App\Http\Controllers\ClientController::class, 'sendReview']);
         Route::get('books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
         Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
         Route::get('checkout', [\App\Http\Controllers\ClientController::class, 'getCheckouts']);

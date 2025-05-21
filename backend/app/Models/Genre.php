@@ -17,11 +17,8 @@ class Genre extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function books()
-    {
-        return $this->belongsToMany(Book::class)
-            ->using(BookGenre::class)
-            ->withTimestamps();
+    public function books() {
+        return $this->belongsToMany(Book::class, 'book_genres')->using(BookGenre::class);
     }
 
     public function scopeFilter($query, $filters)

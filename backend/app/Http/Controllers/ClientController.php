@@ -6,14 +6,17 @@ use App\Models\Book;
 use App\Models\BorrowedBook;
 use App\Models\Category;
 use App\Models\Favourite;
+use App\Models\Genre;
 use App\Models\Location;
 use App\Models\LocationBook;
+use App\Models\Review;
 use App\Services\GeoapifyService;
 use App\Services\GoogleBookService;
 use App\Services\OpenLibraryService;
 use App\Services\WikipediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class ClientController extends Controller
@@ -39,7 +42,7 @@ class ClientController extends Controller
         $shops = $this->geoapify->getNearbyCoffeeShops(
             $latitude,
             $longitude,
-            500,
+            5000,
             7
         );
 
@@ -96,7 +99,6 @@ class ClientController extends Controller
         // Get Wikipedia data
         $wikipediaData = [
             'info' => $wikipediaService->getCategoryInfo($category->name),
-            'history' => $wikipediaService->getCategoryHistory($category->name),
             'notable_books' => $googleBookService->getBooksBySubject($subject, 5),
             'authors' => $wikipediaService->getNotableAuthors($category->name)
         ];
@@ -124,6 +126,31 @@ class ClientController extends Controller
         ]);
     }
 
+    public function getGenresWithMostFavoritedBook()
+    {
+        $genres = Genre::with(['books' => function($query) {
+            $query->withCount('favourites')
+                ->orderBy('favourites_count', 'desc')
+                ->take(1); // Get only the most favorited book
+        }])
+            ->get()
+            ->map(function($genre) {
+                return [
+                    'id' => $genre->id,
+                    'name' => $genre->name,
+                    'book' => $genre->books->first() ? [
+                        'id' => $genre->books->first()->id,
+                        'title' => $genre->books->first()->title,
+                        'author' => $genre->books->first()->author,
+                        'cover_image' => $genre->books->first()->cover_image,
+                        'favourites_count' => $genre->books->first()->favourites_count
+                    ] : null
+                ];
+            });
+
+        return response()->json($genres);
+    }
+
     public function getBooks(Request $request)
     {
         if(Auth::user()) {
@@ -134,6 +161,33 @@ class ClientController extends Controller
         } else {
             return Book::with('category', 'tags')->orderBy('id', 'DESC')->filter($request->all())->paginate(10);
         }
+    }
+
+    public function sendReview(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'book_id' => ['required', 'integer', 'exists:books,id'],
+            'comment' => ['required', 'string', 'max:1000'],
+            'rating' => ['required', 'integer', 'between:1,5'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        $userId = Auth::id();
+
+        Review::create([
+            'book_id' =>$request->book_id,
+            'user_id' =>$userId,
+            'comment' =>$request->comment,
+            'rating' =>$request->rating,
+        ]);
+        return response()->json([
+            'success' => true
+        ]);
     }
 
     public function getRecommendBooks(Request $request)
@@ -147,6 +201,7 @@ class ClientController extends Controller
             'category_id' => 'nullable',
             'tags'        => 'nullable',
             'genre_id'        => 'nullable',
+            'locations'        => 'nullable',
         ]);
 
         // 2) Build the query—matching category OR any of the tags OR the one genre:
@@ -164,6 +219,11 @@ class ClientController extends Controller
                 if (! empty($data['genre_id'])) {
                     $q->orWhereHas('tags', function ($q2) use ($data) {
                         $q2->whereIn('tags.id', $data['tags']);
+                    });
+                }
+                if (! empty($data['locations'])) {
+                    $q->orWhereHas('locations', function ($q2) use ($data) {
+                        $q2->whereIn('locations.id', $data['locations']);
                     });
                 }
             });

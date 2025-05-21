@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="mb-5">
     <h2 class="section-title">Popular <span class="highlight">Categories</span></h2>
     <div class="stories-block">
       <div class="custom-stories-widget">
@@ -198,5 +198,10 @@ export default {
   font-size: 2.2rem;
   margin-bottom: 50px;
   font-family: 'Roboto Slab', serif;
+}
+
+.circle-preview:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
 }
 </style>

@@ -45,6 +45,7 @@
       </div>
     </section>
     <categories-list />
+    <top-list />
     <!-- Interactive Book Globe -->
 <!--    <top-book-list />-->
     <!-- Personalized Recommendations -->
@@ -53,13 +54,14 @@
       <div class="recommendation-cards">
         <div class="rec-card" v-for="rec in personalizedRecs" :key="rec.id"
              @click="viewBookDetails(rec.id)">
-          <div class="rec-cover" :style="{ backgroundImage: rec.cover_image ? `url(http://localhost:8000/storage/${rec.cover_image})` : 'url(http://localhost:8000/defaults/default-cover.jpg)' }"></div>
+          <div class="rec-cover"
+               :style="{ backgroundImage: rec.cover_image ? `url(http://localhost:8000/storage/${rec.cover_image})` : 'url(http://localhost:8000/defaults/default-cover.jpg)' }"></div>
           <div class="rec-details">
             <h3>{{ rec.title }}</h3>
             <p>{{ rec.author }}</p>
             <div class="rec-meta">
               <span class="genre">{{ rec.category }}</span>
-              <span class="rating">★ {{ rec.rating || '4.5' }}</span>
+              <span class="rating">★ {{ getAverageRating(rec.reviews) }} ({{ rec.reviews_count }})</span>
             </div>
           </div>
         </div>
@@ -96,10 +98,11 @@
 import { gsap } from 'gsap';
 import clientApi from "@/api/ClientApi";
 import CategoriesList from "@/ClientViews/Elements/CategoriesList.vue";
+import TopList from "@/ClientViews/Elements/TopList.vue";
 
 export default {
   name: 'DashboardView',
-  components: {CategoriesList},
+  components: {TopList, CategoriesList},
   data() {
     return {
       searchQuery: '',
@@ -121,6 +124,12 @@ export default {
     };
   },
   methods: {
+    getAverageRating(reviews) {
+      if (!reviews || reviews.length === 0) return '0';
+      const total = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+      const avg = total / reviews.length;
+      return avg.toFixed(1);
+    },
     async fetchData() {
       try {
         const [featured, globe, recs, activity] = await Promise.all([
@@ -129,7 +138,7 @@ export default {
           clientApi.getRecommendList(),
           clientApi.getRecentList()
         ]);
-        this.featuredBooks = featured.slice(0, 5);
+        this.featuredBooks = featured.slice(0, 1);
         this.globeBooks = globe;
         this.personalizedRecs = recs;
         this.recentActivity = activity;
@@ -179,7 +188,6 @@ export default {
 
 <style scoped>
 .dashboard-container {
-  max-width: 1600px;
   margin: 0 auto;
   padding: 0 20px;
   color: #2c3e50;
@@ -187,6 +195,8 @@ export default {
 
 /* Hero Section */
 .hero-section {
+  max-width: 1600px;
+  margin: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -397,7 +407,8 @@ export default {
 
 /* Personalized Recommendations */
 .personalized-section {
-  margin: 80px 0;
+  max-width: 1600px;
+  margin: 80px auto;
 }
 
 .recommendation-cards {

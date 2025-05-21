@@ -119,7 +119,7 @@ class Book extends Model
      */
     public static function getRecommendedBooks()
     {
-        return self::withCount('favourites')
+        return self::withCount('favourites')->withCount('reviews')->with('reviews')
             ->orderBy('favourites_count', 'ASC')
             ->limit(7)
             ->get();
