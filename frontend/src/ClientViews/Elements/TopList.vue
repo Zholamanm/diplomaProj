@@ -8,10 +8,10 @@
             :key="genre.id"
             class="genre-block"
             @click="$router.push({
-            name: 'TopView',
+            name: 'GenreView',
             params: {
               locale: $route.params.locale,
-              genre: genre.id
+              id: genre.id
             }
           })"
         >

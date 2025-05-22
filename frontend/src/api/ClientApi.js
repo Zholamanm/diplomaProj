@@ -5,11 +5,34 @@ const ClientApi = {
     getList(data) {
         return client.get('/api/client/books', {params: data}).then(res => res.data);
     },
+    getProfile() {
+        return client.get('/api/client/profile').then(res => res.data);
+    },
+    getRecentReviews() {
+        return client.get('/api/client/reviews/recent').then(res => res.data);
+    },
+    updateProfilePicture(data) {
+        return client.post(`/api/client/profile/picture`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res => res.data);
+    },
+    updateProfile(data) {
+        return client.post(`/api/client/profile`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(res => res.data);
+    },
+    getUserReviews() {
+        return client.get('/api/client/reviews').then(res => res.data);
+    },
     getGuestList(data) {
         return client.get('/api/guest/books', {params: data}).then(res => res.data);
     },
     submitReview(data) {
-        return client.get('/api/client/review', {params: data}).then(res => res.data);
+        return client.post('/api/client/review', {params: data}).then(res => res.data);
     },
     getRecommendList(data) {
         return client.get('/api/client/books/recommend', {params: data}).then(res => res.data);
@@ -19,6 +42,9 @@ const ClientApi = {
     },
     getTopsLists(data) {
         return client.get('/api/client/books/top-list', {params: data}).then(res => res.data);
+    },
+    getTopBooksByGenre(id) {
+        return client.get(`/api/client/genres/${id}/books`).then(res => res.data);
     },
     getFeaturedList(data) {
         return client.get('/api/client/books/recent', {params: data}).then(res => res.data);

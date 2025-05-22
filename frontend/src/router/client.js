@@ -1,5 +1,6 @@
 import Catalog from "@/ClientViews/Catalog.vue";
 import CategoryView from "@/ClientViews/CategoryView.vue";
+import GenreView from "@/ClientViews/GenreView.vue";
 import BorrowMap from "@/ClientViews/BorrowMap.vue";
 import BorrowBook from "@/ClientViews/BorrowBook.vue";
 import Main from "@/ClientViews/Main.vue";
@@ -10,6 +11,7 @@ import Favourites from "@/ClientViews/Favourites.vue";
 import About from "@/ClientViews/About.vue";
 import Book from "@/ClientViews/Book.vue";
 import Home from "@/ClientViews/Home.vue";
+import UserProfile from "@/ClientViews/UserProfile.vue";
 
 const clientRoutes = [
     {
@@ -31,6 +33,11 @@ const clientRoutes = [
                 path: 'category/:id',
                 name: 'CategoryView',
                 component: CategoryView,
+            },
+            {
+                path: 'genre/:id',
+                name: 'GenreView',
+                component: GenreView,
             },
             {
                 path: 'checkout',
@@ -61,6 +68,11 @@ const clientRoutes = [
                 path: 'about',
                 name: 'AboutView',
                 component: About,
+            },
+            {
+                path: 'profile',
+                name: 'UserProfile',
+                component: UserProfile,
             },
         ],
     },

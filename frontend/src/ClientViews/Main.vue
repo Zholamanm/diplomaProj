@@ -4,9 +4,9 @@
     <router-view :search-query="searchQuery" @update-search="handleSearchQuery"></router-view>
     <footer-view></footer-view>
   </div>
-<!--  <div class="main-overlay-nav" style="z-index: 10;">-->
-<!--    <div class="overlay-full"></div>-->
-<!--  </div>-->
+  <!--  <div class="main-overlay-nav" style="z-index: 10;">-->
+  <!--    <div class="overlay-full"></div>-->
+  <!--  </div>-->
 </template>
 <script>
 import HeaderView from './Elements/HeaderView.vue';
@@ -26,6 +26,10 @@ export default {
     },
   },
   mounted() {
+    const script = document.createElement('script');
+    script.src = 'https://app.fastbots.ai/embed/cmazk5jqk0a8nn8luyhslp7l1'
+    script.defer = true;
+    document.head.appendChild(script);
   }
 };
 </script>
@@ -34,6 +38,7 @@ export default {
 @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:400,700);
 @import url("https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css");
 </style>
+
 <style scoped>
 html,
 body,
@@ -43,8 +48,9 @@ body,
 }
 
 .main-container {
-  padding-bottom: 60px;    /* = footer’s total height */
+  padding-bottom: 60px; /* = footer’s total height */
 }
+
 body {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #313131;
@@ -119,6 +125,7 @@ a.button {
   border-radius: 3px;
   background-color: rgba(49, 49, 49, 0.5);
 }
+
 a.button:hover, a.button:focus {
   background-color: #219e9a;
 }
@@ -139,6 +146,7 @@ a.button:hover, a.button:focus {
   padding: 1em;
   width: auto;
 }
+
 .main-logo a.logo {
   display: block;
   width: 150px;
@@ -147,6 +155,7 @@ a.button:hover, a.button:focus {
   background-color: #fff;
   transition: background-color 250ms ease-out;
 }
+
 .main-logo a.logo:hover, .main-logo a.logo:focus {
   background-color: #ecf0f1;
 }
@@ -186,6 +195,7 @@ a.button:hover, a.button:focus {
   -webkit-appearance: none;
   /* for box shadows to show on iOS */
 }
+
 .input_field:focus {
   outline: none;
   border: none;
@@ -193,6 +203,7 @@ a.button:hover, a.button:focus {
   box-shadow: none;
   -webkit-appearance: none;
 }
+
 .input_field:focus .input_label-content {
   bottom: 20px;
 }
@@ -218,6 +229,7 @@ a.button:hover, a.button:focus {
   -ms-user-select: none;
   user-select: none;
 }
+
 .input_label:before {
   content: "";
   position: absolute;
@@ -227,6 +239,7 @@ a.button:hover, a.button:focus {
   height: calc(100% - 10px);
   border-bottom: 1px solid rgba(49, 49, 49, 0.45);
 }
+
 .input_label:after {
   content: "";
   position: absolute;
@@ -251,6 +264,7 @@ a.button:hover, a.button:focus {
   display: block;
   color: rgba(49, 49, 49, 0.45);
 }
+
 .input_label-search:after {
   content: "";
   position: absolute;
@@ -263,6 +277,7 @@ a.button:hover, a.button:focus {
 .input--filled .input_label::after {
   transform: translate3d(0, 0, 0);
 }
+
 /*
  *  Menu
 */
@@ -274,6 +289,7 @@ a.button:hover, a.button:focus {
   height: 40px;
   border-left: 1px solid #d2d6d5;
 }
+
 .main-navigation-nav a {
   display: inline-block;
   line-height: 40px;
@@ -283,6 +299,7 @@ a.button:hover, a.button:focus {
   text-transform: uppercase;
   color: #313131;
 }
+
 .main-navigation-nav a:before {
   content: "";
   position: relative;
@@ -302,6 +319,7 @@ a.button:hover, a.button:focus {
   position: relative;
   overflow-x: hidden;
 }
+
 .main-container.prevent-scroll, .main-container.nav-menu-open {
   overflow: hidden;
 }
@@ -318,6 +336,7 @@ a.button:hover, a.button:focus {
   transition: all 0.5s;
   transform: translate3d(100%, 0, 0);
 }
+
 .nav-menu:after {
   position: absolute;
   top: 0;
@@ -330,6 +349,7 @@ a.button:hover, a.button:focus {
   transition: opacity 0.5s;
   display: none;
 }
+
 .nav-menu h2 {
   margin: 0;
   padding: 1em;
@@ -338,11 +358,13 @@ a.button:hover, a.button:focus {
   font-weight: 300;
   font-size: 2em;
 }
+
 .nav-menu ul {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
+
 .nav-menu li a {
   display: block;
   padding: 1em 1em 1em 1.2em;
@@ -355,9 +377,11 @@ a.button:hover, a.button:focus {
   font-weight: 400;
   transition: background 0.3s, box-shadow 0.3s;
 }
+
 .nav-menu li:first-child a {
   box-shadow: inset 0 -1px rgba(0, 0, 0, 0.2), inset 0 1px rgba(0, 0, 0, 0.2);
 }
+
 .nav-menu li:hover {
   background: rgba(0, 0, 0, 0.2);
   box-shadow: inset 0 -1px rgba(0, 0, 0, 0);
@@ -368,6 +392,7 @@ a.button:hover, a.button:focus {
   visibility: visible;
   transform: translate3d(0, 0, 0);
 }
+
 .nav-menu-open .nav-menu:after {
   width: 0;
   height: 0;
@@ -384,6 +409,7 @@ a.button:hover, a.button:focus {
   display: none;
   background-color: rgba(49, 49, 49, 0.65);
 }
+
 .main-overlay-nav .overlay-full {
   position: absolute;
   top: 0;
@@ -391,12 +417,14 @@ a.button:hover, a.button:focus {
   width: 100%;
   height: 100%;
 }
+
 #footer {
   margin-top: 60px;
   padding: 15px 0 20px;
   border-top: 1px solid #fff;
   background-color: rgba(49, 49, 49, 0.5);
 }
+
 #footer div,
 #footer a,
 #footer p {

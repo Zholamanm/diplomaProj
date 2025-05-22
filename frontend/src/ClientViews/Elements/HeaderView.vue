@@ -5,7 +5,7 @@
         <li><a class="" href="#" @click="$router.push({name: 'CatalogView', params: {locale: $route.params.locale}})">Catalog</a></li>
         <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'CheckoutView', params: {locale: $route.params.locale}})">Checkout</a></li>
         <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'FavouriteView', params: {locale: $route.params.locale}})">Favourites</a></li>
-        <li><a class="" href="#" @click="$router.push({name: 'ReviewView', params: {locale: $route.params.locale}})">Reviews</a></li>
+<!--        <li><a class="" href="#" @click="$router.push({name: 'ReviewView', params: {locale: $route.params.locale}})">Reviews</a></li>-->
         <li><a class="" href="#" @click="$router.push({name: 'AboutView', params: {locale: $route.params.locale}})">About</a></li>
         <li><a class="" href="#" @click="$router.push({name: 'ContactView', params: {locale: $route.params.locale}})">Contact</a></li>
         <li>
@@ -170,7 +170,6 @@ a.button:hover, a.button:focus {
 */
 .page-header {
   position: relative;
-  margin-bottom: 55px;
   width: 100%;
   border-bottom: 1px solid #d2d6d5;
   background-color: #fff;

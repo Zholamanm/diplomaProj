@@ -18,7 +18,7 @@ class LocationController extends Controller
         $validated = $request->validate([
             'books' => 'required|array',
             'books.*.book_id' => 'exists:books,id',
-            'books.*.quantity' => 'required|integer|min:1'
+            'books.*.quantity' => 'required|integer|min:0'
         ]);
 
         $location = Location::findOrFail($locationId);

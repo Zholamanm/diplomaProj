@@ -59,7 +59,13 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'fcm_token'
+        'fcm_token',
+        'profile_picture',
+        'date_of_birth',
+        'nationality',
+        'address',
+        'phone',
+        'bio'
     ];
 
     /**

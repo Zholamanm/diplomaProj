@@ -57,6 +57,17 @@ export default {
                 `
         },
         {
+          name: 'SliderIndex',
+          label: 'Sliders',
+          child: ['SliderIndex', 'SliderCreate', 'SliderEdit', 'SliderView'],
+          access: [1, 2].includes(this.$store.state.user.user.role_id),
+          svg: `<svg class="w-7 h-7 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13.5 2a7 7 0 0 0-.5 0 1 1 0 0 0-1 1v8c0 .6.4 1 1 1h8c.5 0 1-.4 1-1v-.5A8.5 8.5 0 0 0 13.5 2Z"/>
+                    <path d="M11 6a1 1 0 0 0-1-1 8.5 8.5 0 1 0 9 9 1 1 0 0 0-1-1h-7V6Z"/>
+                </svg>
+                `
+        },
+        {
           name: 'MapComponent',
           label: 'Map',
           child: ['LocationMap'],

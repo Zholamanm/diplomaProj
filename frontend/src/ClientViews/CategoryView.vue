@@ -1,4 +1,5 @@
 <template>
+  <slider-list />
   <div id="main-container" class="category-container">
     <div class="category-main">
       <div class="page-container">
@@ -112,9 +113,11 @@
 <script>
 import $ from 'jquery';
 import clientApi from "@/api/ClientApi";
+import SliderList from "@/ClientViews/Elements/SliderList.vue";
 
 export default {
   name: 'CategoryView',
+  components: {SliderList},
   data() {
     return {
       category: {

@@ -16,8 +16,12 @@ use App\Services\OpenLibraryService;
 use App\Services\WikipediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\Encoders\PngEncoder;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ClientController extends Controller
 {
@@ -96,13 +100,14 @@ class ClientController extends Controller
                 ->with('genres', 'tags');
         }])->findOrFail($id);
         $subject = request('subject', $category->name);
+        $slug = preg_replace('/[^\p{L}\p{Nd}]+/u', '_', $subject);
+        $slug = trim($slug, '_');
         // Get Wikipedia data
         $wikipediaData = [
             'info' => $wikipediaService->getCategoryInfo($category->name),
             'notable_books' => $googleBookService->getBooksBySubject($subject, 5),
-            'authors' => $wikipediaService->getNotableAuthors($category->name)
+            'authors' => $wikipediaService->getNotableAuthors($slug)
         ];
-
         return response()->json([
             'data' => [
                 'category' => [
@@ -151,6 +156,59 @@ class ClientController extends Controller
         return response()->json($genres);
     }
 
+    public function getTopBooksByGenre($genreId)
+    {
+        try {
+            $genre = Genre::with('category')->findOrFail($genreId);
+            $wikipediaService = new WikipediaService();
+            $googleBookService = new GoogleBookService();
+            $books = Book::whereHas('genres', function($query) use ($genreId) {
+                $query->where('genres.id', $genreId);
+            })
+                ->with(['reviews', 'genres'])
+                ->select('books.*')
+                ->selectRaw('(
+                SELECT AVG(rating)
+                FROM reviews
+                WHERE reviews.book_id = books.id
+            ) as average_rating')
+                ->selectRaw('(
+                SELECT COUNT(*)
+                FROM reviews
+                WHERE reviews.book_id = books.id
+            ) as reviews_count')
+                ->selectRaw('(
+                SELECT COUNT(*)
+                FROM favourites
+                WHERE favourites.book_id = books.id
+            ) as favourites_count')
+                ->orderByDesc('average_rating')
+                ->orderByDesc('reviews_count')
+                ->orderByDesc('favourites_count')
+                ->limit(10)
+                ->get();
+            $subject = request('subject', $genre->name);
+            $slug = preg_replace('/[^\p{L}\p{Nd}]+/u', '_', $subject);
+            $slug = trim($slug, '_');
+            $wikipediaData = [
+                'info' => $wikipediaService->getGenreInfo($genre->name),
+                'notable_books' => $googleBookService->getBooksBySubject($subject, 5),
+                'authors' => $wikipediaService->getNotableAuthorsByGenre($slug)
+            ];
+            return response()->json([
+                'genre' => $genre,
+                'books' => $books,
+                'wikipedia' => $wikipediaData
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch top books by genre',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getBooks(Request $request)
     {
         if(Auth::user()) {
@@ -179,20 +237,141 @@ class ClientController extends Controller
         }
         $userId = Auth::id();
 
-        Review::create([
-            'book_id' =>$request->book_id,
-            'user_id' =>$userId,
-            'comment' =>$request->comment,
-            'rating' =>$request->rating,
-        ]);
+        Review::updateOrCreate(
+            [
+                'book_id' => $request->book_id,
+                'user_id' => $userId
+            ],
+            [
+                'comment' => $request->comment,
+                'rating' => $request->rating
+            ]
+        );
         return response()->json([
             'success' => true
         ]);
     }
 
+    public function getReviews()
+    {
+        return Review::where('user_id', Auth::id())->with('book')->paginate(10);
+    }
+
+    public function getProfile()
+    {
+        $user = Auth::user();
+
+        $user->load('role');
+
+        return response()->json([
+            'data' => $user,
+            'message' => 'Profile retrieved successfully'
+        ]);
+    }
+
+    /**
+     * Update user's profile
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,'.$user->id,
+            'date_of_birth' => 'nullable|date',
+            'nationality' => 'nullable|string|max:100',
+            'address' => 'nullable|string|max:500',
+            'phone' => 'nullable|string|max:20',
+            'bio' => 'nullable|string|max:1000'
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'data' => $user,
+            'message' => 'Profile updated successfully'
+        ]);
+    }
+
+    /**
+     * Update profile picture with cropping
+     */
+    public function updatePicture(Request $request)
+    {
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB max
+        ]);
+
+        $user = Auth::user();
+        $imageFile = $request->file('profile_picture');
+
+        $filename = 'profile_' . time() . '.' . $imageFile->getClientOriginalExtension();
+
+        $directory = 'public/profile_pictures/' . $user->id;
+        Storage::makeDirectory($directory);
+
+        // Read the image with Intervention Image
+        $image = Image::read($imageFile);
+
+        // Resize and crop to square 300x300
+        $croppedImage = $image->coverDown(300, 300);
+        $extension = strtolower($imageFile->getClientOriginalExtension());
+        switch ($extension) {
+            case 'jpeg':
+            case 'jpg':
+                $encoder = new JpegEncoder(80); // 80 is quality
+                break;
+            case 'png':
+                $encoder = new PngEncoder(80);
+                break;
+            default:
+                // fallback to jpeg if unknown
+                $encoder = new JpegEncoder(80);
+                break;
+        }
+        $croppedImage = $image->encode($encoder);
+        // Save cropped image to storage
+        $croppedPath = $directory . '/cropped_' . $filename;
+        Storage::put($croppedPath, $croppedImage);
+
+        // Save original uploaded image to storage
+
+        $originalPath = $imageFile->store('profile_pictures', 'public');
+
+        // Delete old images if exist
+        if ($user->profile_picture) {
+            Storage::delete($user->profile_picture);
+            // Try to delete corresponding cropped image as well
+            $oldCroppedPath = preg_replace('/\/profile_/', '/cropped_profile_', $user->profile_picture);
+            Storage::delete($oldCroppedPath);
+        }
+
+        // Save new original image path (or you can save croppedPath if you prefer to show cropped)
+        $user->profile_picture = $originalPath;
+        $user->save();
+
+        return response()->json([
+            'profile_picture' => $user->profile_picture,
+            'message' => 'Profile picture updated successfully'
+        ]);
+    }
     public function getRecommendBooks(Request $request)
     {
         return Book::getRecommendedBooks();
+    }
+
+    public function getRecentReviews()
+    {
+        $reviews = Review::with(['user', 'book'])
+            ->latest()
+            ->take(10) // or whatever limit you want
+            ->get();
+
+        return response()->json([
+            'data' => $reviews,
+            'message' => 'Recent reviews retrieved successfully'
+        ]);
     }
 
     public function getSimilarBooks(Request $request)
@@ -287,7 +466,16 @@ class ClientController extends Controller
 
     public function getCheckouts(Request $request)
     {
-        return BorrowedBook::with('book', 'location')->where('user_id', Auth::id())->filter($request->all())->paginate(10);
+        return BorrowedBook::with([
+            'book' => function ($query) {
+                $query->with(['reviews' => function ($q) {
+                    $q->where('user_id', Auth::id());
+                }]);
+            },
+            'location'
+        ])->where('user_id', Auth::id())
+            ->filter($request->all())
+            ->paginate(10);
     }
 
     public function getFavourites(Request $request)

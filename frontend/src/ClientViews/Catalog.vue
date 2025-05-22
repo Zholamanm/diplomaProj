@@ -1,4 +1,5 @@
 <template>
+  <slider-list />
   <div id="main-container" class="catalog-container">
     <div class="catalog-main">
       <div class="page-container">
@@ -131,6 +132,7 @@
         </section>
       </div>
     </div>
+    <iframe	style="width: 400px; height: 600px;" src="https://app.fastbots.ai/embed/cmazk5jqk0a8nn8luyhslp7l1"></iframe>
 
     <div class="overlay-backdrop"></div>
   </div>
@@ -139,9 +141,11 @@
 <script>
 import $ from 'jquery';
 import clientApi from "@/api/ClientApi";
+import SliderList from "@/ClientViews/Elements/SliderList.vue";
 
 export default {
   name: 'CatalogView',
+  components: {SliderList},
   data() {
     return {
       list: null,

@@ -117,7 +117,7 @@ export default {
       }
     },
     submitBooks() {
-      if (this.selectedBooks.some(bookEntry => !bookEntry.book || bookEntry.quantity < 1)) {
+      if (this.selectedBooks.some(bookEntry => !bookEntry.book && bookEntry.quantity < 1)) {
         return;
       }
 

@@ -10,6 +10,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { createHead } from '@vueuse/head';
 import { messaging, onMessage } from '@/firebase';
 import './assets/styles.css';
+import VueCropper from 'vue-cropper';
+import 'vue-cropper/dist/index.css'
 
 const app = createApp(App);
 const head = createHead(); // Create an instance
@@ -41,6 +43,7 @@ app.config.devtools = true;
 app.use(router);
 app.use(store);
 app.use(i18n);
+app.use(VueCropper);
 app.use($);
 app.use(head); // Register Head
 app.component("InfiniteLoading", InfiniteLoading);

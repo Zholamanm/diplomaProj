@@ -1,46 +1,49 @@
 <template>
   <div class="dashboard-container">
     <!-- Hero Section with Animated Book Stack -->
-    <section class="hero-section">
-      <div class="hero-content">
-        <h1 class="hero-title">Discover. Share. <span class="highlight">Read.</span></h1>
-        <p class="hero-subtitle">Your gateway to a community-powered library</p>
+    <div>
+      <img src="http://localhost:8000/storage/home/1747902338448.jpg" alt="" style="position: absolute; z-index: 0; width: 100%; height: 750px; left: 0">
+      <section class="hero-section">
+        <div class="hero-content" style="z-index: 1;">
+          <h1 class="hero-title">Discover. Share. <span class="highlight">Read.</span></h1>
+          <p class="hero-subtitle">Your gateway to a community-powered library</p>
 
-        <div class="hero-search">
-          <input
-              type="text"
-              placeholder="Search for your next adventure..."
-              v-model="searchQuery"
-              @keyup.enter="searchBooks"
-          >
-          <button @click="searchBooks">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
+          <div class="hero-search">
+            <input
+                type="text"
+                placeholder="Search for your next adventure..."
+                v-model="searchQuery"
+                @keyup.enter="searchBooks"
+            >
+            <button @click="searchBooks">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="book-stack-animation">
-        <div class="book" v-for="(book, index) in featuredBooks" :key="book.id"
-             :style="{ '--delay': index * 0.1 + 's', 'z-index': 10 - index }">
-          <div class="book-cover" :style="{ backgroundImage: `url(http://localhost:8000/storage/${book.cover_image})` }"></div>
+        <div class="book-stack-animation">
+          <div class="book" v-for="(book, index) in featuredBooks" :key="book.id"
+               :style="{ '--delay': index * 0.1 + 's', 'z-index': 10 - index }">
+            <div class="book-cover" :style="{ backgroundImage: `url(http://localhost:8000/storage/${book.cover_image})` }"></div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
     <!-- Stats Counter -->
     <section class="stats-section">
       <div class="stat-card">
-        <div class="stat-number" ref="booksCounter">{{ animatedStats.books }}</div>
+        <div class="stat-number" ref="booksCounter">{{ bookCount }}</div>
         <div class="stat-label">Books Shared</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number" ref="usersCounter">{{ animatedStats.users }}</div>
+        <div class="stat-number" ref="usersCounter">{{ userCount }}</div>
         <div class="stat-label">Community Members</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number" ref="locationsCounter">{{ animatedStats.locations }}</div>
+        <div class="stat-number" ref="locationsCounter">{{ locationCount }}</div>
         <div class="stat-label">Pickup Locations</div>
       </div>
     </section>
@@ -71,6 +74,7 @@
     <!-- Community Activity Feed -->
     <section class="activity-section">
       <h2 class="section-title">Community <span class="highlight">Pulse</span></h2>
+      <reviews-list />
 <!--      <div class="activity-feed">-->
 <!--        <div class="activity-card" v-for="activity in recentActivity" :key="activity.id">-->
 <!--          <div class="activity-content">-->
@@ -91,37 +95,40 @@
         </svg>
       </button>
     </section>
+    <slider-list />
   </div>
 </template>
 
 <script>
-import { gsap } from 'gsap';
 import clientApi from "@/api/ClientApi";
 import CategoriesList from "@/ClientViews/Elements/CategoriesList.vue";
 import TopList from "@/ClientViews/Elements/TopList.vue";
+import SliderList from "@/ClientViews/Elements/SliderList.vue";
+import ReviewsList from "@/ClientViews/Elements/ReviewsList.vue";
 
 export default {
-  name: 'DashboardView',
-  components: {TopList, CategoriesList},
+  name: 'HomeView',
+  components: {ReviewsList, SliderList, TopList, CategoriesList},
   data() {
     return {
       searchQuery: '',
-      animatedStats: {
-        books: 0,
-        users: 0,
-        locations: 0
-      },
-      targetStats: {
-        books: 10000,
-        users: 20000,
-        locations: 100
-      },
       featuredBooks: [],
       globeBooks: [],
       personalizedRecs: [],
       recentActivity: [],
       globeRotation: { x: 0, y: 0 }
     };
+  },
+  computed: {
+    bookCount() {
+      return this.$store.state.common.data?.stats.books || 0
+    },
+    userCount() {
+      return this.$store.state.common.data?.stats.users || 0
+    },
+    locationCount() {
+      return this.$store.state.common.data?.stats.locations || 0
+    },
   },
   methods: {
     getAverageRating(reviews) {
@@ -142,27 +149,9 @@ export default {
         this.globeBooks = globe;
         this.personalizedRecs = recs;
         this.recentActivity = activity;
-
-        this.animateStats();
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
-    },
-    animateStats() {
-      gsap.to(this.animatedStats, {
-        books: this.targetStats.books,
-        users: this.targetStats.users,
-        locations: this.targetStats.locations,
-        duration: 2,
-        ease: "power1.out",
-        onUpdate: () => {
-          this.animatedStats = {
-            books: Math.floor(this.animatedStats.books),
-            users: Math.floor(this.animatedStats.users),
-            locations: Math.floor(this.animatedStats.locations)
-          };
-        }
-      });
     },
     searchBooks() {
       this.$emit('update-search', this.searchQuery);
@@ -205,6 +194,10 @@ export default {
 }
 
 .hero-content {
+  border-radius: 25px;
+  z-index: 1;
+  background: rgb(255 255 255 / 0.7);
+  padding: 40px;
   max-width: 600px;
 }
 
@@ -301,7 +294,7 @@ export default {
   background-size: cover;
   background-position: center;
   border-radius: 5px 8px 8px 5px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px 15px rgba(0, 0, 0, 0.6);
   transform: rotateY(-10deg);
 }
 
@@ -527,7 +520,6 @@ export default {
   padding: 80px 0;
   background: linear-gradient(135deg, rgba(33, 158, 154, 0.05) 0%, rgba(33, 158, 154, 0.02) 100%);
   border-radius: 15px;
-  margin: 40px 0;
 }
 
 .cta-section h2 {

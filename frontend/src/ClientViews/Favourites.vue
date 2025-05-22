@@ -1,4 +1,5 @@
 <template>
+  <slider-list />
   <div id="main-container" class="catalog-container">
     <div class="catalog-main mb-5">
       <div class="page-container">
@@ -140,10 +141,11 @@
 import $ from 'jquery';
 import clientApi from "@/api/ClientApi";
 import RecommendView from "@/ClientViews/Elements/RecommendView.vue";
+import SliderList from "@/ClientViews/Elements/SliderList.vue";
 
 export default {
   name: 'CatalogView',
-  components: {RecommendView},
+  components: {SliderList, RecommendView},
   data() {
     return {
       list: null,

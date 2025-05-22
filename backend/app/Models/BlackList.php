@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Notifications\BlacklistStatusNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Notification;
 
 class BlackList extends Model
 {
@@ -24,5 +26,28 @@ class BlackList extends Model
                 $query->reorder()->orderBy('id', 'asc');
             }
         }
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($blackList) {
+            \Log::info("BlackList CREATED: ID={$blackList->id}, user_id={$blackList->user_id}");
+            if ($user = $blackList->user) {
+                \Log::info("-> Found user, sending notification");
+                $user->notify(new BlacklistStatusNotification($blackList, 'added'));
+            } else {
+                \Log::warning("-> No user found for BlackList ID={$blackList->id}");
+            }
+        });
+
+        static::deleted(function ($blackList) {
+            \Log::info("BlackList DELETED: ID={$blackList->id}, user_id={$blackList->user_id}");
+            if ($user = $blackList->user) {
+                \Log::info("-> Found user, sending removal notification");
+                $user->notify(new BlacklistStatusNotification($blackList, 'removed'));
+            } else {
+                \Log::warning("-> No user found for BlackList ID={$blackList->id}");
+            }
+        });
     }
 }

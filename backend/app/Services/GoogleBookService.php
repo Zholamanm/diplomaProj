@@ -33,8 +33,10 @@ class GoogleBookService
         $cacheKey = 'google_books_subject_'.md5($subject.$maxResults);
 
         return Cache::remember($cacheKey, now()->addHours(12), function() use ($subject, $maxResults) {
+            $slug = preg_replace('/[^\p{L}\p{Nd}]+/u', '_', $subject);
+            $slug = trim($slug, '_');
             $query = [
-                'q'          => 'subject:'.Str::of($subject)->replace(' ', '+'),
+                'q'          => 'subject:'.$slug,
                 'maxResults' => min(max($maxResults, 1), 40),
             ];
 

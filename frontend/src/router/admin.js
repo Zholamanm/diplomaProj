@@ -1,5 +1,6 @@
 import dashboardRoutes from "@/router/admin/dashboard";
 import bookRoutes from "@/router/admin/book";
+import sliderRoutes from "@/router/admin/slider";
 import borrowRoutes from "@/router/admin/borrow";
 import blackListRoutes from "@/router/admin/blackList";
 import Login from "@/views/Login.vue";
@@ -10,6 +11,7 @@ import tagRoutes from "@/router/admin/tag";
 const adminRoutes = [
     ...dashboardRoutes,
     ...bookRoutes,
+    ...sliderRoutes,
     ...borrowRoutes,
     ...blackListRoutes,
     ...categoryRoutes,

@@ -175,6 +175,9 @@
       <path value="$PROJECT_DIR$/backend/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/polyfill-uuid" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/backend/vendor/intervention/gif" />
+      <path value="$PROJECT_DIR$/backend/vendor/intervention/image" />
+      <path value="$PROJECT_DIR$/backend/vendor/intervention/image-laravel" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />

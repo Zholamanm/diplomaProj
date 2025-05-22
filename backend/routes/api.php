@@ -24,13 +24,16 @@ Route::middleware('auth:api')->get('/user-info', function (Request $request) {
     return $request->user();
 });
 Route::get('guest/books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
+Route::get('sliders', [\App\Http\Controllers\ClientController::class, 'getBooks']);
 Route::get('client/books/recommend', [\App\Http\Controllers\ClientController::class, 'getRecommendBooks']);
+Route::get('client/reviews/recent', [\App\Http\Controllers\ClientController::class, 'getRecentReviews']);
 Route::get('client/books/similar', [\App\Http\Controllers\ClientController::class, 'getSimilarBooks']);
 Route::get('client/books/featured', [\App\Http\Controllers\ClientController::class, 'getFeatured']);
 Route::get('client/books/recent', [\App\Http\Controllers\ClientController::class, 'getRecent']);
 Route::get('client/books/top-list', [\App\Http\Controllers\ClientController::class, 'getGenresWithMostFavoritedBook']);
 Route::get('client/books/categories', [\App\Http\Controllers\ClientController::class, 'getCategoriesWithMostBorrowedBooks']);
 Route::get('client/categories/{id}/books', [\App\Http\Controllers\ClientController::class, 'getCategoryWithBooks']);
+Route::get('client/genres/{id}/books', [\App\Http\Controllers\ClientController::class, 'getTopBooksByGenre']);
 Route::get('client/book/locations', [\App\Http\Controllers\ClientController::class, 'getLocationBookById']);
 Route::get('client/locations', [\App\Http\Controllers\ClientController::class, 'getLocationList']);
 Route::get('guest/books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
@@ -51,7 +54,11 @@ Route::middleware('auth:api')->post('/save-fcm-token', function(Request $request
 
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('client')->group(function () {
-        Route::get('review', [\App\Http\Controllers\ClientController::class, 'sendReview']);
+        Route::post('review', [\App\Http\Controllers\ClientController::class, 'sendReview']);
+        Route::get('reviews', [\App\Http\Controllers\ClientController::class, 'getReviews']);
+        Route::get('profile', [\App\Http\Controllers\ClientController::class, 'getProfile']);
+        Route::post('profile', [\App\Http\Controllers\ClientController::class, 'updateProfile']);
+        Route::post('profile/picture', [\App\Http\Controllers\ClientController::class, 'updatePicture']);
         Route::get('books/{id}', [\App\Http\Controllers\ClientController::class, 'getBookById']);
         Route::get('books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
         Route::get('checkout', [\App\Http\Controllers\ClientController::class, 'getCheckouts']);
@@ -90,6 +97,14 @@ Route::middleware(['auth:api'])->group(function () {
                 Route::post('/', [\App\Http\Controllers\BookController::class, 'store']);
                 Route::post('/{id}', [\App\Http\Controllers\BookController::class, 'update']);
                 Route::delete('/{id}', [\App\Http\Controllers\BookController::class, 'destroy']);
+            });
+            Route::prefix('slider')->group(function () {
+                Route::get('', [\App\Http\Controllers\SliderController::class, 'index']);
+                Route::get('/{id}', [\App\Http\Controllers\SliderController::class, 'view']);
+                Route::post('/', [\App\Http\Controllers\SliderController::class, 'store']);
+                Route::post('/{id}', [\App\Http\Controllers\SliderController::class, 'update']);
+                Route::delete('/{id}', [\App\Http\Controllers\SliderController::class, 'destroy']);
+                Route::post('enable/{id}', [\App\Http\Controllers\SliderController::class, 'enable']);
             });
             Route::prefix('category')->group(function () {
                 Route::get('', [\App\Http\Controllers\CategoryController::class, 'index']);
