@@ -39,7 +39,6 @@ class BookAvailableNotification extends Notification
 
     public function toFirebase($notifiable): CloudMessage
     {
-        // note: we re-use their fcm_token here to target this client
         $token = $notifiable->fcm_token;
 
         $title = 'Book Available!';

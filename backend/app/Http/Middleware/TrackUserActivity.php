@@ -15,7 +15,6 @@ class TrackUserActivity
             $user = Auth::user();
             $cacheKey = 'user-is-online-' . $user->id;
 
-            // Only update DB if last update was more than 60 seconds ago
             if (!Cache::has($cacheKey)) {
                 $user->update([
                     'last_seen_at' => now(),
@@ -24,7 +23,6 @@ class TrackUserActivity
 
                 broadcast(new UserOnlineStatusChanged($user->id, true))->toOthers();
 
-                // Cache for 60 seconds to throttle updates
                 Cache::put($cacheKey, true, 60);
             }
         }

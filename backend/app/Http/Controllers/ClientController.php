@@ -42,9 +42,9 @@ class ClientController extends Controller
         return response()->json($results);
     }
 
-    public function coffeeShopsNearby($latitude, $longitude)
+    public function cafesNearby($latitude, $longitude)
     {
-        $shops = $this->geoapify->getNearbyCoffeeShops(
+        $shops = $this->geoapify->getNearbyCafes(
             $latitude,
             $longitude,
             5000,
@@ -574,7 +574,7 @@ class ClientController extends Controller
         $locationBook = $locationBooks->first();
         $latitude = $locationBook->location->latitude;
         $longitude = $locationBook->location->longitude;
-        $shops = $this->coffeeShopsNearby($latitude, $longitude);
+        $shops = $this->cafesNearby($latitude, $longitude);
         return $locationBooks->map(function ($locationBook) use ($shops) {
             return [
                 'location' => [

@@ -23,7 +23,7 @@ class GeoapifyService
      * @param int $limit
      * @return array
      */
-    public function getNearbyCoffeeShops(float $latitude, float $longitude, int $radius = 5000, int $limit = 7): array
+    public function getNearbyCafes(float $latitude, float $longitude, int $radius = 5000, int $limit = 7): array
     {
         $response = Http::get($this->baseUrl, [
             'categories' => 'catering.cafe',
@@ -37,7 +37,6 @@ class GeoapifyService
             return $response->json('features') ?? [];
         }
 
-        // Optionally log errors here
         return [];
     }
 }

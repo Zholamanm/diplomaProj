@@ -311,8 +311,8 @@ export default {
     openReviewModal(item) {
       this.selectedBook = item;
       this.form.book_id = item.book.id;
-      this.form.comment = item.book.reviews[0].comment;
-      this.form.rating = item.book.reviews[0].rating;
+      this.form.comment = item.book.reviews[0]?.comment ?? '';
+      this.form.rating = item.book.reviews[0]?.rating ?? 0;
       this.showReviewModal = true;
     },
 

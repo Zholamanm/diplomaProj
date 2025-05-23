@@ -3,7 +3,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCDVMdN13iUKp1pqoz5KRUYNYTNE8np3aw",
+    apiKey: "AIzaSyAw1WWQRFpEEhEYwR3n7C5lWjYCcEbYN0U",
     authDomain: "diplomaproj-8c680.firebaseapp.com",
     projectId: "diplomaproj-8c680",
     storageBucket: "diplomaproj-8c680.firebasestorage.app",

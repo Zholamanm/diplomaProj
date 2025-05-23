@@ -11,16 +11,13 @@ class FirebaseChannel
 {
     public function send($notifiable, Notification $notification)
     {
-        // 1) Require an FCM token
         if (! $token = $notifiable->fcm_token) {
             \Log::warning("User {$notifiable->id} has no FCM token.");
             return;
         }
 
-        // 2) Let the Notification build its CloudMessage (with token embedded)
         $message = $notification->toFirebase($notifiable);
 
-        // 3) If it didn't return a CloudMessage, bail
         if (! $message instanceof CloudMessage) {
             \Log::error('toFirebase() did not return a CloudMessage instance.');
             return;
