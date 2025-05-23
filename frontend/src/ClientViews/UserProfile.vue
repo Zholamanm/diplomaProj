@@ -307,13 +307,6 @@ export default {
     },
     async cropImage() {
       try {
-        // Get the cropped canvas
-        // const canvas = this.$refs.cropper.getCroppedCanvas();
-
-        // if (!canvas) {
-        //   throw new Error('Cropping failed');
-        // }
-
         // Convert canvas to blob
         this.$refs.cropper.getCropBlob((blob) => {
           // You get the blob here

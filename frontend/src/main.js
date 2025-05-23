@@ -12,6 +12,7 @@ import { messaging, onMessage } from '@/firebase';
 import './assets/styles.css';
 import VueCropper from 'vue-cropper';
 import 'vue-cropper/dist/index.css'
+import './bootstrap.js'
 
 const app = createApp(App);
 const head = createHead(); // Create an instance

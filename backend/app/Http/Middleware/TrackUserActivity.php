@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Events\UserOnlineStatusChanged;
+use Closure;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+
+class TrackUserActivity
+{
+    public function handle($request, Closure $next)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $cacheKey = 'user-is-online-' . $user->id;
+
+            // Only update DB if last update was more than 60 seconds ago
+            if (!Cache::has($cacheKey)) {
+                $user->update([
+                    'last_seen_at' => now(),
+                    'is_online' => true,
+                ]);
+
+                broadcast(new UserOnlineStatusChanged($user->id, true))->toOthers();
+
+                // Cache for 60 seconds to throttle updates
+                Cache::put($cacheKey, true, 60);
+            }
+        }
+
+        return $next($request);
+    }
+}

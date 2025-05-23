@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -65,7 +66,9 @@ class User extends Authenticatable
         'nationality',
         'address',
         'phone',
-        'bio'
+        'bio',
+        'is_online',
+        'last_seen_at'
     ];
 
     /**
@@ -87,6 +90,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['online_status'];
+
+    public function getOnlineStatusAttribute()
+    {
+        if ($this->is_online) {
+            return 'online';
+        }
+
+        if (!$this->last_seen_at) {
+            return 'unknown';
+        }
+
+        return Carbon::parse($this->last_seen_at)->diffInMinutes(now()) > 5
+            ? 'offline'
+            : 'recently_online';    }
+
     public function role() {
         return $this->belongsTo(Role::class);
     }
@@ -104,6 +123,25 @@ class User extends Authenticatable
     public function isMember()
     {
         return $this->role_id == 3;
+    }
+
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'sender_id', 'recipient_id')
+            ->wherePivot('status', 'accepted')
+            ->withTimestamps();
+    }
+
+    public function pendingFriends()
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'recipient_id', 'sender_id')
+            ->wherePivot('status', 'pending');
+    }
+
+    public function sentFriendRequests()
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'sender_id', 'recipient_id')
+            ->wherePivot('status', 'pending');
     }
 
     public function scopeFilter($query, $filters)

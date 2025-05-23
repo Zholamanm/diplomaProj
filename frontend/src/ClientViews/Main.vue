@@ -2,36 +2,86 @@
   <div id="main-container" class="main-container nav-effect-1">
     <header-view @update-search="handleSearchQuery"></header-view>
     <router-view :search-query="searchQuery" @update-search="handleSearchQuery"></router-view>
+
+    <!-- Floating Chat Bubble -->
+    <div
+        class="chat-bubble"
+        :class="{ open: chatOpen }"
+        @click="toggleChat"
+        title="Chat with us"
+    >
+      <svg
+          v-if="!chatOpen"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="white"
+          width="24"
+          height="24"
+      >
+        <path
+            d="M20 2H4C2.897 2 2 2.897 2 4v14c0 1.103.897 2 2 2h14l4 4V4c0-1.103-.897-2-2-2zM7 11h10v2H7v-2zm6-4H7v2h6V7z"
+        />
+      </svg>
+
+      <div v-else class="chat-window" @click.stop>
+        <button class="close-btn" @click="toggleChat" aria-label="Close chat">×</button>
+        <iframe
+            src="https://app.fastbots.ai/embed/cmazk5jqk0a8nn8luyhslp7l1"
+            frameborder="0"
+            allow="microphone; camera"
+            class="chat-iframe"
+        ></iframe>
+      </div>
+    </div>
+
     <footer-view></footer-view>
   </div>
-  <!--  <div class="main-overlay-nav" style="z-index: 10;">-->
-  <!--    <div class="overlay-full"></div>-->
-  <!--  </div>-->
 </template>
+
 <script>
 import HeaderView from './Elements/HeaderView.vue';
 import FooterView from './Elements/FooterView.vue';
+import client from "@/api";
 
 export default {
-  name: 'ClientMainView',
-  components: {HeaderView, FooterView},
+  name: "ClientMainView",
+  components: { HeaderView, FooterView },
   data() {
     return {
-      searchQuery: '',
+      searchQuery: "",
+      chatOpen: false,
     };
   },
   methods: {
     handleSearchQuery(query) {
       this.searchQuery = query;
     },
+    toggleChat() {
+      this.chatOpen = !this.chatOpen;
+    },
   },
   mounted() {
-    const script = document.createElement('script');
-    script.src = 'https://app.fastbots.ai/embed/cmazk5jqk0a8nn8luyhslp7l1'
+    const script = document.createElement("script");
+    script.src = "https://app.fastbots.ai/embed/cmazk5jqk0a8nn8luyhslp7l1";
     script.defer = true;
     document.head.appendChild(script);
-  }
+
+    if(this.$store.state.auth.authorized) {
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+          client.post('/api/user/online');
+        } else {
+          client.post('/api/user/away');
+        }
+      });
+
+      window.addEventListener('beforeunload', function() {
+        navigator.sendBeacon('/api/user/offline');
+      });
+    }
+  },
 };
+
 </script>
 <style>
 @import url(https://fonts.googleapis.com/css?family=Lato:400,300,700,900);
@@ -40,6 +90,78 @@ export default {
 </style>
 
 <style scoped>
+.chat-bubble {
+  position: fixed;
+  bottom: 90px;
+  right: 25px;
+  background-color: #219e9a;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  box-shadow: 0 6px 12px rgba(33, 158, 154, 0.5);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: width 0.4s ease, height 0.4s ease, border-radius 0.4s ease,
+  box-shadow 0.4s ease;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* When open, expand bubble to chat window size */
+.chat-bubble.open {
+  width: 400px;
+  height: 600px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(33, 158, 154, 0.7);
+}
+
+/* Hide the icon when open */
+.chat-bubble.open > svg {
+  display: none;
+}
+
+.chat-window {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Close button top-right corner inside chat */
+.close-btn {
+  position: absolute;
+  top: 17px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  line-height: 28px;
+  font-weight: 700;
+  color: #219e9a;
+  cursor: pointer;
+  z-index: 10;
+  user-select: none;
+}
+
+.close-btn:hover {
+  color: #176d6c;
+}
+
+/* Style iframe to fill container */
+.chat-iframe {
+  flex-grow: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+}
+
 html,
 body,
 .main,

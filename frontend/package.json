@@ -17,6 +17,8 @@
     "firebase": "^11.7.3",
     "gsap": "^3.13.0",
     "jquery": "^3.7.1",
+    "laravel-echo": "^1.19.0",
+    "pusher-js": "^8.4.0",
     "select2": "^4.1.0-rc.0",
     "shufflejs": "^6.1.1",
     "v3-infinite-loading": "^1.2.2",

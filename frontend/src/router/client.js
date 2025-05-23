@@ -12,6 +12,10 @@ import About from "@/ClientViews/About.vue";
 import Book from "@/ClientViews/Book.vue";
 import Home from "@/ClientViews/Home.vue";
 import UserProfile from "@/ClientViews/UserProfile.vue";
+import UserPage from "@/ClientViews/UserPage.vue";
+import FriendList from "@/ClientViews/FriendList.vue";
+import chat from "@/ClientViews/Elements/ChatWindow.vue";
+import { requireAuth } from './router-guards'
 
 const clientRoutes = [
     {
@@ -43,11 +47,13 @@ const clientRoutes = [
                 path: 'checkout',
                 name: 'CheckoutView',
                 component: Checkout,
+                beforeEnter: requireAuth,
             },
             {
                 path: 'favourites',
                 name: 'FavouriteView',
                 component: Favourites,
+                beforeEnter: requireAuth,
             },
             {
                 path: 'book/:id',
@@ -58,11 +64,13 @@ const clientRoutes = [
                 path: 'map/:id',
                 name: 'BorrowMap',
                 component: BorrowMap,
+                beforeEnter: requireAuth,
             },
             {
                 path: 'map/:id/:locId',
                 name: 'BorrowBook',
                 component: BorrowBook,
+                beforeEnter: requireAuth,
             },
             {
                 path: 'about',
@@ -73,6 +81,24 @@ const clientRoutes = [
                 path: 'profile',
                 name: 'UserProfile',
                 component: UserProfile,
+                beforeEnter: requireAuth,
+            },
+            {
+                path: 'user/:id',
+                name: 'UserPage',
+                component: UserPage,
+            },
+            {
+                path: 'friends',
+                name: 'FriendList',
+                component: FriendList,
+                beforeEnter: requireAuth,
+            },
+            {
+                path: 'chat/:userId',
+                name: 'chat',
+                component: chat,
+                beforeEnter: requireAuth,
             },
         ],
     },

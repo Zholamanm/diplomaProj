@@ -16,7 +16,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('blacklist:remove-expired');
+        $schedule->command('blacklist:remove-expired')->daily();
+        $schedule->command('users:update-offline')->everyMinute();
     }
 
     /**

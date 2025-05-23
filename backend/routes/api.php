@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\BroadCastingController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -14,15 +16,9 @@ use App\Http\Controllers\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::post('/register', [AuthController::class, 'register']);
+//Route::post('/broadcasting/auth', BroadCastingController::class)->middleware('auth:api');Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/google-login', [AuthController::class, 'loginWithGoogle']);
-
-Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
-Route::middleware('auth:api')->get('/user-info', function (Request $request) {
-    return $request->user();
-});
 Route::get('guest/books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
 Route::get('sliders', [\App\Http\Controllers\ClientController::class, 'getBooks']);
 Route::get('client/books/recommend', [\App\Http\Controllers\ClientController::class, 'getRecommendBooks']);
@@ -40,6 +36,44 @@ Route::get('guest/books/{id}', [\App\Http\Controllers\ClientController::class, '
 Route::get('client/book/locations/{id}/', [\App\Http\Controllers\ClientController::class, 'getLocations']);
 Route::get('client/locations/{id}', [\App\Http\Controllers\ClientController::class, 'getLocationById']);
 Route::get('common_data', [\App\Http\Controllers\CommonController::class, 'index']);
+Route::get('client/reviews/{id}', [\App\Http\Controllers\ClientController::class, 'getUserReviews']);
+Route::get('client/profile/{id}', [\App\Http\Controllers\ClientController::class, 'getUserProfile']);
+Route::get('client/book/favourite/{id}', [\App\Http\Controllers\ClientController::class, 'getUserFavourites']);
+Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:api')->get('/user-info', function (Request $request) {
+    return $request->user();
+});
+Route::middleware('auth:api')->get('/test-auth', function () {
+    return response()->json(['user' => auth()->user()]);
+});
+Route::middleware('auth:api')->get('/online-friends', function () {
+    return response()->json([
+        'online' => auth()->user()->friends()
+            ->where('is_online', true)
+            ->get(),
+        'recently_online' => auth()->user()->friends()
+            ->where('is_online', false)
+            ->where('last_seen_at', '>', now()->subMinutes(15))
+            ->get()
+    ]);
+});
+Route::middleware('auth:api')->post('/user/online', function() {
+    auth()->user()->update(['is_online' => true]);
+    broadcast(new \App\Events\UserOnlineStatusChanged(auth()->id(), true))->toOthers();
+    return response()->json(['status' => 'online']);
+});
+
+Route::middleware('auth:api')->post('/user/away', function() {
+    auth()->user()->update(['is_online' => false]);
+    broadcast(new \App\Events\UserOnlineStatusChanged(auth()->id(), false))->toOthers();
+    return response()->json(['status' => 'away']);
+});
+
+Route::middleware('auth:api')->post('/user/offline', function() {
+    auth()->user()->update(['is_online' => false]);
+    broadcast(new \App\Events\UserOnlineStatusChanged(auth()->id(), false))->toOthers();
+    return response()->json(['status' => 'offline']);
+});
 
 Route::middleware('auth:api')->post('/save-fcm-token', function(Request $request) {
     $request->validate(['fcm_token' => 'required|string']);
@@ -54,6 +88,13 @@ Route::middleware('auth:api')->post('/save-fcm-token', function(Request $request
 
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('client')->group(function () {
+        Route::get('/friends/{id}', [\App\Http\Controllers\FriendshipController::class, 'getFriends']);
+        Route::post('/friends/{id}/send', [\App\Http\Controllers\FriendshipController::class, 'sendRequest']);
+        Route::get('/friendship-status/{id}', [\App\Http\Controllers\FriendshipController::class, 'checkStatus']);
+        Route::post('/friends/{id}/accept', [\App\Http\Controllers\FriendshipController::class, 'acceptRequest']);
+        Route::post('/friends/{id}/reject', [\App\Http\Controllers\FriendshipController::class, 'rejectRequest']);
+        Route::get('/chat/{id}', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat');
+        Route::post('/chat/{id}/send', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
         Route::post('review', [\App\Http\Controllers\ClientController::class, 'sendReview']);
         Route::get('reviews', [\App\Http\Controllers\ClientController::class, 'getReviews']);
         Route::get('profile', [\App\Http\Controllers\ClientController::class, 'getProfile']);

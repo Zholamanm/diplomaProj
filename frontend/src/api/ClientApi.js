@@ -1,12 +1,17 @@
 import client from "./index";
 
-
 const ClientApi = {
     getList(data) {
         return client.get('/api/client/books', {params: data}).then(res => res.data);
     },
+    getFriends(id) {
+        return client.get('/api/client/friends/' + id).then(res => res.data);
+    },
     getProfile() {
         return client.get('/api/client/profile').then(res => res.data);
+    },
+    getUserProfile(id) {
+        return client.get('/api/client/profile/' + id).then(res => res.data);
     },
     getRecentReviews() {
         return client.get('/api/client/reviews/recent').then(res => res.data);
@@ -27,6 +32,9 @@ const ClientApi = {
     },
     getUserReviews() {
         return client.get('/api/client/reviews').then(res => res.data);
+    },
+    getUserPublicReviews(id) {
+        return client.get('/api/client/reviews/' + id).then(res => res.data);
     },
     getGuestList(data) {
         return client.get('/api/guest/books', {params: data}).then(res => res.data);
@@ -90,6 +98,21 @@ const ClientApi = {
     },
     getFavourites(data) {
         return client.get('/api/client/book/favourite', {params: data}).then(res => res.data);
+    },
+    getUserFavorites(id) {
+        return client.get('/api/client/book/favourite/' + id).then(res => res.data);
+    },
+    sendRequest(id) {
+        return client.post(`/api/client/friends/${id}/send`).then(res => res.data);
+    },
+    acceptRequest(id) {
+        return client.post(`/api/client/friends/${id}/accept`).then(res => res.data);
+    },
+    declineRequest(id) {
+        return client.post(`/api/client/friends/${id}/reject`).then(res => res.data);
+    },
+    removeFriend(id) {
+        return client.delete(`/api/client/friends/${id}//remove`).then(res => res.data);
     }
 };
 export default ClientApi;

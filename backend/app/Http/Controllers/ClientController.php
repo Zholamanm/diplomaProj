@@ -10,6 +10,7 @@ use App\Models\Genre;
 use App\Models\Location;
 use App\Models\LocationBook;
 use App\Models\Review;
+use App\Models\User;
 use App\Services\GeoapifyService;
 use App\Services\GoogleBookService;
 use App\Services\OpenLibraryService;
@@ -269,6 +270,23 @@ class ClientController extends Controller
         ]);
     }
 
+    public function getUserReviews($id)
+    {
+        return Review::where('user_id', $id)->with('book')->paginate(10);
+    }
+
+    public function getUserProfile($id)
+    {
+        $user = User::find($id);
+
+        $user->load('role');
+
+        return response()->json([
+            'data' => $user,
+            'message' => 'Profile retrieved successfully'
+        ]);
+    }
+
     /**
      * Update user's profile
      */
@@ -481,6 +499,11 @@ class ClientController extends Controller
     public function getFavourites(Request $request)
     {
         return Favourite::where('user_id', Auth::id())->with('book')->filter($request->all())->paginate(10);
+    }
+
+    public function getUserFavourites($id)
+    {
+        return Favourite::where('user_id', $id)->with('book')->paginate(10);
     }
 
     public function addToFavourites($id)

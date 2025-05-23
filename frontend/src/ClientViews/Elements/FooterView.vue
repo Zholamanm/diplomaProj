@@ -4,7 +4,7 @@
       <div class="original-version small-12 columns"><a href=""
                                                         target="_blank"><em>Original Version can be found here.</em></a>
       </div>
-      <div class="copyright small-12 columns">&copy; 2016 - <a href="" target="_blank">InteractiveJoe</a>
+      <div class="copyright small-12 columns">&copy; 2016 - <a href="" target="_blank">Diploma Project</a>
       </div>
     </div>
   </footer>
