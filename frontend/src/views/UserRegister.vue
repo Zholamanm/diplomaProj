@@ -93,7 +93,7 @@ export default {
   methods: {
     register() {
       axios
-        .post('http://localhost:8000/api/register', this.form)
+        .post('https://diplomaproj.byethost3.com/api/register', this.form)
         .then((response) => {
           console.log(response.data);
           this.$router.push('/login');

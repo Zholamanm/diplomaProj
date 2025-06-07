@@ -76,7 +76,7 @@
                       <div class="bk-front">
                         <div
                             class="bk-cover"
-                            :style="{ backgroundImage: `url('http://localhost:8000/storage/${book.cover_image}')` }"
+                            :style="{ backgroundImage: `url('https://diplomaproj.byethost3.com/storage/${book.cover_image}')` }"
                             @error="handleImageError"
                         ></div>
                       </div>
@@ -169,7 +169,7 @@ export default {
       return desc.length > 100 ? desc.substring(0, 100) + '...' : desc;
     },
     handleImageError(e) {
-      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
     },
     showBookDetails(id) {
       this.$router.push({name: 'BookView', params: {locale: this.$route.params.locale, id: id}})

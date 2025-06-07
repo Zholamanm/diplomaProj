@@ -57,7 +57,7 @@
                       <div class="bk-front">
                         <div
                             class="bk-cover"
-                            :style="{ backgroundImage: `url('http://localhost:8000/storage/${book.cover_image}')` }"
+                            :style="{ backgroundImage: `url('https://diplomaproj.byethost3.com/storage/${book.cover_image}')` }"
                             @error="handleImageError"
                         ></div>
                       </div>
@@ -87,7 +87,7 @@
                     <div class="overlay-image-container">
                       <div class="overlay-image">
                         <img
-                            :src="'http://localhost:8000/storage/' + book.cover_image"
+                            :src="'https://diplomaproj.byethost3.com/' + book.cover_image"
                             alt="Book Cover"
                             @error="handleImageError"
                         >
@@ -263,7 +263,7 @@ export default {
       }
     },
     handleImageError(e) {
-      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
     },
     showBookDetails(event, book) {
       const $el = $(event.currentTarget).closest('.book-item');

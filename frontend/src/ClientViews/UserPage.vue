@@ -149,8 +149,8 @@ export default {
   computed: {
     userProfilePicture() {
       return this.user?.profile_picture
-          ? `http://localhost:8000/storage/${this.user?.profile_picture}`
-          : 'http://localhost:8000/defaults/default-profile.jpg';
+          ? `https://diplomaproj.byethost3.com/storage/${this.user?.profile_picture}`
+          : 'https://diplomaproj.byethost3.com/defaults/default-profile.jpg';
     }
   },
   methods: {
@@ -205,8 +205,8 @@ export default {
 
     getBookCover(book) {
       return book.cover_image
-          ? `http://localhost:8000/storage/${book.cover_image}`
-          : 'http://localhost:8000/defaults/default-cover.jpg';
+          ? `https://diplomaproj.byethost3.com/storage/${book.cover_image}`
+          : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
     }
   },
   mounted() {

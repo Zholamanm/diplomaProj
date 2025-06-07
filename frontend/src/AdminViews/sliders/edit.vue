@@ -113,7 +113,7 @@ export default {
       if (this.form.new_cover_image) {
         return URL.createObjectURL(this.form.new_cover_image);
       }
-      return this.form.cover_image ? `http://localhost:8000/storage/${this.form.cover_image}` : '';
+      return this.form.cover_image ? `https://diplomaproj.byethost3.com/storage/${this.form.cover_image}` : '';
     },
   },
   methods: {

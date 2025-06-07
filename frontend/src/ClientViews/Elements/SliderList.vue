@@ -6,7 +6,7 @@
             class="slide"
             v-for="(slider) in activeSliders"
             :key="slider.id"
-            :style="{ backgroundImage: `url(http://localhost:8000/storage/${slider.cover_image})` }"
+            :style="{ backgroundImage: `url(https://diplomaproj.byethost3.com/storage/${slider.cover_image})` }"
         >
           <!-- You can add slider content here if needed -->
         </div>

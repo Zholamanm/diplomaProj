@@ -193,10 +193,10 @@ export default {
   },
   methods: {
     getImageUrl(path) {
-      return path ? `http://localhost:8000/storage/${path}` : 'http://localhost:8000/defaults/default-cover.jpg';
+      return path ? `https://diplomaproj.byethost3.com/storage/${path}` : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
     },
     handleImageError(e) {
-      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
     },
     fetchLocationDetails() {
       this.loading = false;

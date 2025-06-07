@@ -84,7 +84,7 @@ export default {
   methods: {
     fetchUser() {
       axios
-        .get('http://localhost:8000/api/user', {
+        .get('https://diplomaproj.byethost3.com/api/user', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -99,7 +99,7 @@ export default {
     },
     logout() {
       axios
-        .post('http://localhost:8000/api/logout', {}, {
+        .post('https://diplomaproj.byethost3.com/api/logout', {}, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },

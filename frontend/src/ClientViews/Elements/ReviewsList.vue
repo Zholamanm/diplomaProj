@@ -64,14 +64,14 @@ export default {
 
     getProfilePicture(user) {
       return user.profile_picture
-          ? `http://localhost:8000/storage/${user.profile_picture}`
-          : 'http://localhost:8000/defaults/default-profile.jpg';
+          ? `https://diplomaproj.byethost3.com/storage/${user.profile_picture}`
+          : 'https://diplomaproj.byethost3.com/defaults/default-profile.jpg';
     },
 
     getBookCover(book) {
       return book.cover_image
-          ? `http://localhost:8000/storage/${book.cover_image}`
-          : 'http://localhost:8000/defaults/default-cover.jpg';
+          ? `https://diplomaproj.byethost3.com/storage/${book.cover_image}`
+          : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
     },
 
     formatDate(dateString) {
@@ -90,7 +90,7 @@ export default {
     },
 
     handleImageError(e) {
-      e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
+      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
     }
   },
   mounted() {

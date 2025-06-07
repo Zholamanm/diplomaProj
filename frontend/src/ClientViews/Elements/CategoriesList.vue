@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     getImageUrl(path) {
-      return path ? `http://localhost:8000/storage/${path}` : '';
+      return path ? `https://diplomaproj.byethost3.com/storage/${path}` : '';
     },
     fetchCategories() {
       clientApi.getCategoriesWithMostBorrowed()
