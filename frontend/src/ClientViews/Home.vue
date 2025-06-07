@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <!-- Hero Section with Animated Book Stack -->
     <div>
-      <img src="https://diplomaproj.byethost3.com/storage/home/1747902338448.jpg" alt="" style="position: absolute; z-index: 0; width: 100%; height: 750px; left: 0">
+      <img src="https://bookers.com.kz/storage/home/1747902338448.jpg" alt="" style="position: absolute; z-index: 0; width: 100%; height: 750px; left: 0">
       <section class="hero-section">
         <div class="hero-content" style="z-index: 1;">
           <h1 class="hero-title">Discover. Share. <span class="highlight">Read.</span></h1>
@@ -26,7 +26,7 @@
         <div class="book-stack-animation">
           <div class="book" v-for="(book, index) in featuredBooks" :key="book.id"
                :style="{ '--delay': index * 0.1 + 's', 'z-index': 10 - index }">
-            <div class="book-cover" :style="{ backgroundImage: book.cover_image ? `url(https://diplomaproj.byethost3.com/storage/${book.cover_image})` : 'url(https://diplomaproj.byethost3.com/defaults/default-cover.jpg)' }"></div>
+            <div class="book-cover" :style="{ backgroundImage: book.cover_image ? `url(https://bookers.com.kz/storage/${book.cover_image})` : 'url(https://bookers.com.kz/defaults/default-cover.jpg)' }"></div>
           </div>
         </div>
       </section>
@@ -58,7 +58,7 @@
         <div class="rec-card" v-for="rec in personalizedRecs" :key="rec.id"
              @click="viewBookDetails(rec.id)">
           <div class="rec-cover"
-               :style="{ backgroundImage: rec.cover_image ? `url(https://diplomaproj.byethost3.com/storage/${rec.cover_image})` : 'url(https://diplomaproj.byethost3.com/defaults/default-cover.jpg)' }"></div>
+               :style="{ backgroundImage: rec.cover_image ? `url(https://bookers.com.kz/storage/${rec.cover_image})` : 'url(https://bookers.com.kz/defaults/default-cover.jpg)' }"></div>
           <div class="rec-details">
             <h3>{{ rec.title }}</h3>
             <p>{{ rec.author }}</p>

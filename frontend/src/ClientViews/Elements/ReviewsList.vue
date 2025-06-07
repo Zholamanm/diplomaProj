@@ -64,14 +64,14 @@ export default {
 
     getProfilePicture(user) {
       return user.profile_picture
-          ? `https://diplomaproj.byethost3.com/storage/${user.profile_picture}`
-          : 'https://diplomaproj.byethost3.com/defaults/default-profile.jpg';
+          ? `https://bookers.com.kz/storage/${user.profile_picture}`
+          : 'https://bookers.com.kz/defaults/default-profile.jpg';
     },
 
     getBookCover(book) {
       return book.cover_image
-          ? `https://diplomaproj.byethost3.com/storage/${book.cover_image}`
-          : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+          ? `https://bookers.com.kz/storage/${book.cover_image}`
+          : 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
 
     formatDate(dateString) {
@@ -90,7 +90,7 @@ export default {
     },
 
     handleImageError(e) {
-      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+      e.target.src = 'https://bookers.com.kz/defaults/default-cover.jpg';
     }
   },
   mounted() {

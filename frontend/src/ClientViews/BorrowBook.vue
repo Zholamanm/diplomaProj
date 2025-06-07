@@ -193,10 +193,10 @@ export default {
   },
   methods: {
     getImageUrl(path) {
-      return path ? `https://diplomaproj.byethost3.com/storage/${path}` : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+      return path ? `https://bookers.com.kz/storage/${path}` : 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
     handleImageError(e) {
-      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+      e.target.src = 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
     fetchLocationDetails() {
       this.loading = false;

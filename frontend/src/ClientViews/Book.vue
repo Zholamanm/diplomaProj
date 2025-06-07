@@ -24,7 +24,7 @@
         <div class="book-media">
           <div class="main-image">
             <img
-                :src="book.cover_image ? `https://diplomaproj.byethost3.com/storage/${book.cover_image}` : placeholderImage"
+                :src="book.cover_image ? `https://bookers.com.kz/storage/${book.cover_image}` : placeholderImage"
                 :alt="`Cover of ${book.title}`"
                 @error="handleImageError"
             >
@@ -257,8 +257,8 @@ export default {
       tags: null,
       genre_id: null,
       loading: false,
-      placeholderImage: 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg',
-      similarPlaceholder: 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg',
+      placeholderImage: 'https://bookers.com.kz/defaults/default-cover.jpg',
+      similarPlaceholder: 'https://bookers.com.kz/defaults/default-cover.jpg',
       showSimilarModal: false,
       selectedSimilarBook: null,
       isFav: null,

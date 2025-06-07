@@ -48,7 +48,7 @@
           <tbody>
           <tr v-for="item in list" :key="item.id">
             <td>{{ item.id }}</td>
-            <td style="justify-items: center;"><img :src="`https://diplomaproj.byethost3.com/storage/${item.cover_image}`" alt="Slider Image Preview" style="display: block; margin-bottom: 1rem;"></td>
+            <td style="justify-items: center;"><img :src="`https://bookers.com.kz/storage/${item.cover_image}`" alt="Slider Image Preview" style="display: block; margin-bottom: 1rem;"></td>
             <td>{{ new Date(item.start_date).toDateString() }}</td>
             <td>{{ new Date(item.end_date).toDateString() }}</td>
             <td>

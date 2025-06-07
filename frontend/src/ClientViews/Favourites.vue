@@ -57,7 +57,7 @@
                       <div class="bk-front">
                         <div
                             class="bk-cover"
-                            :style="{ backgroundImage: `url('https://diplomaproj.byethost3.com/storage/${item.book.cover_image}')` }"
+                            :style="{ backgroundImage: `url('https://bookers.com.kz/storage/${item.book.cover_image}')` }"
                             @error="handleImageError"
                         ></div>
                       </div>
@@ -87,7 +87,7 @@
                     <div class="overlay-image-container">
                       <div class="overlay-image">
                         <img
-                            :src="'https://diplomaproj.byethost3.com/storage/' + item.book.cover_image"
+                            :src="'https://bookers.com.kz/storage/' + item.book.cover_image"
                             alt="Book Cover"
                             @error="handleImageError"
                         >
@@ -218,7 +218,7 @@ export default {
   },
   methods: {
     handleImageError(e) {
-      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+      e.target.src = 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
     truncateDescription(desc) {
       if (!desc) return '';

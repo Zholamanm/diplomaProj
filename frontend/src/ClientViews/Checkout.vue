@@ -40,7 +40,7 @@
                 <div class="col-4 col-sm-3">
                   <img
                       class="book-cover"
-                      :src="`https://diplomaproj.byethost3.com/storage/${item.book.cover_image}`"
+                      :src="`https://bookers.com.kz/storage/${item.book.cover_image}`"
                       :alt="item.book.title"
                       @error="handleImageError"
                   >
@@ -112,7 +112,7 @@
           <div class="book-info">
             <img
                 class="modal-book-cover"
-                :src="`https://diplomaproj.byethost3.com/storage/${selectedBook.book.cover_image}`"
+                :src="`https://bookers.com.kz/storage/${selectedBook.book.cover_image}`"
                 :alt="selectedBook.book.title"
                 @error="handleImageError"
             >
@@ -267,7 +267,7 @@ export default {
   },
   methods: {
     handleImageError(e) {
-      e.target.src = 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+      e.target.src = 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
     dropList() {
       this.list = [];

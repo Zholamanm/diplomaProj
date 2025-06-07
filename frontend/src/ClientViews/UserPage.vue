@@ -149,8 +149,8 @@ export default {
   computed: {
     userProfilePicture() {
       return this.user?.profile_picture
-          ? `https://diplomaproj.byethost3.com/storage/${this.user?.profile_picture}`
-          : 'https://diplomaproj.byethost3.com/defaults/default-profile.jpg';
+          ? `https://bookers.com.kz/storage/${this.user?.profile_picture}`
+          : 'https://bookers.com.kz/defaults/default-profile.jpg';
     }
   },
   methods: {
@@ -205,8 +205,8 @@ export default {
 
     getBookCover(book) {
       return book.cover_image
-          ? `https://diplomaproj.byethost3.com/storage/${book.cover_image}`
-          : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+          ? `https://bookers.com.kz/storage/${book.cover_image}`
+          : 'https://bookers.com.kz/defaults/default-cover.jpg';
     }
   },
   mounted() {

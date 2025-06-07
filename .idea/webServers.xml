@@ -9,6 +9,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="cd8f1e5e-84d1-482d-b498-5f80301a3db0" name="195.210.46.56" url="https://bookers.com.kz/">
+        <fileTransfer rootFolder="/httpdocs" host="195.210.46.56" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

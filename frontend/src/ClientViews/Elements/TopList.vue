@@ -29,7 +29,7 @@
           transform: `rotate(${-2 + n * 1.5}deg)`,
           zIndex: 5 - n,
           ...(n === 1 ? {
-            backgroundImage: `url('${genre.book ? getImageUrl(genre.book.cover_image) : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg'}')`,
+            backgroundImage: `url('${genre.book ? getImageUrl(genre.book.cover_image) : 'https://bookers.com.kz/defaults/default-cover.jpg'}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           } : {})
@@ -65,11 +65,11 @@ export default {
       }, 5000); // Scroll every 5 seconds
     },
     getImageUrl(path) {
-      return path ? `https://diplomaproj.byethost3.com/storage/${path}` : 'https://diplomaproj.byethost3.com/defaults/default-cover.jpg';
+      return path ? `https://bookers.com.kz/storage/${path}` : 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
     handleImageError(e) {
       // This won't work for background images, we'll need a different approach
-      e.target.style.backgroundImage = "url('https://diplomaproj.byethost3.com/defaults/default-cover.jpg')";
+      e.target.style.backgroundImage = "url('https://bookers.com.kz/defaults/default-cover.jpg')";
     },
     fetchGenres() {
       clientApi.getTopsLists()

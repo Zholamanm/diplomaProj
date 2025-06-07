@@ -27,7 +27,7 @@
         >
           <div class="friend-avatar-container">
             <img
-                :src="friend.profile_picture ? `https://diplomaproj.byethost3.com/storage/${friend.profile_picture}` : 'https://diplomaproj.byethost3.com/defaults/default-profile.jpg'"
+                :src="friend.profile_picture ? `https://bookers.com.kz/storage/${friend.profile_picture}` : 'https://bookers.com.kz/defaults/default-profile.jpg'"
                 class="friend-avatar"
                 :class="{ 'avatar-hover': hoverFriend === friend.id }"
             >
@@ -88,7 +88,7 @@
         >
           <div class="request-avatar-container">
             <img
-                :src="request.profile_picture ? `https://diplomaproj.byethost3.com/storage/${request.profile_picture}` : 'https://diplomaproj.byethost3.com/defaults/default-profile.jpg'"
+                :src="request.profile_picture ? `https://bookers.com.kz/storage/${request.profile_picture}` : 'https://bookers.com.kz/defaults/default-profile.jpg'"
                 class="request-avatar"
             >
           </div>

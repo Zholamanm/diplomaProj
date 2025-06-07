@@ -84,7 +84,7 @@ export default {
   methods: {
     fetchUser() {
       axios
-        .get('https://diplomaproj.byethost3.com/api/user', {
+        .get('https://bookers.com.kz/api/user', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -99,7 +99,7 @@ export default {
     },
     logout() {
       axios
-        .post('https://diplomaproj.byethost3.com/api/logout', {}, {
+        .post('https://bookers.com.kz/api/logout', {}, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },

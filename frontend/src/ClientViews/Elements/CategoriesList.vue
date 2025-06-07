@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     getImageUrl(path) {
-      return path ? `https://diplomaproj.byethost3.com/storage/${path}` : '';
+      return path ? `https://bookers.com.kz/storage/${path}` : '';
     },
     fetchCategories() {
       clientApi.getCategoriesWithMostBorrowed()

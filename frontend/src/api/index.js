@@ -4,7 +4,7 @@ import router from "../router";
 
 const client = axios.create({
     // baseURL: import.meta.env.BASE_URL || 'http://localhost',
-    baseURL: process.env.MIX_BASE_URL || 'https://diplomaproj.byethost3.com/',
+    baseURL: process.env.MIX_BASE_URL || 'https://bookers.com.kz/',
     headers: {
         'Content-Type': 'application/json',
     },
