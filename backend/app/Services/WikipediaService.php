@@ -129,10 +129,9 @@ class WikipediaService
     {
         $cacheKey = 'wikipedia_authors_' . md5($categoryName);
 
-        // Normalize the category name
         $normalized = str_replace(' ', '_', $categoryName);
-        $normalized = str_replace('Non_Fiction', 'Non-fiction', $normalized); // Fix specific case
-        $normalized = str_replace('Nonfiction', 'Non-fiction', $normalized);   // Alternative spelling
+        $normalized = str_replace('Non_Fiction', 'Non-fiction', $normalized);
+        $normalized = str_replace('Nonfiction', 'Non-fiction', $normalized);
 
         $encoded = urlencode($normalized);
         $encoded = str_replace('%26', '&', $encoded);

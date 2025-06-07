@@ -157,12 +157,10 @@ class AuthController extends Controller
             $user = User::where('email', $firebaseUser->email)->first();
 
             if (!$user) {
-                // Create new user if not exists
                 $user = User::create([
                     'name' => $firebaseUser->displayName ?? 'No Name',
                     'password' => Hash::make('123456'),
                     'email' => $firebaseUser->email,
-                    // 'firebase_uid' => $firebaseUser->uid, // optional
                 ]);
             }
 

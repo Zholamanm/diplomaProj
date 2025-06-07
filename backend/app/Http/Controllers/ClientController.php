@@ -565,8 +565,9 @@ class ClientController extends Controller
             ->where('location_id', $request->id)
             ->where('quantity', '>', 0)
             ->with('location')
-            ->with('book')
+            ->with('book', 'book.category', 'book.genres', 'book.tags', 'book.reviews')
             ->get();
+        $book = Book::withCount('reviews')->find($request->bookId);
 
         if ($locationBooks->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404); // Optional: handle this case
@@ -575,7 +576,7 @@ class ClientController extends Controller
         $latitude = $locationBook->location->latitude;
         $longitude = $locationBook->location->longitude;
         $shops = $this->cafesNearby($latitude, $longitude);
-        return $locationBooks->map(function ($locationBook) use ($shops) {
+        return $locationBooks->map(function ($locationBook) use ($shops, $book) {
             return [
                 'location' => [
                     'id' => $locationBook->location->id,
@@ -585,6 +586,7 @@ class ClientController extends Controller
                     'quantity' => $locationBook->quantity,
                 ],
                 'book' => $locationBook->book,
+                'reviews_count' => $book->reviews_count,
                 'shops' => $shops
             ];
         });

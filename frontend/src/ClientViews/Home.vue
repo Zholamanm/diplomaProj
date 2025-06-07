@@ -26,7 +26,7 @@
         <div class="book-stack-animation">
           <div class="book" v-for="(book, index) in featuredBooks" :key="book.id"
                :style="{ '--delay': index * 0.1 + 's', 'z-index': 10 - index }">
-            <div class="book-cover" :style="{ backgroundImage: `url(http://localhost:8000/storage/${book.cover_image})` }"></div>
+            <div class="book-cover" :style="{ backgroundImage: book.cover_image ? `url(http://localhost:8000/storage/${book.cover_image})` : 'url(http://localhost:8000/defaults/default-cover.jpg)' }"></div>
           </div>
         </div>
       </section>

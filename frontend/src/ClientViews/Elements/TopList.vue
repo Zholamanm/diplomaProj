@@ -84,16 +84,10 @@ export default {
     scroll(direction) {
       const carousel = this.$refs.carousel;
       const itemWidth = 320; // Width of each genre block
-      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
 
       this.currentScroll += direction * itemWidth * 2; // Scroll 2 items at a time
 
       // Handle boundaries
-      if (this.currentScroll < 0) {
-        this.currentScroll = maxScroll;
-      } else if (this.currentScroll > maxScroll) {
-        this.currentScroll = 0;
-      }
 
       carousel.scrollTo({
         left: this.currentScroll,
