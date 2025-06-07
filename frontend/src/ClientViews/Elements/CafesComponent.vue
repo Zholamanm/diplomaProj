@@ -106,7 +106,7 @@
       </div>
     </div>
     <div style="width: 50%" class="coffee-shop mt-5">
-      <h1 class="carousel-title">Discover Nearby Coffee Shops</h1>
+      <h1 class="carousel-title">Discover Nearby Cafes</h1>
       <p class="carousel-subtitle">Find your perfect brew near you</p>
 
       <div class="carousel mt-4" mask style="justify-self: center;"
@@ -148,18 +148,6 @@
             </span>
             </div>
           </div>
-
-          <div class="card-footer">
-            <a :href="item.properties.website || '#'" class="visit-btn" target="_blank">
-              Visit Website
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14px" height="14px">
-                <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
-              </svg>
-            </a>
-            <button class="directions-btn" @click="getDirections(item)">
-              Get Directions
-            </button>
-          </div>
         </article>
       </div>
     </div>
@@ -173,7 +161,7 @@ import { LMap, LTileLayer, LMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 
 export default {
-  name: 'CoffeeShops',
+  name: 'CafesComponent',
   components: {
     LMap,
     LTileLayer,
@@ -241,10 +229,6 @@ export default {
       if (this.hoveredIndex === index) {
         this.hoveredIndex = null;
       }
-    },
-    getDirections(shop) {
-      // Implement directions functionality
-      console.log('Getting directions to:', shop.properties.address_line1);
     },
     filterLocations() {
       if (!this.searchQuery) {

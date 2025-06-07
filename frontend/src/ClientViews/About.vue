@@ -11,7 +11,7 @@
           <figure class="front" id="cover">
             <div class="cover-content">
               <h1>BookShare</h1>
-              <p class="tagline">Connecting readers since 2023</p>
+              <p class="tagline">Connecting readers since 2025</p>
               <div class="cover-logo">📚</div>
             </div>
           </figure>
@@ -35,7 +35,7 @@
           <figure class="front">
             <div class="page-content">
               <h2>The Community</h2>
-              <p>Over 10,000 members strong, our platform connects book lovers across the country. Join discussions, share recommendations, and meet fellow bibliophiles.</p>
+              <p>Over 1,000,000,000,000 members strong, our platform connects book lovers across the country. Join discussions, share recommendations, and meet fellow bibliophiles.</p>
               <div class="icon">👥</div>
             </div>
           </figure>

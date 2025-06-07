@@ -36,9 +36,6 @@
           <div class="friend-info">
             <h3>{{ friend.name }}</h3>
             <UserOnlineIndicator v-if="$store.state.user.user.id" :user="friend" />
-            <p class="friend-status" v-if="friend.last_seen">
-              {{ friend.is_online ? 'Online now' : `Last seen ${formatLastSeen(friend.last_seen)}` }}
-            </p>
           </div>
           <div class="friend-actions">
             <button

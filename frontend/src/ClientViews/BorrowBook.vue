@@ -1,5 +1,5 @@
 <template>
-  <div class="borrow-book-container">
+  <div class="borrow-book-container mt-3">
     <div v-if="book && location" class="borrow-book-content">
       <!-- First Row - Split into two columns -->
       <div class="first-row">
@@ -124,7 +124,7 @@
                   <svg viewBox="0 0 24 24" width="16" height="16">
                     <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"/>
                   </svg>
-                  <span>Pages: {{ book.pages || 'N/A' }}</span>
+                  <span>Genres: {{ book.genres.map(x => x.name).join(', ') || 'N/A' }}</span>
                 </div>
 
                 <div class="meta-item">
@@ -132,7 +132,8 @@
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
                     <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                   </svg>
-                  <span>Published: {{ book.published_year || 'N/A' }}</span>
+                  <span>Tags: {{ book.tags.map(x => x.name).join(', ') || 'N/A' }}</span>
+                  <span class="rating">★ {{ getAverageRating(book.reviews) }} ({{ reviews_count }})</span>
                 </div>
               </div>
 
@@ -154,7 +155,7 @@
           </div>
         </div>
       </div>
-      <coffee-shops :shops="shops" :borrowLoc="location"/>
+      <cafes-component :shops="shops" :borrowLoc="location"/>
       <!-- Second Row (will contain coffee shops component later) -->
       <!-- <coffee-shops :shops="shops" /> -->
     </div>
@@ -172,11 +173,11 @@
 
 <script>
 import clientApi from "@/api/ClientApi";
-import CoffeeShops from "@/ClientViews/Elements/CoffeeShops.vue";
+import CafesComponent from "@/ClientViews/Elements/CafesComponent.vue";
 
 export default {
   name: 'BorrowBook',
-  components: {CoffeeShops},
+  components: {CafesComponent},
   data() {
     return {
       book: null,
@@ -186,7 +187,8 @@ export default {
       loading: false,
       message: "",
       success: false,
-      check: null
+      check: null,
+      reviews_count: null,
     };
   },
   methods: {
@@ -195,9 +197,6 @@ export default {
     },
     handleImageError(e) {
       e.target.src = 'http://localhost:8000/defaults/default-cover.jpg';
-    },
-    fetchBookDetails() {
-      // Your existing implementation
     },
     fetchLocationDetails() {
       this.loading = false;
@@ -210,6 +209,7 @@ export default {
           this.location = data.location;
           this.shops = data.shops.original;
           this.book = data.book;
+          this.reviews_count = data.reviews_count;
         } else {
           this.error = "No location or book data found.";
         }
@@ -217,6 +217,12 @@ export default {
       }).catch(err => {
         console.error("Error fetching location details:", err);
       })
+    },
+    getAverageRating(reviews) {
+      if (!reviews || reviews.length === 0) return '0';
+      const total = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+      const avg = total / reviews.length;
+      return avg.toFixed(1);
     },
     borrowBook() {
       if (!this.location || this.borrowQuantity < 1) {
@@ -244,7 +250,6 @@ export default {
     },
   },
   mounted() {
-    this.fetchBookDetails();
     this.fetchLocationDetails();
   },
 };
