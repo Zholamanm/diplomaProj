@@ -186,30 +186,159 @@ export default {
 </script>
 
 <style scoped>
-button {
-  padding: 5px 10px;
-  margin: 5px;
+.content-wrapper {
+  background-color: #f8fafc;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 1.5rem;
+}
+
+.card-primary {
   border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+  0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+}
+
+.map-container {
+  height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f1f5f9;
+}
+
+/* Popup Styling */
+.leaflet-popup-content {
+  min-width: 220px;
+  padding: 12px;
+  font-family: 'Inter', sans-serif;
+}
+
+.leaflet-popup-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.leaflet-popup-content p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+/* Form Controls */
+.form-control {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+/* Buttons */
+button {
+  padding: 6px 12px;
+  margin: 4px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
-  background: #2196F3;
-  color: white;
-  border-radius: 3px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-1px);
 }
 
 button:disabled {
-  background: grey;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-button:hover {
-  background: #0d8af3;
+/* Primary Action Button */
+button:not([disabled]) {
+  background-color: #3b82f6;
+  color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-input {
-  width: 100%;
-  padding: 5px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+button:not([disabled]):hover {
+  background-color: #2563eb;
+}
+
+/* Secondary Action Button */
+button[disabled] {
+  background-color: #e2e8f0;
+  color: #64748b;
+}
+
+/* Danger Button */
+button[type="button"]:last-child {
+  background-color: #ef4444;
+  color: white;
+}
+
+button[type="button"]:last-child:hover {
+  background-color: #dc2626;
+}
+
+/* Button Group */
+.d-flex {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+/* Leaflet Overrides */
+.leaflet-bar {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.leaflet-bar a {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.leaflet-bar a:hover {
+  background-color: #f1f5f9;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .map-container {
+    height: 400px;
+  }
 }
 </style>

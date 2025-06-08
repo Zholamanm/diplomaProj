@@ -3,42 +3,43 @@
     <h2 class="section-title">Recent Reviews</h2>
     <p class="section-subtitle">What readers are saying about these books</p>
 
-    <div class="carousel" mask style="justify-self: center">
-      <article v-for="(review, index) in reviews" :key="index" class="review-card">
-        <div class="reviewer-info">
-          <img :src="getProfilePicture(review.user)" alt="Reviewer" class="reviewer-avatar">
-          <div>
-            <h3 class="reviewer-name">{{ review.user.name }}</h3>
-            <p class="review-date">{{ formatDate(review.created_at) }}</p>
+    <div class="carousel-container">
+      <div class="carousel">
+        <article v-for="(review, index) in reviews" :key="index" class="review-card">
+          <div class="reviewer-info">
+            <img :src="getProfilePicture(review.user)" alt="Reviewer" class="reviewer-avatar" @click="$router.push({name: 'UserPage', params: { locale: $route.params.locale, id: review.user.id}})">
+            <div>
+              <h3 class="reviewer-name">{{ review.user.name }}</h3>
+              <p class="review-date">{{ formatDate(review.created_at) }}</p>
+            </div>
           </div>
-        </div>
 
-        <div class="book-info">
-          <img :src="getBookCover(review.book)" alt="Book cover" class="book-cover" @error="handleImageError">
-          <div>
-            <h4 class="book-title">{{ review.book.title }}</h4>
-            <p class="book-author">{{ review.book.author }}</p>
+          <div class="book-info">
+            <img :src="getBookCover(review.book)" alt="Book cover" class="book-cover" @error="handleImageError">
+            <div>
+              <h4 class="book-title">{{ review.book.title }}</h4>
+              <p class="book-author">{{ review.book.author }}</p>
+            </div>
           </div>
-        </div>
 
-        <div class="review-content">
-          <div class="rating">
-            <svg v-for="star in 5" :key="star" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                 :fill="star <= review.rating ? '#FFC107' : '#E0E0E0'">
-              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-            </svg>
+          <div class="review-content">
+            <div class="rating">
+              <svg v-for="star in 5" :key="star" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                   :fill="star <= review.rating ? '#FFC107' : '#E0E0E0'">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+              </svg>
+            </div>
+            <p class="review-text">{{ truncateText(review.comment) }}</p>
+            <button class="read-more" @click="viewFullReview(review)" v-if="review.comment.length > 150">Read full review</button>
           </div>
-          <p class="review-text">{{ truncateText(review.comment) }}</p>
-          <button class="read-more" @click="viewFullReview(review)" v-if="review.comment.length > 150">Read full review</button>
-        </div>
-      </article>
+        </article>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import clientApi from "@/api/ClientApi";
-import '../../assets/carousel.css'
 
 export default {
   name: 'ReviewsList',
@@ -100,7 +101,6 @@ export default {
 </script>
 
 <style scoped>
-
 .section-title {
   text-align: center;
   font-size: 1.8rem;
@@ -117,28 +117,29 @@ export default {
   font-weight: 300;
 }
 
+.carousel-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 1rem 0;
+  -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+}
+
 .carousel {
-  --items: 6;
-  --carousel-duration: 40s;
-  --carousel-width: min(90vw, 1200px);
-  --carousel-item-width: 300px;
-  --carousel-item-height: 380px;
-  --carousel-item-gap: 20px;
-  --clr-primary: #219e9a;
-  --clr-secondary: #2a3e50;
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+  width: 100%;
 }
 
 .review-card {
-  position: absolute;
-  top: 0;
-  left: calc(100% + var(--carousel-item-gap));
-  width: var(--carousel-item-width);
-  height: var(--carousel-item-height);
+  width: 300px;
+  min-width: 300px;
+  height: 380px;
   background: white;
   border-radius: 10px;
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
 }
@@ -248,28 +249,21 @@ export default {
   text-decoration: underline;
 }
 
-/* Animation delays for each card */
-.carousel > article:nth-child(1) { --i: 0; }
-.carousel > article:nth-child(2) { --i: 1; }
-.carousel > article:nth-child(3) { --i: 2; }
-.carousel > article:nth-child(4) { --i: 3; }
-.carousel > article:nth-child(5) { --i: 4; }
-.carousel > article:nth-child(6) { --i: 5; }
-.carousel > article:nth-child(7) { --i: 6; }
-.carousel > article:nth-child(8) { --i: 7; }
+/* Hide scrollbar but keep functionality */
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
 
 @media (max-width: 768px) {
-  .carousel {
-    --carousel-item-width: 280px;
-    --carousel-item-height: 400px;
+  .review-card {
+    width: 280px;
+    min-width: 280px;
+    height: 400px;
+    padding: 1.2rem;
   }
 
   .section-title {
     font-size: 1.5rem;
-  }
-
-  .review-card {
-    padding: 1.2rem;
   }
 }
 </style>

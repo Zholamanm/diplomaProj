@@ -1,115 +1,88 @@
 <template>
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
+    <!-- Content Header -->
     <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Dashboard</h1>
-          </div><!-- /.col -->
+            <h1 class="m-0">Dashboard Overview</h1>
+          </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Dashboard v1</li>
+              <li class="breadcrumb-item active">Dashboard</li>
             </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- /.content-header -->
 
-    <!-- Main content -->
-    <section class="content"  v-if="borrows.length !== 0">
+    <!-- Main Content -->
+    <section class="content" v-if="borrows.length !== 0">
       <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-          <div class="col-lg-3 col-6" v-if="users">
-            <!-- small box -->
-            <div class="small-box bg-info">
+        <!-- Stats Cards -->
+        <div class="row stats-grid">
+          <div class="col-lg-3 col-6" v-if="users" @click="tab = 1">
+            <div class="stat-card bg-gradient-info">
               <div class="inner">
                 <h3>{{ users.length }}</h3>
-
                 <p>Users</p>
               </div>
               <div class="icon">
-                <i class="ion ion-bag"></i>
+                <i class="fas fa-users"></i>
               </div>
-<!--              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
             </div>
           </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6" v-if="books">
-            <!-- small box -->
-            <div class="small-box bg-success">
+
+          <div class="col-lg-3 col-6" v-if="books" @click="tab = 2">
+            <div class="stat-card bg-gradient-success">
               <div class="inner">
                 <h3>{{ books.length }}</h3>
-
                 <p>Books</p>
               </div>
               <div class="icon">
-                <i class="ion ion-stats-bars"></i>
+                <i class="fas fa-book"></i>
               </div>
-<!--              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
             </div>
           </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6" v-if="locations">
-            <!-- small box -->
-            <div class="small-box bg-warning">
+
+          <div class="col-lg-3 col-6" v-if="locations" @click="tab = 3">
+            <div class="stat-card bg-gradient-warning">
               <div class="inner">
                 <h3>{{ locations.length }}</h3>
-
                 <p>Locations</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fas fa-map-marker-alt"></i>
               </div>
-<!--              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
             </div>
           </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6" v-if="borrows">
-            <!-- small box -->
-            <div class="small-box bg-danger">
+
+          <div class="col-lg-3 col-6" v-if="borrows"  @click="tab = 4">
+            <div class="stat-card bg-gradient-danger">
               <div class="inner">
                 <h3>{{ borrows.length }}</h3>
-
                 <p>Borrows</p>
               </div>
               <div class="icon">
-                <i class="ion ion-pie-graph"></i>
+                <i class="fas fa-exchange-alt"></i>
               </div>
-<!--              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
             </div>
           </div>
-          <!-- ./col -->
         </div>
-      </div><!-- /.container-fluid -->
+      </div>
+      <user-dashboard v-if="tab === 1 && $store.state.user.user.role_id === 1" />
+      <book-dashboard v-if="tab === 2 &&  $store.state.user.user.role_id === 1"/>
+      <location-books-dashboard  v-if="tab === 3 &&  $store.state.user.user.role_id === 1"/>
     </section>
+
     <InfiniteLoading v-if="loading">
       <template #spinner>
-        <div class="custom-spinner">
-          <svg
-              class="loading-icon"
-              viewBox="0 0 50 50"
-          >
-            <circle
-                class="path"
-                cx="25"
-                cy="25"
-                r="20"
-                fill="none"
-                stroke-width="5"
-                stroke="green"
-                stroke-dasharray="80, 100"
-                stroke-dashoffset="0" x
-            ></circle>
-          </svg>
+        <div class="loading-spinner">
+          <div class="spinner-circle"></div>
         </div>
       </template>
     </InfiniteLoading>
-
-    <!-- /.content -->
   </div>
 </template>
 <script>
@@ -118,16 +91,17 @@ import usersApi from "@/api/usersApi";
 import locationApi from "@/api/Admin/LocationApi";
 import bookApi from "@/api/Admin/BookApi";
 import borrowApi from "@/api/Admin/BorrowApi";
+import LocationBooksDashboard from "@/AdminViews/LocationBooksDashboard.vue";
+import BookDashboard from "@/AdminViews/BookDashboard.vue";
+import UserDashboard from "@/AdminViews/UserDashboard.vue";
 
 export default {
   name: 'DashboardView',
+  components: {UserDashboard, BookDashboard, LocationBooksDashboard},
   data() {
     return {
+      tab: 1,
       loading: false,
-      form: {
-        email: '',
-        password: '',
-      },
       users: [],
       books: [],
       locations: [],
@@ -172,91 +146,109 @@ export default {
 };
 </script>
 <style scoped>
-/* Custom Loader */
-.custom-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
+/* Content Header */
+.content-header {
+  padding: 15px 0.5rem;
 }
 
-.loading-icon {
+.content-header h1 {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.8rem;
+}
+
+.breadcrumb {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.breadcrumb-item.active {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Stat Cards */
+.stats-grid {
+  margin: 0 -10px;
+}
+
+.stat-card {
+  border-radius: 10px;
+  color: white;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.stat-card .inner h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+}
+
+.stat-card .inner p {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.stat-card .icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 2.5rem;
+  opacity: 0.2;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover .icon {
+  opacity: 0.3;
+  transform: scale(1.1);
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #1abc9c 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #28a745 0%, #5cb85c 100%);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #f0ad4e 100%);
+}
+
+.bg-gradient-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #d9534f 100%);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+}
+
+.spinner-circle {
   width: 40px;
   height: 40px;
+  border: 4px solid rgba(52, 152, 219, 0.2);
+  border-top-color: #3498db;
+  border-radius: 50%;
   animation: spin 1s linear infinite;
-  stroke: #4CAF50;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.actions {
-  justify-content: space-around;
-  flex-direction: row;
-  display: flex;
-}
-.icon-warning {
-  display: block;
-  margin: 0 auto 16px;
-  width: 48px;
-  height: 48px;
-  color: #9CA3AF; /* Gray */
-}
-
-/* === Confirmation Text === */
-.confirm-text {
-  font-size: 1rem;
-  color: #6B7280; /* Gray */
-  margin-bottom: 16px;
-}
-
-/* === Button Group === */
-.button-group {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-/* === Delete Button === */
-.btn-delete {
-  background-color: #DC2626; /* Red */
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 8px;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-delete:hover {
-  background-color: #B91C1C; /* Darker Red */
-}
-
-.btn-delete:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* === Cancel Button === */
-.btn-cancel {
-  background-color: white;
-  color: #374151; /* Dark Gray */
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: 1px solid #D1D5DB; /* Light Gray Border */
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.btn-cancel:hover {
-  background-color: #F3F4F6; /* Light Gray */
-  color: #2563EB; /* Blue */
+  to { transform: rotate(360deg); }
 }
 </style>

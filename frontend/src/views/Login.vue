@@ -54,7 +54,7 @@
 
     <div class="mt-3 text-end">
       <p>Don't have an account? </p>
-      <router-link to="/register" class="btn btn-dark btn-sm">Register here.</router-link>
+      <a href="#!" class="btn btn-dark btn-sm" @click.prevent="$router.push({name: 'RegisterPage', params: { locale: $route.params.locale }})">Register here.</a>
     </div>
   </div>
 
@@ -104,7 +104,7 @@ export default {
         await authApi.signInWithGoogle();
         await this.registerFcmToken();
 
-        this.$router.push({ name: 'DashboardView' });
+        this.$router.push({ name: 'CatalogView' });
       } catch (error) {
         this.loading = false;
         this.globalError = 'Google login failed';

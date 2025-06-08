@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouterView } from 'vue-router';
 import {checkLocale, requireAuth} from "./router-guards";
-import RegisterPage from '@/views/UserRegister.vue'; 
+import RegisterPage from '@/views/UserRegister.vue';
 import Login from '@/views/Login.vue';
 import clientRoutes from "@/router/client";
 import adminRoutes from "@/router/admin";
@@ -9,16 +9,23 @@ const routes = [
   {
     path: '/',
     redirect: '/ru',
-    beforeEnter: checkLocale,
   },
   {
     path: '/register',
-    name: 'RegisterPage', 
+    redirect: '/ru/register', // Explicit redirect
+  },
+  {
+    path: '/:locale/register',
+    name: 'RegisterPage',
     component: RegisterPage,
     beforeEnter: checkLocale,
   },
   {
     path: '/login',
+    redirect: '/ru/login', // Explicit redirect
+  },
+  {
+    path: '/:locale/login',
     name: 'login',
     component: Login,
     beforeEnter: checkLocale,

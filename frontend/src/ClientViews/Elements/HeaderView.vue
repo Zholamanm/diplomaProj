@@ -1,49 +1,50 @@
 <template>
-    <nav class="nav-menu nav-effect-1" id="menu-1">
-      <h2 class="" style="color: #2c3e50;" @click="$router.push({ name: 'HomeView', parmas: { locale: $route.params.locale }})">The Library</h2>
-      <ul class="header-list">
-        <li><a class="" href="#" @click="$router.push({name: 'UserProfile', params: {locale: $route.params.locale}})">Profile</a></li>
-        <li><a class="" href="#" @click="$router.push({name: 'FriendList', params: {locale: $route.params.locale}})">Friends</a></li>
-        <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'CheckoutView', params: {locale: $route.params.locale}})">Checkout</a></li>
-        <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'FavouriteView', params: {locale: $route.params.locale}})">Favourites</a></li>
-<!--        <li><a class="" href="#" @click="$router.push({name: 'ReviewView', params: {locale: $route.params.locale}})">Reviews</a></li>-->
-        <li><a class="" href="#" @click="$router.push({name: 'AboutView', params: {locale: $route.params.locale}})">About</a></li>
-<!--        <li><a class="" href="#" @click="$router.push({name: 'ContactView', params: {locale: $route.params.locale}})">Contact</a></li>-->
-        <li>
-          <a class="" href="#" @click="logout" v-if="$store.state.auth.authorized">Logout</a>
-          <a class="" href="#" v-else @click="$router.push({name: 'login', params: {locale: this.$route.params.locale}})">Login</a>
-        </li>
-      </ul>
-    </nav>
-    <div class="main clearfix">
-      <header id="header" class="page-header">
-        <div class="page-header-container row">
+  <nav class="nav-menu nav-effect-1" id="menu-1">
+    <h2 class="" style="color: #2c3e50;" @click="$router.push({ name: 'HomeView', parmas: { locale: $route.params.locale }})">The Library</h2>
+    <ul class="header-list">
+      <li><a class="" href="#" @click="$router.push({name: 'UserProfile', params: {locale: $route.params.locale}})">Profile</a></li>
+      <li><a class="" href="#" @click="$router.push({name: 'FriendList', params: {locale: $route.params.locale}})">Friends</a></li>
+      <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'CheckoutView', params: {locale: $route.params.locale}})">Checkout</a></li>
+      <li><a class="" href="#" v-if="$store.state.auth.authorized" @click="$router.push({name: 'FavouriteView', params: {locale: $route.params.locale}})">Favourites</a></li>
+      <!--        <li><a class="" href="#" @click="$router.push({name: 'ReviewView', params: {locale: $route.params.locale}})">Reviews</a></li>-->
+      <li><a class="" href="#" @click="$router.push({name: 'AboutView', params: {locale: $route.params.locale}})">About</a></li>
+      <!--        <li><a class="" href="#" @click="$router.push({name: 'ContactView', params: {locale: $route.params.locale}})">Contact</a></li>-->
+      <li>
+        <a class="" href="#" @click="logout" v-if="$store.state.auth.authorized">Logout</a>
+        <a class="" href="#" v-else @click="$router.push({name: 'login', params: {locale: this.$route.params.locale}})">Login</a>
+      </li>
+      <li><a class="" href="#" v-if="[1, 2].includes(this.$store.state.user ?.user?.role_id)" @click="$router.push({name: 'DashboardView', params: {locale: $route.params.locale}})">Admin</a></li>
+    </ul>
+  </nav>
+  <div class="main clearfix">
+    <header id="header" class="page-header">
+      <div class="page-header-container row">
 
-          <div class="main-logo">
-            <a href="#" class="logo" style="color: #2c3e50;" @click="$router.push({ name: 'HomeView', parmas: { locale: $route.params.locale }})">The Library</a>
-          </div>
-
-          <div class="menu-search">
-            <div class="main-navigation-nav">
-              <a href="#">Menu</a>
-            </div>
-
-            <div class="catalog-search" v-if="$route.name === 'CatalogView'">
-              <input v-model="searchQuery" @input="updateSearchQuery" class="shuffle-search input_field " autocomplete="off" value="" maxlength="128"
-                     id="input-search"/>
-              <label class="input_label" for="input-search">
-                <span class="input_label-content">Search Library</span>
-                <span class="input_label-search"></span>
-              </label>
-            </div>
-
-          </div>
+        <div class="main-logo">
+          <a href="#" class="logo" style="color: #2c3e50;" @click="$router.push({ name: 'HomeView', parmas: { locale: $route.params.locale }})">The Library</a>
         </div>
-      </header>
-    </div>
-    <div class="main-overlay-nav" style="z-index: 10;">
-      <div class="overlay-full"></div>
-    </div>
+
+        <div class="menu-search">
+          <div class="main-navigation-nav">
+            <a href="#">Menu</a>
+          </div>
+
+          <div class="catalog-search" v-if="$route.name === 'CatalogView'">
+            <input v-model="searchQuery" @input="updateSearchQuery" class="shuffle-search input_field " autocomplete="off" value="" maxlength="128"
+                   id="input-search"/>
+            <label class="input_label" for="input-search">
+              <span class="input_label-content">Search Library</span>
+              <span class="input_label-search"></span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </header>
+  </div>
+  <div class="main-overlay-nav" style="z-index: 10;">
+    <div class="overlay-full"></div>
+  </div>
 </template>
 <script>
 import $ from 'jquery'

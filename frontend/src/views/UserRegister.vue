@@ -76,6 +76,7 @@
 
 <script>
 import axios from 'axios';
+import authApi from "@/api/AuthApi";
 
 export default {
   name: 'UserRegister', 
@@ -95,8 +96,8 @@ export default {
       axios
         .post('https://bookers.com.kz/api/register', this.form)
         .then((response) => {
-          console.log(response.data);
-          this.$router.push('/login');
+          this.setMyUser(this.form.email, this.form.password, response.data.token)
+          this.$router.push({name: 'CatalogView', params: { locale: this.$route.params.locale }});
         })
         .catch((error) => {
           if (error.response && error.response.data) {
@@ -104,6 +105,9 @@ export default {
           }
         });
     },
+    setMyUser(email, password, token) {
+      authApi.setAuthorization(email, password, token)
+    }
   },
 };
 </script>

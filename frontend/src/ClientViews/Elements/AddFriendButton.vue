@@ -11,7 +11,7 @@ import clientApi from "@/api/ClientApi";
 export default {
   data() {
     return {
-      status: 'none' // none, pending, friends
+      status: 'none-status' // none, pending, friends
     }
   },
   computed: {
@@ -25,19 +25,28 @@ export default {
   },
   methods: {
     checkStatus() {
-      client.get(`/api/client/friendship-status/${this.$route.params.id}`).then(response => {
-        this.status = response.data.data.status;
-      });
+      client.get(`/api/client/friendship-status/${this.$route.params.id}`)
+          .then(response => {
+            this.status = response.data.data.status || 'none-status';
+          })
+          .catch(error => {
+            console.error('Error checking friend status:', error);
+          });
     },
-    handleFriendAction() {
-      if (!this.status) {
-        clientApi.sendRequest(this.$route.params.id).then(() => {
+    async handleFriendAction() {
+      try {
+        if (this.status === 'none-status') {
+          await clientApi.sendRequest(this.$route.params.id);
           this.status = 'pending';
-        });
-      } else if (this.status === 'friends') {
-        clientApi.removeFriend(this.$route.params.id).then(() => {
-          this.status = 'none';
-        });
+        } else if (this.status === 'friends') {
+          await clientApi.removeFriend(this.$route.params.id);
+          this.status = 'none-status';
+        }
+      } catch (error) {
+        console.error('Error handling friend action:', error);
+        if (error.response && error.response.data.error) {
+          alert(error.response.data.error);
+        }
       }
     }
   },
@@ -55,11 +64,16 @@ export default {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.friend-btn.none {
+.friend-btn.none-status {
   background: #219e9a;
   color: white;
+}
+
+.friend-btn.none-status:hover {
+  background: #1a7f7b;
 }
 
 .friend-btn.pending {
@@ -67,8 +81,16 @@ export default {
   color: black;
 }
 
+.friend-btn.pending:hover {
+  background: #e0a800;
+}
+
 .friend-btn.friends {
   background: #4CAF50;
   color: white;
+}
+
+.friend-btn.friends:hover {
+  background: #3d8b40;
 }
 </style>
