@@ -6,7 +6,7 @@
             class="slide"
             v-for="(slider) in activeSliders"
             :key="slider.id"
-            :style="{ backgroundImage: `url(https://bookers.com.kz/storage/${slider.cover_image})` }"
+            :style="{ backgroundImage: `url(https://bookers.com.kz/public/storage/${slider.cover_image})` }"
         >
           <!-- You can add slider content here if needed -->
         </div>

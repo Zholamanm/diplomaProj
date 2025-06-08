@@ -7,7 +7,7 @@
       <div class="container">
         <!-- Page 1: Cover -->
         <div class="right">
-          <figure class="back" id="back-cover"></figure>
+          <figure class="back" id="back-cover" style="background: linear-gradient(135deg, #ffcb63, #ef9f00);"></figure>
           <figure class="front" id="cover">
             <div class="cover-content">
               <h1>BookShare</h1>
@@ -23,20 +23,8 @@
           <figure class="front">
             <div class="page-content">
               <h2>Our Mission</h2>
-              <p>To make reading accessible to everyone by creating a community where books can be shared, borrowed, and enjoyed without barriers.</p>
+              <p>We aim to simplify and modernize library services by replacing outdated systems with a smart, user-friendly platform for book reservations and sharing.</p>
               <div class="icon">💫</div>
-            </div>
-          </figure>
-        </div>
-
-        <!-- Page 3: Community -->
-        <div class="right">
-          <figure class="back" style="background-image: url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></figure>
-          <figure class="front">
-            <div class="page-content">
-              <h2>The Community</h2>
-              <p>Over 1,000,000,000,000 members strong, our platform connects book lovers across the country. Join discussions, share recommendations, and meet fellow bibliophiles.</p>
-              <div class="icon">👥</div>
             </div>
           </figure>
         </div>
@@ -48,10 +36,10 @@
             <div class="page-content">
               <h2>Unique Features</h2>
               <ul>
-                <li>Real-time book availability</li>
-                <li>Personalized recommendations</li>
-                <li>Local pickup locations</li>
-                <li>Reading challenges</li>
+                <li>Smart Book Recommendations — tailored to users' interests and reading history.</li>
+                <li>Booking System — find and book the books near to you.</li>
+                <li>Favorites & Blacklist — manage your reading preferences and interactions.</li>
+                <li>Built-in Chat — communicate directly with other users within the platform.</li>
               </ul>
               <div class="icon">✨</div>
             </div>
@@ -64,7 +52,7 @@
           <figure class="front">
             <div class="page-content">
               <h2>Our Team</h2>
-              <p>Founded by a group of passionate readers and tech enthusiasts who believe books should be shared, not shelved.</p>
+              <p>We are a group of tech-savvy students from Astana IT University who love books and innovation. Together, we created this project to connect readers and make sharing books easier and more fun.</p>
               <div class="icon">❤️</div>
             </div>
           </figure>
@@ -77,7 +65,7 @@
             <div class="page-content">
               <h2>Join Us</h2>
               <p>Ready to start your book-sharing journey?</p>
-              <button class="join-btn">Become a Member</button>
+              <button class="join-btn" @click="$router.push({name: 'login', params: { locale: $route.params.locale}})">Become a Member</button>
               <div class="icon">📖</div>
             </div>
           </figure>

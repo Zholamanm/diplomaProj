@@ -40,7 +40,7 @@
                 <div class="col-4 col-sm-3">
                   <img
                       class="book-cover"
-                      :src="`https://bookers.com.kz/storage/${item.book.cover_image}`"
+                      :src="`https://bookers.com.kz/public/storage/${item.book.cover_image}`"
                       :alt="item.book.title"
                       @error="handleImageError"
                   >
@@ -112,7 +112,7 @@
           <div class="book-info">
             <img
                 class="modal-book-cover"
-                :src="`https://bookers.com.kz/storage/${selectedBook.book.cover_image}`"
+                :src="`https://bookers.com.kz/public/storage/${selectedBook.book.cover_image}`"
                 :alt="selectedBook.book.title"
                 @error="handleImageError"
             >

@@ -76,7 +76,7 @@
                       <div class="bk-front">
                         <div
                             class="bk-cover"
-                            :style="{ backgroundImage: `url('https://bookers.com.kz/storage/${book.cover_image}')` }"
+                            :style="{ backgroundImage: `url('https://bookers.com.kz/public/storage/${book.cover_image}')` }"
                             @error="handleImageError"
                         ></div>
                       </div>

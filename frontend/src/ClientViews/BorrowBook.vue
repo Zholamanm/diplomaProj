@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     getImageUrl(path) {
-      return path ? `https://bookers.com.kz/storage/${path}` : 'https://bookers.com.kz/defaults/default-cover.jpg';
+      return path ? `https://bookers.com.kz/public/storage/${path}` : 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
     handleImageError(e) {
       e.target.src = 'https://bookers.com.kz/defaults/default-cover.jpg';

@@ -65,7 +65,7 @@ export default {
       }, 5000); // Scroll every 5 seconds
     },
     getImageUrl(path) {
-      return path ? `https://bookers.com.kz/storage/${path}` : 'https://bookers.com.kz/defaults/default-cover.jpg';
+      return path ? `https://bookers.com.kz/public/storage/${path}` : 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
     handleImageError(e) {
       // This won't work for background images, we'll need a different approach

@@ -7,7 +7,7 @@
         <div class="genre-header">
           <div class="genre-info-card">
             <div class="genre-cover"
-                 :style="{ backgroundImage: `url('https://bookers.com.kz/storage/${topBook?.cover_image}')` }">
+                 :style="{ backgroundImage: `url('https://bookers.com.kz/public/storage/${topBook?.cover_image}')` }">
               <div class="genre-overlay"></div>
               <div class="genre-meta">
                 <h1 class="genre-title">{{ genre.name }}</h1>
@@ -72,7 +72,7 @@
             <div class="top-book-card" v-for="(book, index) in books" :key="book.id">
               <div class="book-rank">{{ index + 1 }}</div>
               <div class="book-cover"
-                   :style="{ backgroundImage: `url('https://bookers.com.kz/storage/${book.cover_image}')` }"
+                   :style="{ backgroundImage: `url('https://bookers.com.kz/public/storage/${book.cover_image}')` }"
                    @error="handleImageError">
               </div>
               <div class="book-details">

@@ -24,7 +24,7 @@
         <div class="book-media">
           <div class="main-image">
             <img
-                :src="book.cover_image ? `https://bookers.com.kz/storage/${book.cover_image}` : placeholderImage"
+                :src="book.cover_image ? `https://bookers.com.kz/public/storage/${book.cover_image}` : placeholderImage"
                 :alt="`Cover of ${book.title}`"
                 @error="handleImageError"
             >

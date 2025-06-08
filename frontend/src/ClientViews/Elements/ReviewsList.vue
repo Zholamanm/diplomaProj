@@ -65,13 +65,13 @@ export default {
 
     getProfilePicture(user) {
       return user.profile_picture
-          ? `https://bookers.com.kz/storage/${user.profile_picture}`
+          ? `https://bookers.com.kz/public/storage/${user.profile_picture}`
           : 'https://bookers.com.kz/defaults/default-profile.jpg';
     },
 
     getBookCover(book) {
       return book.cover_image
-          ? `https://bookers.com.kz/storage/${book.cover_image}`
+          ? `https://bookers.com.kz/public/storage/${book.cover_image}`
           : 'https://bookers.com.kz/defaults/default-cover.jpg';
     },
 

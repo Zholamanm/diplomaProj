@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     getImageUrl(path) {
-      return path ? `https://bookers.com.kz/storage/${path}` : '';
+      return path ? `https://bookers.com.kz/public/storage/${path}` : '';
     },
     fetchCategories() {
       clientApi.getCategoriesWithMostBorrowed()
