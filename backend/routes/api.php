@@ -18,6 +18,7 @@ use App\Http\Controllers\AuthController;
 */
 //Route::post('/broadcasting/auth', BroadCastingController::class)->middleware('auth:api');Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/google-login', [AuthController::class, 'loginWithGoogle']);
 Route::get('guest/books', [\App\Http\Controllers\ClientController::class, 'getBooks']);
 Route::get('sliders', [\App\Http\Controllers\ClientController::class, 'getBooks']);
@@ -128,6 +129,8 @@ Route::middleware(['auth:api'])->group(function () {
             });
             Route::prefix('users')->group(function () {
                 Route::get('', [\App\Http\Controllers\UserController::class, 'get']);
+                Route::post('', [\App\Http\Controllers\UserController::class, 'store']);
+                Route::post('/{id}', [\App\Http\Controllers\UserController::class, 'update']);
             });
             Route::prefix('books')->group(function () {
                 Route::get('', [\App\Http\Controllers\BookController::class, 'get']);
@@ -171,8 +174,6 @@ Route::middleware(['auth:api'])->group(function () {
             Route::prefix('user')->group(function () {
                 Route::get('', [\App\Http\Controllers\UserController::class, 'index']);
                 Route::get('/{id}', [\App\Http\Controllers\UserController::class, 'view']);
-                Route::post('/', [\App\Http\Controllers\UserController::class, 'store']);
-                Route::post('/{id}', [\App\Http\Controllers\UserController::class, 'update']);
                 Route::delete('/{id}', [\App\Http\Controllers\UserController::class, 'destroy']);
             });
             Route::prefix('location')->group(function () {

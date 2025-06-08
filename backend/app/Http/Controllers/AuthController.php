@@ -87,6 +87,7 @@ class AuthController extends Controller
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
+            'role_id' => 3
         ]);
     }
 
@@ -161,6 +162,7 @@ class AuthController extends Controller
                     'name' => $firebaseUser->displayName ?? 'No Name',
                     'password' => Hash::make('123456'),
                     'email' => $firebaseUser->email,
+                    'role_id' => 3
                 ]);
             }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -23,14 +24,16 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'email' => 'required|string|unique:users',
-            'password' => 'required|string|min:8',
+            'email' => 'nullable',
+            'role_id' => 'required'
         ]);
+        $password = '12345678';
 
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'role_id' => $validated['role_id'],
+            'password' => Hash::make($password),
         ]);
 
         return ['success' => true];
@@ -40,15 +43,15 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'email' => 'required|string|unique:users',
-            'password' => 'required|string|min:8',
+            'email' => 'nullable',
+            'role_id' => 'required'
         ]);
 
-        $book = User::where('id', $id)->first();
-        $book->name = $validated['name'];
-        $book->email = $validated['email'];
-        $book->password = Hash::make($validated['password']);
-        $book->save();
+        $user = User::where('id', $id)->first();
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->role_id = $validated['role_id'];
+        $user->save();
 
         return ['success' => true];
     }

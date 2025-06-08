@@ -21,7 +21,9 @@ class FriendshipController extends Controller
     {
         $user = User::find($id);
         if (auth()->id() === $user->id) {
-            return back()->with('error', 'You cannot send a friend request to yourself');
+            return response()->json([
+                'error' => 'You cannot send a friend request to yourself'
+            ], 400);
         }
 
         Friendship::updateOrCreate([
@@ -36,7 +38,10 @@ class FriendshipController extends Controller
             'status' => 'pending'
         ]);
 
-        return back()->with('success', 'Friend request sent');
+        return response()->json([
+            'success' => true,
+            'message' => 'Friend request sent'
+        ]);
     }
 
     public function acceptRequest($id)

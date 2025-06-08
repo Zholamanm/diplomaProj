@@ -10,7 +10,9 @@ class LocationController extends Controller
 {
     public function index()
     {
-        return response()->json(Location::all());
+        $locations = Location::withCount('books')->get();
+
+        return response()->json($locations);
     }
 
     public function addBooksToLocation(Request $request, $locationId)
